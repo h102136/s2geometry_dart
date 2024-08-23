@@ -21,18 +21,10 @@ class LatLng {
     }
 
     // wrap lng to -180..180
-    double wrapLng(double lng) {
-      double result = (lng + 180) % 360;
-      if (result < 0) {
-        result += 360;
-      }
-      return result - 180;
-    }
-
     // (!noWrap) is true, run the statement
     if (!noWrap) {
       lat = lat.clamp(-90, 90);
-      lng = wrapLng(lng);
+      lng = (lng + 180) % 360-180;
     }
   }
 

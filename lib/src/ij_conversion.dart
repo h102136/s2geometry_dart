@@ -27,6 +27,8 @@ List<double> ijToST(List<int> ij, int order, List<int> offsets/*a list of two in
 
 // rotate and flip points for given parameters
 void rotateAndFlipQuadrant(int n, Map<String, int> point, int rx, int ry) {
+  point['x'] ??= 0;
+  point['y'] ??= 0;
   if (ry == 0) {
     if (rx == 1) {
       point['x'] = n - 1 - point['x']!; // map x from range 0 to n-1 transform to n-1 to 0. 
