@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:s2geometry_dart/src/lat_lng_conversion.dart';
+import 'package:s2geometry_dart/src/latlng_conversion.dart';
 
 void main() {
   group('LatLng', () {
