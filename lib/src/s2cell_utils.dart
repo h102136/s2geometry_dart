@@ -1,6 +1,6 @@
 import 'package:fixnum/fixnum.dart';
 import 's2cell.dart';
-import 'package:s2geometry_dart/src/latlng_s2point.dart';
+import 'lat_lng_conversion.dart';
 
 class S2CellUtils {
   static const int faceBITS = 3;
@@ -37,7 +37,7 @@ class S2CellUtils {
       bin += '0';
     }
 
-    return BigInt.parse(bin, radix: 2).toString(); // S2 Cell ID
+    return int.parse(bin, radix: 2).toString(); // s2cell id
   }
 
   // Convert quadkey to S2 Cell ID
@@ -59,8 +59,8 @@ class S2CellUtils {
     var posB = bin.substring(3, lsbIndex);
     var levelN = (posB.length / 2).floor();
 
-    var faceS = BigInt.parse(faceB, radix: 2).toString();
-    var posS = BigInt.parse(posB, radix: 2).toRadixString(4);
+    var faceS = int.parse(faceB, radix:2).toString();
+    var posS = int.parse(posB, radix:2).toRadixString(4);
 
     while (posS.length < levelN) {
       posS = '0' + posS;
