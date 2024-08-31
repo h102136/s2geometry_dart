@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:s2geometry_dart/src/lat_lng_conversion.dart';
+import 'package:s2geometry_dart/src/latlng_s2point.dart';
 import 'package:s2geometry_dart/src/s2cell.dart';
 
 void main() {
@@ -56,4 +56,5 @@ void main() {
       expect(neighbors[0], isA<S2Cell>());
     });
   });
+  
 }

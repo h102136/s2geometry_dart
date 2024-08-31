@@ -1,13 +1,13 @@
 import 'package:fixnum/fixnum.dart';
 import 's2cell.dart';
-import 'lat_lng_conversion.dart';
+import 'package:s2geometry_dart/src/latlng_s2point.dart';
 
 class S2CellUtils {
   static const int faceBITS = 3;
   static const int maxLEVEL = 30;
   static const int posBITS = (2 * maxLEVEL) + 1; // 61 (60 bits of data, 1 bit lsb marker)
 
-  // convert face, position, and level to S2 Cell ID
+  // Convert face, position, and level to S2 Cell ID
   static String facePosLevelToId(int faceN, String posS, int? levelN) {
     String faceB;
     String posB;
@@ -25,7 +25,7 @@ class S2CellUtils {
     }
 
     // 60-bit position value
-     posB = Int64(int.parse(posS, radix: 4)).toRadixString(2);
+    posB = Int64(int.parse(posS, radix: 4)).toRadixString(2);
     while (posB.length < (2 * levelN)) {
       posB = '0' + posB;
     }
@@ -37,18 +37,18 @@ class S2CellUtils {
       bin += '0';
     }
 
-    return int.parse(bin, radix: 2).toString(); // s2cell id
+    return BigInt.parse(bin, radix: 2).toString(); // S2 Cell ID
   }
 
-  // convert quadkey to S2 Cell ID
+  // Convert quadkey to S2 Cell ID
   static String keyToId(String key) {
     var parts = key.split('/');
     return facePosLevelToId(int.parse(parts[0]), parts[1], parts[1].length);
   }
 
-  // convert S2 Cell ID to quadkey
+  // Convert S2 Cell ID to quadkey
   static String idToKey(String idS) {
-    var bin = Int64.parseInt(idS).toRadixString(2);
+    var bin = BigInt.parse(idS).toRadixString(2);
 
     while (bin.length < (faceBITS + posBITS)) {
       bin = '0' + bin;
@@ -57,10 +57,10 @@ class S2CellUtils {
     var lsbIndex = bin.lastIndexOf('1');
     var faceB = bin.substring(0, 3);
     var posB = bin.substring(3, lsbIndex);
-    var levelN = posB.length ~/ 2;
+    var levelN = (posB.length / 2).floor();
 
-    var faceS = int.parse(faceB, radix:2).toString();
-    var posS = int.parse(posB, radix:2).toRadixString(4);
+    var faceS = BigInt.parse(faceB, radix: 2).toString();
+    var posS = BigInt.parse(posB, radix: 2).toRadixString(4);
 
     while (posS.length < levelN) {
       posS = '0' + posS;
@@ -69,19 +69,19 @@ class S2CellUtils {
     return faceS + '/' + posS;
   }
 
-  // convert quadkey to LatLng
+  // Convert quadkey to LatLng
   static LatLng keyToLatLng(String key) {
     final cell = S2Cell.fromHilbertQuadKey(key);
     return cell.getLatLng();
   }
 
-  // convert S2 Cell ID to LatLng
+  // Convert S2 Cell ID to LatLng
   static LatLng idToLatLng(String id) {
     final key = idToKey(id);
     return keyToLatLng(key);
   }
 
-  // convert LatLng to quadkey
+  // Convert LatLng to quadkey
   static String latLngToKey(double lat, double lng, int level) {
     if (level.isNaN || level < 1 || level > 30) {
       throw ArgumentError("'level' is not a number between 1 and 30 (but it should be)");
@@ -89,26 +89,31 @@ class S2CellUtils {
     return S2Cell.fromLatLng(LatLng(lat, lng), level).toHilbertQuadkey();
   }
 
-  // stepping operation for quadkey
-  static String stepKey(String key, int num) { // num is steps to take
+  // Convert LatLng to S2 Cell ID
+  static String latLngToId(double lat, double lng, {int level = 15}) {
+    String hilbertQuadkey = latLngToKey(lat, lng, level);
+    return keyToId(hilbertQuadkey);
+  }
+
+  // Stepping operation for quadkey
+  static String stepKey(String key, int num) {
     var parts = key.split('/');
     var faceS = parts[0];
     var posS = parts[1];
     var level = parts[1].length;
 
-    var posL = int.parse(posS, radix: 4); //translate posS to base 10
-    int otherL; 
-    // calculation of new position
+    var posL = int.parse(posS, radix: 4); // Translate posS to base 10
+    int otherL;
     if (num > 0) {
-      otherL = posL + (num.abs());
+      otherL = posL + num.abs();
     } else if (num < 0) {
-      otherL = posL - (num.abs());
+      otherL = posL - num.abs();
     } else {
       otherL = posL;
     }
     var otherS = otherL.toRadixString(4);
 
-    if (otherS == '0') { 
+    if (otherS == '0') {
       print("Warning: face/position wrapping is not yet supported");
     }
     while (otherS.length < level) {
@@ -118,12 +123,12 @@ class S2CellUtils {
     return faceS + '/' + otherS;
   }
 
-  // calculate the previous Hilbert QuadKey
+  // Calculate the previous Hilbert QuadKey
   static String prevKey(String key) {
     return stepKey(key, -1);
   }
 
-  // calculate the next Hilbert QuadKey
+  // Calculate the next Hilbert QuadKey
   static String nextKey(String key) {
     return stepKey(key, 1);
   }

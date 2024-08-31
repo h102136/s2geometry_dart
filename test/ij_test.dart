@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:s2geometry_dart/src/ij_conversion.dart';
+import 'package:s2geometry_dart/src/ij.dart';
 
 void main() {
   group('stToIJ', () {

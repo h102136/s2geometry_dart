@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:s2geometry_dart/src/face_uv_conversion.dart';
+import 'package:s2geometry_dart/src/face_uv.dart';
 
 void main() {
   group('largestAbsComponent', () {
