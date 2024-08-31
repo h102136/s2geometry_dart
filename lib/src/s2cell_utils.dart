@@ -1,6 +1,6 @@
 import 'package:fixnum/fixnum.dart';
 import 's2cell.dart';
-import 'lat_lng_conversion.dart';
+import 'latlng_s2point.dart';
 
 class S2CellUtils {
   static const int faceBITS = 3;
