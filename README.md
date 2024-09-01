@@ -3,6 +3,13 @@
 - This project is to port JavaScript version of S2 Geometry Library to Dart, the reference is https://www.npmjs.com/package/s2-geometry, S2 Geometry is an open-source library for geometric calculations, apply in geographic information systems (GIS), map applications, spatial analysis.
 - The goal of this porting task is to retain all functionality in the reference and split the main script into multiple scripts, to enhance code maintainability and improve testability, and improve user experience so that users can use the package more intuitively and easily.
 
+## Reference
+
+https://www.npmjs.com/package/s2-geometry (javascript)  
+https://github.com/google/s2geometry (python)   
+https://github.com/google/s2-geometry-library-java (java)  
+https://github.com/nbspou/dart-s2geometry (dart)
+
 ## Porting plan
 
 1. Target: 
