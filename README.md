@@ -33,10 +33,28 @@ Port test cases of Javascript version into Dart version and ensure all tests pas
 
 - data structure: 'Array' and 'Object' are the most commonly used in JavaScript, 'List' and 'Map' have different ways of use in Dart, so the code needs to be rewritten to accommodate the methods and features of Dart
 
+## Usage
+
+- clone the package in your project
+
+```sh
+git clone https://github.com/h102136/s2geometry_dart
+```
+```
+your_project/
+├── lib/
+└── s2geometry_dart/
+```
+- add the dependency in 'pubspec.yaml'
+
+```yaml
+dependencies:
+    s2geometry_dart:
+    path: s2geometry_dart
+```
 ## Example
 ```dart
-import 'package:s2geometry_dart/src/s2cell.dart';
-import 'package:s2geometry_dart/src/s2cell_utils.dart';
+import 'package:s2geometry_dart/s2geometry.dart';
 
 void main(){
 
@@ -46,34 +64,33 @@ void main(){
   var level = 15;
   
   // Convert lat and lng to key 
-  var key = S2CellUtils.latLngToKey(lat, lng, level);
+  var key = S2.latLngToKey(lat, lng, level);
   print(key);
 
   // Convert key to s2cell id 
-  var id_fromKey = S2CellUtils.keyToId(key);
-  print(id_fromKey);
+  var idFromKey = S2.keyToId(key);
+  print(idFromKey);
 
-  var key_fromId = S2CellUtils.idToKey(id);
-  print(key_fromId);
+  var keyFromId = S2.idToKey(idFromKey);
+  print(keyFromId);
 
   //Get neighbors based on lat, lng, level
-  var neighbors = S2Cell.latLngToNeighborKeys(lat, lng, level);
+  var neighbors = S2.latLngToNeighborKeys(lat, lng, level);
   print(neighbors);
   
   //The next key of the current one
-  var nextKey = S2CellUtils.nextKey(key);
+  var nextKey = S2.nextKey(key);
   print(nextKey);
   //The previous key of the current one
-  var prevKey = S2CellUtils.prevKey(key);
+  var prevKey = S2.prevKey(key);
   print(prevKey); 
   
   //step ten keys back 
-  var backTenKeys = S2CellUtils.stepKey(key, -10);
+  var backTenKeys = S2.stepKey(key, -10);
   print(backTenKeys); 
 
 }
 ```
-
 
     
 
