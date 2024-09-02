@@ -1,6 +1,6 @@
 # s2geometry_dart
 
-- This project is to port JavaScript version of S2 Geometry Library to Dart, the script of the project is based on https://www.npmjs.com/package/s2-geometry, 
+- This project is to port JavaScript version of S2 Geometry Library to Dart, the porting task is based on the script from  https://www.npmjs.com/package/s2-geometry as a reference.
 - The goal of this porting task is to retain all functionality in the reference and split the main script into multiple scripts, to enhance code maintainability and improve testability, and improve user experience so that users can use the package more intuitively and easily.
 
 ## Reference
