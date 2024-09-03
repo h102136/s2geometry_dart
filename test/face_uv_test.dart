@@ -3,8 +3,6 @@ import 'package:s2geometry_dart/src/face_uv.dart';
 
 void main() {
   group('largestAbsComponent', () {
-    
-    // test for the largest absolute component
     test('should return the index of the largest absolute component', () {
       expect(largestAbsComponent([3.0, -4.0, 2.0]), 1);
       expect(largestAbsComponent([-5.0, 2.0, 3.0]), 0);
@@ -13,7 +11,7 @@ void main() {
   });
 
   group('faceXYZToUV', () {
-    test('should convert xyz to uv coordinates correctly', () {
+    test('should convert xyz to uv correctly', () {
       expect(faceXYZToUV(0, [1.0, 2.0, 3.0]), [2.0, 3.0]);
       expect(faceXYZToUV(1, [1.0, 2.0, 3.0]), [-0.5, 1.5]);
       expect(faceXYZToUV(2, [1.0, 2.0, 3.0]), [-0.3333333333333333, -0.6666666666666666]);
