@@ -19,6 +19,7 @@ List<int> stToIJ(List<double> st, int order) { // order: the level of the S2 cel
 
   // let st project from a range [0, 1] to the range [0, maxSize], then get the floor value of the result 
   int singleSTtoIJ(double st) { 
+
     int ij = (st * maxSize).floor(); 
     return max(0, min(maxSize - 1, ij)); //make sure ij is in the range [0, maxSize)
   }
@@ -45,6 +46,7 @@ List<double> ijToST(List<int> ij, int order, List<int> offsets/*a list of two in
     (ij[1] + offsets[1]) / maxSize
   ];
 }
+
 
 /*
 var rotateAndFlipQuadrant = function(n, point, rx, ry)
