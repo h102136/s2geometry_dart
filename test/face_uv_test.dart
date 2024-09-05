@@ -4,7 +4,6 @@ import 'package:s2geometry_dart/src/face_uv.dart';
 void main() {
   group('largestAbsComponent', () {
     
-    // test for the largest absolute component
     test('should return the index of the largest absolute component', () {
       expect(largestAbsComponent([3.0, -4.0, 2.0]), 1);
       expect(largestAbsComponent([-5.0, 2.0, 3.0]), 0);
