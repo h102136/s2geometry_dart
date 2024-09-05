@@ -3,7 +3,7 @@ import 'package:s2geometry_dart/src/latlng_s2point.dart';
 
 void main() {
   //test cases for LatLng class
-  group('LatLng', () {
+  group('LatLng, S2point', () {
 
     test('should create a LatLng object with lat,lng', () {
       final latLng = LatLng(45.0, 90.0);
