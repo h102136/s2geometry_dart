@@ -47,7 +47,6 @@ List<double> ijToST(List<int> ij, int order, List<int> offsets/*a list of two in
   ];
 }
 
-
 /*
 var rotateAndFlipQuadrant = function(n, point, rx, ry)
 {
