@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 /* source code from js
-
 (function (exports) {
 'use strict';
 var S2 = exports.S2 = { L: {} };
@@ -58,6 +57,7 @@ class LatLng {
       return 'LatLng(lat: $lat, lng: $lng)';
     }
 }
+
 /* source code from js
 S2.LatLngToXYZ = function(latLng) {
   var d2r = S2.L.LatLng.DEG_TO_RAD;
@@ -79,7 +79,6 @@ S2.XYZToLatLng = function(xyz) {
   return S2.L.LatLng(lat*r2d, lng*r2d);
 };
 */
-
 // S2Point class contains static methods to convert between LatLng and 3D coordinates(xyz)
 class S2Point{
   

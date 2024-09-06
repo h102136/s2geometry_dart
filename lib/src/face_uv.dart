@@ -1,4 +1,4 @@
-/*
+/* source code from js
 var largestAbsComponent = function(xyz) {
   var temp = [Math.abs(xyz[0]), Math.abs(xyz[1]), Math.abs(xyz[2])];
 
@@ -38,7 +38,7 @@ int largestAbsComponent(List<double> xyz) {
   }
 }
 
-/*
+/* source code from js
 var faceXYZToUV = function(face,xyz) {
   var u,v;
 
@@ -72,7 +72,7 @@ List<double> faceXYZToUV(int face, List<double> xyz) {
   return [u, v];
 }
 
-/*
+/* source code from js
 S2.XYZToFaceUV = function(xyz) {
   var face = largestAbsComponent(xyz);
 
@@ -97,7 +97,7 @@ List<dynamic> xyzToFaceUV(List<double> xyz) {
   return [face, uv];
 }
 
-/* 
+/* source code from js
 S2.FaceUVToXYZ = function(face,uv) {
   var u = uv[0];
   var v = uv[1];
