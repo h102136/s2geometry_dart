@@ -1,0 +1,23 @@
+var singleSTtoUV = function(st) {
+  if (st >= 0.5) {
+    return (1/3.0) * (4*st*st - 1);
+  } else {
+    return (1/3.0) * (1 - (4*(1-st)*(1-st)));
+  }
+};
+
+S2.STToUV = function(st) {
+  return [singleSTtoUV(st[0]), singleSTtoUV(st[1])];
+};
+
+
+var singleUVtoST = function(uv) {
+  if (uv >= 0) {
+    return 0.5 * Math.sqrt (1 + 3*uv);
+  } else {
+    return 1 - 0.5 * Math.sqrt (1 - 3*uv);
+  }
+};
+S2.UVToST = function(uv) {
+  return [singleUVtoST(uv[0]), singleUVtoST(uv[1])];
+};
