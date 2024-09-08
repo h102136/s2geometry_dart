@@ -27,7 +27,7 @@ List<int> stToIJ(List<double> st, int order) { // order: the level of the S2 cel
   return [singleSTtoIJ(st[0]), singleSTtoIJ(st[1])];
 }
 
-/*
+/* source code from js
 S2.IJToST = function(ij,order,offsets) {
   var maxSize = (1<<order);
 
@@ -47,7 +47,7 @@ List<double> ijToST(List<int> ij, int order, List<int> offsets/*a list of two in
   ];
 }
 
-/*
+/* source code from js
 var rotateAndFlipQuadrant = function(n, point, rx, ry)
 {
 	var newX, newY;

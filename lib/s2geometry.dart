@@ -7,12 +7,7 @@ import 'dart:math';
 import 'dart:core';
 import 'package:fixnum/fixnum.dart';
 
-class S2 {
-  int face;
-  List<int> ij;
-  int level;
 
-  S2({required this.face, required this.ij, required this.level});
   /* source code from js
   S2.S2Cell = function(){};
   S2.S2Cell.FromHilbertQuadKey = function(hilbertQuadkey) {
@@ -65,8 +60,14 @@ class S2 {
     return S2.S2Cell.FromFaceIJ(parseInt(face), [point.x, point.y], level);
   };
   */
+class S2 {
+  int face;
+  List<int> ij;
+  int level;
+
+  S2({required this.face, required this.ij, required this.level});
   // Convert Hilbert Quadkey to S2 Cell
-  static S2 fromHilbertQuadKey(String hilbertQuadkey) {
+  static S2 cellFromKey(String hilbertQuadkey) {
     final parts = hilbertQuadkey.split('/'); 
     final face = int.parse(parts[0]); 
     final position = parts[1]; 
@@ -135,7 +136,7 @@ class S2 {
   }; 
   */
   // Convert LatLng to S2 Cell
-  static S2 fromLatLng(LatLng latLng, int level) {
+  static S2 cellFromLatLng(LatLng latLng, int level) {
     final xyz = S2Point.latLngToXYZ(latLng);
     final faceuv = xyzToFaceUV(xyz);
     final st = uvToST(faceuv[1]);
@@ -245,7 +246,7 @@ class S2 {
   */
   // Convert LatLng to neighboring Hilbert Quadkeys
   static List<String> latLngToNeighborKeys(double lat, double lng, int level) {
-    S2 cell = S2.fromLatLng(LatLng(lat, lng), level);
+    S2 cell = S2.cellFromLatLng(LatLng(lat, lng), level);
     return cell.getNeighbors().map((neighbor) => neighbor.toHilbertQuadkey()).toList();
   }
   /* source code from js
@@ -477,7 +478,7 @@ class S2 {
   */
   // Convert quadkey to LatLng
   static LatLng keyToLatLng(String key) {
-    final cell = S2.fromHilbertQuadKey(key);
+    final cell = S2.cellFromKey(key);
     return cell.getLatLng();
   }
 
@@ -507,7 +508,7 @@ class S2 {
     if (level.isNaN || level < 1 || level > 30) {
       throw ArgumentError("'level' is not a number between 1 and 30 (but it should be)");
     }
-    return S2.fromLatLng(LatLng(lat, lng), level).toHilbertQuadkey();
+    return S2.cellFromLatLng(LatLng(lat, lng), level).toHilbertQuadkey();
   }
 
   // Convert LatLng to S2 Cell ID

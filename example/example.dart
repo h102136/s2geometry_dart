@@ -1,28 +1,29 @@
 import 'package:s2geometry_dart/s2geometry.dart';
+
 void main(){
   var lat = 40.2574448;
   var lng = -111.7089464;
   var level = 15;
-  
-  var key = S2.latLngToKey(lat, lng, level);
-  print(key);
 
-  var id = S2.keyToId(key);
-  print(id);
+  var keyFromLatlng = S2.latLngToKey(lat, lng, level);
+  print('keyFromLatlng: $keyFromLatlng');
 
-  var key2 = S2.idToKey(id);
-  print(key2);
+  var idFromKey = S2.keyToId(keyFromLatlng);
+  print('idFromKey: $idFromKey');
 
-  var neighbors = S2.latLngToNeighborKeys(lat, lng, level);
-  print(neighbors);
+  var keyFromid = S2.idToKey(idFromKey);
+  print('keyFromid: $keyFromid');
 
-  var nextKey = S2.nextKey(key);
-  print(nextKey);
-  var prevKey = S2.prevKey(key);
-  print(prevKey); 
+  var neighborsKey = S2.latLngToNeighborKeys(lat, lng, level);
+  print('neighborsKey: $neighborsKey');
 
-  var backTenKeys = S2.stepKey(key, -10);
-  print(backTenKeys); 
+  var nextKey = S2.nextKey(keyFromLatlng);
+  print('nextKey: $nextKey');
+  var prevKey = S2.prevKey(keyFromLatlng);
+  print('prevKey: $prevKey'); 
+
+  var backTenKeys = S2.stepKey(keyFromLatlng, -10);
+  print('backTenKeys: $backTenKeys'); 
 
 }
 
