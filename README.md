@@ -18,7 +18,7 @@ https://github.com/nbspou/dart-s2geometry (dart)
     - convenience of use: Improve the convenience of use and ensure that users can use the package easily without a deep understanding of the internal implementation.
 
 2. Preparation and analysis: 
-    - due to that all function on Javascript version was combined as one script, so the script was split into several functions first.
+    - due to that all function on Javascript version was combined as one script, so the script was split into several functions to improve maintainability.
     - code test cases for each function to ensure the availability of each function through testing.
     - analyze the structure of all module.
 
@@ -39,6 +39,8 @@ Port test cases of Javascript version into Dart version and ensure all tests pas
 - differences of language feature: Javascript is a dynamic typing language and Dart is a static typing, so need to check and reconstruct the type of each variable and function.
 
 - data structure: 'Array' and 'Object' are the most commonly used in JavaScript, 'List' and 'Map' have different ways of use in Dart, so the code needs to be rewritten to accommodate the methods and features of Dart
+
+- use 'BigInt' to declare S2 cell id for solving the problem of a number over 64 bits.
 
 ## Usage
 
