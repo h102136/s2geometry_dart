@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - async-2.11.0/lib/src/delegate/stream.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory async-2.11.0/lib/src/delegate">async-2.11.0/lib/src/delegate</a> - stream.dart<span style="font-size: 80%;"> (source / <a href="stream.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2016, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : /// Simple delegating wrapper around a [Stream].</span>
+<span id="L8"><span class="lineNum">       8</span>              : ///</span>
+<span id="L9"><span class="lineNum">       9</span>              : /// Subclasses can override individual methods, or use this to expose only the</span>
+<span id="L10"><span class="lineNum">      10</span>              : /// [Stream] methods of a subclass.</span>
+<span id="L11"><span class="lineNum">      11</span>              : ///</span>
+<span id="L12"><span class="lineNum">      12</span>              : /// Note that this is identical to [StreamView] in `dart:async`. It's provided</span>
+<span id="L13"><span class="lineNum">      13</span>              : /// under this name for consistency with other `Delegating*` classes.</span>
+<span id="L14"><span class="lineNum">      14</span>              : class DelegatingStream&lt;T&gt; extends StreamView&lt;T&gt; {</span>
+<span id="L15"><span class="lineNum">      15</span> <span class="tlaUNC tlaBgUNC">           0 :   DelegatingStream(super.stream);</span></span>
+<span id="L16"><span class="lineNum">      16</span>              : </span>
+<span id="L17"><span class="lineNum">      17</span>              :   /// Creates a wrapper which throws if [stream]'s events aren't instances of</span>
+<span id="L18"><span class="lineNum">      18</span>              :   /// `T`.</span>
+<span id="L19"><span class="lineNum">      19</span>              :   ///</span>
+<span id="L20"><span class="lineNum">      20</span>              :   /// This soundly converts a [Stream] to a `Stream&lt;T&gt;`, regardless of its</span>
+<span id="L21"><span class="lineNum">      21</span>              :   /// original generic type, by asserting that its events are instances of `T`</span>
+<span id="L22"><span class="lineNum">      22</span>              :   /// whenever they're provided. If they're not, the stream throws a</span>
+<span id="L23"><span class="lineNum">      23</span>              :   /// [TypeError].</span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC">           0 :   @Deprecated('Use stream.cast instead')</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaUNC">           0 :   static Stream&lt;T&gt; typed&lt;T&gt;(Stream stream) =&gt; stream.cast();</span></span>
+<span id="L26"><span class="lineNum">      26</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

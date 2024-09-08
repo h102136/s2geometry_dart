@@ -1,0 +1,629 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - test_core-0.6.5/lib/src/runner/engine.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory test_core-0.6.5/lib/src/runner">test_core-0.6.5/lib/src/runner</a> - engine.dart<span style="font-size: 80%;"> (source / <a href="engine.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">177</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : import 'dart:math';</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : import 'package:async/async.dart' hide Result;</span>
+<span id="L9"><span class="lineNum">       9</span>              : import 'package:collection/collection.dart';</span>
+<span id="L10"><span class="lineNum">      10</span>              : import 'package:pool/pool.dart';</span>
+<span id="L11"><span class="lineNum">      11</span>              : import 'package:test_api/src/backend/group.dart'; // ignore: implementation_imports</span>
+<span id="L12"><span class="lineNum">      12</span>              : import 'package:test_api/src/backend/invoker.dart'; // ignore: implementation_imports</span>
+<span id="L13"><span class="lineNum">      13</span>              : import 'package:test_api/src/backend/live_test.dart'; // ignore: implementation_imports</span>
+<span id="L14"><span class="lineNum">      14</span>              : import 'package:test_api/src/backend/live_test_controller.dart'; // ignore: implementation_imports</span>
+<span id="L15"><span class="lineNum">      15</span>              : import 'package:test_api/src/backend/message.dart'; // ignore: implementation_imports</span>
+<span id="L16"><span class="lineNum">      16</span>              : import 'package:test_api/src/backend/state.dart'; // ignore: implementation_imports</span>
+<span id="L17"><span class="lineNum">      17</span>              : import 'package:test_api/src/backend/test.dart'; // ignore: implementation_imports</span>
+<span id="L18"><span class="lineNum">      18</span>              : </span>
+<span id="L19"><span class="lineNum">      19</span>              : import 'coverage_stub.dart' if (dart.library.io) 'coverage.dart';</span>
+<span id="L20"><span class="lineNum">      20</span>              : import 'live_suite.dart';</span>
+<span id="L21"><span class="lineNum">      21</span>              : import 'live_suite_controller.dart';</span>
+<span id="L22"><span class="lineNum">      22</span>              : import 'load_suite.dart';</span>
+<span id="L23"><span class="lineNum">      23</span>              : import 'runner_suite.dart';</span>
+<span id="L24"><span class="lineNum">      24</span>              : import 'util/iterable_set.dart';</span>
+<span id="L25"><span class="lineNum">      25</span>              : </span>
+<span id="L26"><span class="lineNum">      26</span>              : /// An [Engine] manages a run that encompasses multiple test suites.</span>
+<span id="L27"><span class="lineNum">      27</span>              : ///</span>
+<span id="L28"><span class="lineNum">      28</span>              : /// Test suites are provided by passing them into [suiteSink]. Once all suites</span>
+<span id="L29"><span class="lineNum">      29</span>              : /// have been provided, the user should close [suiteSink] to indicate this.</span>
+<span id="L30"><span class="lineNum">      30</span>              : /// [run] won't terminate until [suiteSink] is closed. Suites will be run in the</span>
+<span id="L31"><span class="lineNum">      31</span>              : /// order they're provided to [suiteSink]. Tests within those suites will</span>
+<span id="L32"><span class="lineNum">      32</span>              : /// likewise be run in the order they're declared.</span>
+<span id="L33"><span class="lineNum">      33</span>              : ///</span>
+<span id="L34"><span class="lineNum">      34</span>              : /// The current status of every test is visible via [liveTests]. [onTestStarted]</span>
+<span id="L35"><span class="lineNum">      35</span>              : /// can also be used to be notified when a test is about to be run.</span>
+<span id="L36"><span class="lineNum">      36</span>              : ///</span>
+<span id="L37"><span class="lineNum">      37</span>              : /// The engine has some special logic for [LoadSuite]s and the tests they</span>
+<span id="L38"><span class="lineNum">      38</span>              : /// contain, referred to as &quot;load tests&quot;. Load tests exist to provide visibility</span>
+<span id="L39"><span class="lineNum">      39</span>              : /// into the process of loading test files. As long as that process is</span>
+<span id="L40"><span class="lineNum">      40</span>              : /// proceeding normally users usually don't care about it, so the engine does</span>
+<span id="L41"><span class="lineNum">      41</span>              : /// not include them in [liveTests] and other collections.</span>
+<span id="L42"><span class="lineNum">      42</span>              : /// If a load test fails, it will be added to [failed] and [liveTests].</span>
+<span id="L43"><span class="lineNum">      43</span>              : ///</span>
+<span id="L44"><span class="lineNum">      44</span>              : /// The test suite loaded by a load suite will be automatically be run by the</span>
+<span id="L45"><span class="lineNum">      45</span>              : /// engine; it doesn't need to be added to [suiteSink] manually.</span>
+<span id="L46"><span class="lineNum">      46</span>              : ///</span>
+<span id="L47"><span class="lineNum">      47</span>              : /// Load tests will always be emitted through [onTestStarted] so users can watch</span>
+<span id="L48"><span class="lineNum">      48</span>              : /// their event streams once they start running.</span>
+<span id="L49"><span class="lineNum">      49</span>              : class Engine {</span>
+<span id="L50"><span class="lineNum">      50</span>              :   /// Whether [run] has been called yet.</span>
+<span id="L51"><span class="lineNum">      51</span>              :   var _runCalled = false;</span>
+<span id="L52"><span class="lineNum">      52</span>              : </span>
+<span id="L53"><span class="lineNum">      53</span>              :   /// Whether [close] has been called.</span>
+<span id="L54"><span class="lineNum">      54</span>              :   var _closed = false;</span>
+<span id="L55"><span class="lineNum">      55</span>              : </span>
+<span id="L56"><span class="lineNum">      56</span>              :   /// Whether [close] was called before all the tests finished running.</span>
+<span id="L57"><span class="lineNum">      57</span>              :   ///</span>
+<span id="L58"><span class="lineNum">      58</span>              :   /// This is `null` if close hasn't been called and the tests are still</span>
+<span id="L59"><span class="lineNum">      59</span>              :   /// running, `true` if close was called before the tests finished running, and</span>
+<span id="L60"><span class="lineNum">      60</span>              :   /// `false` if the tests finished running before close was called.</span>
+<span id="L61"><span class="lineNum">      61</span>              :   bool? _closedBeforeDone;</span>
+<span id="L62"><span class="lineNum">      62</span>              : </span>
+<span id="L63"><span class="lineNum">      63</span>              :   /// The coverage output directory.</span>
+<span id="L64"><span class="lineNum">      64</span>              :   String? _coverage;</span>
+<span id="L65"><span class="lineNum">      65</span>              : </span>
+<span id="L66"><span class="lineNum">      66</span>              :   /// The seed used to generate randomness for test case shuffling.</span>
+<span id="L67"><span class="lineNum">      67</span>              :   ///</span>
+<span id="L68"><span class="lineNum">      68</span>              :   /// If null or zero no shuffling will occur.</span>
+<span id="L69"><span class="lineNum">      69</span>              :   /// The same seed will shuffle the tests in the same way every time.</span>
+<span id="L70"><span class="lineNum">      70</span>              :   int? testRandomizeOrderingSeed;</span>
+<span id="L71"><span class="lineNum">      71</span>              : </span>
+<span id="L72"><span class="lineNum">      72</span>              :   /// Whether to stop running tests after a failure.</span>
+<span id="L73"><span class="lineNum">      73</span>              :   bool _stopOnFirstFailure;</span>
+<span id="L74"><span class="lineNum">      74</span>              : </span>
+<span id="L75"><span class="lineNum">      75</span>              :   /// A pool that limits the number of test suites running concurrently.</span>
+<span id="L76"><span class="lineNum">      76</span>              :   final Pool _runPool;</span>
+<span id="L77"><span class="lineNum">      77</span>              : </span>
+<span id="L78"><span class="lineNum">      78</span>              :   /// A completer that will complete when this engine is unpaused.</span>
+<span id="L79"><span class="lineNum">      79</span>              :   ///</span>
+<span id="L80"><span class="lineNum">      80</span>              :   /// `null` if this engine is not paused.</span>
+<span id="L81"><span class="lineNum">      81</span>              :   Completer? _pauseCompleter;</span>
+<span id="L82"><span class="lineNum">      82</span>              : </span>
+<span id="L83"><span class="lineNum">      83</span>              :   /// A future that completes once this is unpaused.</span>
+<span id="L84"><span class="lineNum">      84</span>              :   ///</span>
+<span id="L85"><span class="lineNum">      85</span>              :   /// If this engine isn't paused, this future completes immediately.</span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaUNC tlaBgUNC">           0 :   Future get _onUnpaused =&gt;</span></span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaUNC">           0 :       _pauseCompleter == null ? Future.value() : _pauseCompleter!.future;</span></span>
+<span id="L88"><span class="lineNum">      88</span>              : </span>
+<span id="L89"><span class="lineNum">      89</span>              :   /// Whether all tests passed or were skipped.</span>
+<span id="L90"><span class="lineNum">      90</span>              :   ///</span>
+<span id="L91"><span class="lineNum">      91</span>              :   /// This fires once all tests have completed and [suiteSink] has been closed.</span>
+<span id="L92"><span class="lineNum">      92</span>              :   /// This will be `null` if [close] was called before all the tests finished</span>
+<span id="L93"><span class="lineNum">      93</span>              :   /// running.</span>
+<span id="L94"><span class="lineNum">      94</span> <span class="tlaUNC">           0 :   Future&lt;bool?&gt; get success async {</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaUNC">           0 :     await Future.wait(&lt;Future&gt;[_group.future, _runPool.done], eagerError: true);</span></span>
+<span id="L96"><span class="lineNum">      96</span> <span class="tlaUNC">           0 :     if (_closedBeforeDone!) return null;</span></span>
+<span id="L97"><span class="lineNum">      97</span> <span class="tlaUNC">           0 :     return liveTests.every((liveTest) =&gt;</span></span>
+<span id="L98"><span class="lineNum">      98</span> <span class="tlaUNC">           0 :         liveTest.state.result.isPassing &amp;&amp;</span></span>
+<span id="L99"><span class="lineNum">      99</span> <span class="tlaUNC">           0 :         liveTest.state.status == Status.complete);</span></span>
+<span id="L100"><span class="lineNum">     100</span>              :   }</span>
+<span id="L101"><span class="lineNum">     101</span>              : </span>
+<span id="L102"><span class="lineNum">     102</span>              :   /// A group of futures for each test suite.</span>
+<span id="L103"><span class="lineNum">     103</span>              :   final _group = FutureGroup&lt;void&gt;();</span>
+<span id="L104"><span class="lineNum">     104</span>              : </span>
+<span id="L105"><span class="lineNum">     105</span>              :   /// All of the engine's stream subscriptions.</span>
+<span id="L106"><span class="lineNum">     106</span>              :   final _subscriptions = &lt;StreamSubscription&gt;{};</span>
+<span id="L107"><span class="lineNum">     107</span>              : </span>
+<span id="L108"><span class="lineNum">     108</span>              :   /// A sink used to pass [RunnerSuite]s in to the engine to run.</span>
+<span id="L109"><span class="lineNum">     109</span>              :   ///</span>
+<span id="L110"><span class="lineNum">     110</span>              :   /// Suites may be added as quickly as they're available; the Engine will only</span>
+<span id="L111"><span class="lineNum">     111</span>              :   /// run as many as necessary at a time based on its concurrency settings.</span>
+<span id="L112"><span class="lineNum">     112</span>              :   ///</span>
+<span id="L113"><span class="lineNum">     113</span>              :   /// Suites added to the sink will be closed by the engine based on its</span>
+<span id="L114"><span class="lineNum">     114</span>              :   /// internal logic.</span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaUNC">           0 :   Sink&lt;RunnerSuite&gt; get suiteSink =&gt; DelegatingSink(_suiteController.sink);</span></span>
+<span id="L116"><span class="lineNum">     116</span>              :   final _suiteController = StreamController&lt;RunnerSuite&gt;();</span>
+<span id="L117"><span class="lineNum">     117</span>              : </span>
+<span id="L118"><span class="lineNum">     118</span>              :   /// All the [RunnerSuite]s added to [suiteSink] so far.</span>
+<span id="L119"><span class="lineNum">     119</span>              :   ///</span>
+<span id="L120"><span class="lineNum">     120</span>              :   /// Note that if a [LoadSuite] is added, this will only contain that suite,</span>
+<span id="L121"><span class="lineNum">     121</span>              :   /// not the suite it loads.</span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :   Set&lt;RunnerSuite&gt; get addedSuites =&gt; UnmodifiableSetView(_addedSuites);</span></span>
+<span id="L123"><span class="lineNum">     123</span>              :   final _addedSuites = &lt;RunnerSuite&gt;{};</span>
+<span id="L124"><span class="lineNum">     124</span>              : </span>
+<span id="L125"><span class="lineNum">     125</span>              :   /// A broadcast stream that emits each [RunnerSuite] as it's added to the</span>
+<span id="L126"><span class="lineNum">     126</span>              :   /// engine via [suiteSink].</span>
+<span id="L127"><span class="lineNum">     127</span>              :   ///</span>
+<span id="L128"><span class="lineNum">     128</span>              :   /// Note that if a [LoadSuite] is added, this will only return that suite, not</span>
+<span id="L129"><span class="lineNum">     129</span>              :   /// the suite it loads.</span>
+<span id="L130"><span class="lineNum">     130</span>              :   ///</span>
+<span id="L131"><span class="lineNum">     131</span>              :   /// This is guaranteed to fire after the suite is added to [addedSuites].</span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :   Stream&lt;RunnerSuite&gt; get onSuiteAdded =&gt; _onSuiteAddedController.stream;</span></span>
+<span id="L133"><span class="lineNum">     133</span>              :   final _onSuiteAddedController = StreamController&lt;RunnerSuite&gt;.broadcast();</span>
+<span id="L134"><span class="lineNum">     134</span>              : </span>
+<span id="L135"><span class="lineNum">     135</span>              :   /// A broadcast stream that emits each [LiveSuite] as it's loaded.</span>
+<span id="L136"><span class="lineNum">     136</span>              :   ///</span>
+<span id="L137"><span class="lineNum">     137</span>              :   /// Note that unlike [onSuiteAdded], for suites that are loaded using</span>
+<span id="L138"><span class="lineNum">     138</span>              :   /// [LoadSuite]s, both the [LoadSuite] and the suite it loads will eventually</span>
+<span id="L139"><span class="lineNum">     139</span>              :   /// be emitted by this stream.</span>
+<span id="L140"><span class="lineNum">     140</span> <span class="tlaUNC">           0 :   Stream&lt;LiveSuite&gt; get onSuiteStarted =&gt; _onSuiteStartedController.stream;</span></span>
+<span id="L141"><span class="lineNum">     141</span>              :   final _onSuiteStartedController = StreamController&lt;LiveSuite&gt;.broadcast();</span>
+<span id="L142"><span class="lineNum">     142</span>              : </span>
+<span id="L143"><span class="lineNum">     143</span>              :   /// All the currently-known tests that have run or are running.</span>
+<span id="L144"><span class="lineNum">     144</span>              :   ///</span>
+<span id="L145"><span class="lineNum">     145</span>              :   /// These are [LiveTest]s, representing the in-progress state of each test.</span>
+<span id="L146"><span class="lineNum">     146</span>              :   /// Tests that have not yet begun running are marked [Status.pending]; tests</span>
+<span id="L147"><span class="lineNum">     147</span>              :   /// that have finished are marked [Status.complete].</span>
+<span id="L148"><span class="lineNum">     148</span>              :   ///</span>
+<span id="L149"><span class="lineNum">     149</span>              :   /// This is guaranteed to contain the same tests as the union of [passed],</span>
+<span id="L150"><span class="lineNum">     150</span>              :   /// [skipped], [failed], and [active].</span>
+<span id="L151"><span class="lineNum">     151</span>              :   ///</span>
+<span id="L152"><span class="lineNum">     152</span>              :   /// [LiveTest.run] must not be called on these tests.</span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaUNC">           0 :   Set&lt;LiveTest&gt; get liveTests =&gt;</span></span>
+<span id="L154"><span class="lineNum">     154</span> <span class="tlaUNC">           0 :       UnionSet.from([passed, skipped, failed, IterableSet(active)],</span></span>
+<span id="L155"><span class="lineNum">     155</span>              :           disjoint: true);</span>
+<span id="L156"><span class="lineNum">     156</span>              : </span>
+<span id="L157"><span class="lineNum">     157</span>              :   /// A stream that emits each [LiveTest] as it's about to start running.</span>
+<span id="L158"><span class="lineNum">     158</span>              :   ///</span>
+<span id="L159"><span class="lineNum">     159</span>              :   /// This is guaranteed to fire before [LiveTest.onStateChange] first fires.</span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaUNC">           0 :   Stream&lt;LiveTest&gt; get onTestStarted =&gt; _onTestStartedGroup.stream;</span></span>
+<span id="L161"><span class="lineNum">     161</span>              :   final _onTestStartedGroup = StreamGroup&lt;LiveTest&gt;.broadcast();</span>
+<span id="L162"><span class="lineNum">     162</span>              : </span>
+<span id="L163"><span class="lineNum">     163</span>              :   /// The set of tests that have completed and been marked as passing.</span>
+<span id="L164"><span class="lineNum">     164</span> <span class="tlaUNC">           0 :   Set&lt;LiveTest&gt; get passed =&gt; _passedGroup.set;</span></span>
+<span id="L165"><span class="lineNum">     165</span>              :   final _passedGroup = UnionSetController&lt;LiveTest&gt;(disjoint: true);</span>
+<span id="L166"><span class="lineNum">     166</span>              : </span>
+<span id="L167"><span class="lineNum">     167</span>              :   /// The set of tests that have completed and been marked as skipped.</span>
+<span id="L168"><span class="lineNum">     168</span> <span class="tlaUNC">           0 :   Set&lt;LiveTest&gt; get skipped =&gt; _skippedGroup.set;</span></span>
+<span id="L169"><span class="lineNum">     169</span>              :   final _skippedGroup = UnionSetController&lt;LiveTest&gt;(disjoint: true);</span>
+<span id="L170"><span class="lineNum">     170</span>              : </span>
+<span id="L171"><span class="lineNum">     171</span>              :   /// The set of tests that have completed and been marked as failing or error.</span>
+<span id="L172"><span class="lineNum">     172</span> <span class="tlaUNC">           0 :   Set&lt;LiveTest&gt; get failed =&gt; _failedGroup.set;</span></span>
+<span id="L173"><span class="lineNum">     173</span>              :   final _failedGroup = UnionSetController&lt;LiveTest&gt;(disjoint: true);</span>
+<span id="L174"><span class="lineNum">     174</span>              : </span>
+<span id="L175"><span class="lineNum">     175</span>              :   /// The tests that are still running, in the order they began running.</span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC">           0 :   List&lt;LiveTest&gt; get active =&gt; UnmodifiableListView(_active);</span></span>
+<span id="L177"><span class="lineNum">     177</span>              :   final _active = QueueList&lt;LiveTest&gt;();</span>
+<span id="L178"><span class="lineNum">     178</span>              : </span>
+<span id="L179"><span class="lineNum">     179</span>              :   /// The suites that are still loading, in the order they began.</span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaUNC">           0 :   List&lt;LiveTest&gt; get activeSuiteLoads =&gt;</span></span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaUNC">           0 :       UnmodifiableListView(_activeSuiteLoads);</span></span>
+<span id="L182"><span class="lineNum">     182</span>              :   final _activeSuiteLoads = &lt;LiveTest&gt;{};</span>
+<span id="L183"><span class="lineNum">     183</span>              : </span>
+<span id="L184"><span class="lineNum">     184</span>              :   /// The set of tests that have been marked for restarting.</span>
+<span id="L185"><span class="lineNum">     185</span>              :   ///</span>
+<span id="L186"><span class="lineNum">     186</span>              :   /// This is always a subset of [active]. Once a test in here has finished</span>
+<span id="L187"><span class="lineNum">     187</span>              :   /// running, it's run again.</span>
+<span id="L188"><span class="lineNum">     188</span>              :   final _restarted = &lt;LiveTest&gt;{};</span>
+<span id="L189"><span class="lineNum">     189</span>              : </span>
+<span id="L190"><span class="lineNum">     190</span>              :   /// Whether this engine is idle—that is, not currently executing a test.</span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaUNC">           0 :   bool get isIdle =&gt; _group.isIdle;</span></span>
+<span id="L192"><span class="lineNum">     192</span>              : </span>
+<span id="L193"><span class="lineNum">     193</span>              :   /// A broadcast stream that fires an event whenever [isIdle] switches from</span>
+<span id="L194"><span class="lineNum">     194</span>              :   /// `false` to `true`.</span>
+<span id="L195"><span class="lineNum">     195</span> <span class="tlaUNC">           0 :   Stream get onIdle =&gt; _group.onIdle;</span></span>
+<span id="L196"><span class="lineNum">     196</span>              : </span>
+<span id="L197"><span class="lineNum">     197</span>              :   /// Creates an [Engine] that will run all tests provided via [suiteSink].</span>
+<span id="L198"><span class="lineNum">     198</span>              :   ///</span>
+<span id="L199"><span class="lineNum">     199</span>              :   /// [concurrency] controls how many suites are loaded and ran at once, and</span>
+<span id="L200"><span class="lineNum">     200</span>              :   /// defaults to 1.</span>
+<span id="L201"><span class="lineNum">     201</span>              :   ///</span>
+<span id="L202"><span class="lineNum">     202</span>              :   /// [testRandomizeOrderingSeed] configures test case shuffling within each</span>
+<span id="L203"><span class="lineNum">     203</span>              :   /// test suite.</span>
+<span id="L204"><span class="lineNum">     204</span>              :   /// Any non-zero value will enable shuffling using this value as a seed.</span>
+<span id="L205"><span class="lineNum">     205</span>              :   /// Omitting this argument or passing `0` disables shuffling.</span>
+<span id="L206"><span class="lineNum">     206</span>              :   ///</span>
+<span id="L207"><span class="lineNum">     207</span>              :   /// [coverage] specifies a directory to output coverage information.</span>
+<span id="L208"><span class="lineNum">     208</span>              :   ///</span>
+<span id="L209"><span class="lineNum">     209</span>              :   /// If [stopOnFirstFailure] then a single failing test will cause the engine</span>
+<span id="L210"><span class="lineNum">     210</span>              :   /// to [close] and stop ruunning further tests.</span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaUNC">           0 :   Engine({</span></span>
+<span id="L212"><span class="lineNum">     212</span>              :     int? concurrency,</span>
+<span id="L213"><span class="lineNum">     213</span>              :     String? coverage,</span>
+<span id="L214"><span class="lineNum">     214</span>              :     this.testRandomizeOrderingSeed,</span>
+<span id="L215"><span class="lineNum">     215</span>              :     bool stopOnFirstFailure = false,</span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaUNC">           0 :   })  : _runPool = Pool(concurrency ?? 1),</span></span>
+<span id="L217"><span class="lineNum">     217</span>              :         _stopOnFirstFailure = stopOnFirstFailure,</span>
+<span id="L218"><span class="lineNum">     218</span>              :         _coverage = coverage {</span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaUNC">           0 :     _group.future.then((_) {</span></span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaUNC">           0 :       _onTestStartedGroup.close();</span></span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaUNC">           0 :       _onSuiteStartedController.close();</span></span>
+<span id="L222"><span class="lineNum">     222</span> <span class="tlaUNC">           0 :       _closedBeforeDone ??= false;</span></span>
+<span id="L223"><span class="lineNum">     223</span> <span class="tlaUNC">           0 :     }).onError((_, __) {</span></span>
+<span id="L224"><span class="lineNum">     224</span>              :       // Don't top-level errors. They'll be thrown via [success] anyway.</span>
+<span id="L225"><span class="lineNum">     225</span>              :     });</span>
+<span id="L226"><span class="lineNum">     226</span>              :   }</span>
+<span id="L227"><span class="lineNum">     227</span>              : </span>
+<span id="L228"><span class="lineNum">     228</span>              :   /// Creates an [Engine] that will run all tests in [suites].</span>
+<span id="L229"><span class="lineNum">     229</span>              :   ///</span>
+<span id="L230"><span class="lineNum">     230</span>              :   /// An engine constructed this way will automatically close its [suiteSink],</span>
+<span id="L231"><span class="lineNum">     231</span>              :   /// meaning that no further suites may be provided.</span>
+<span id="L232"><span class="lineNum">     232</span>              :   ///</span>
+<span id="L233"><span class="lineNum">     233</span>              :   /// [concurrency] controls how many suites are run at once. If [runSkipped] is</span>
+<span id="L234"><span class="lineNum">     234</span>              :   /// `true`, skipped tests will be run as though they weren't skipped.</span>
+<span id="L235"><span class="lineNum">     235</span> <span class="tlaUNC">           0 :   factory Engine.withSuites(List&lt;RunnerSuite&gt; suites,</span></span>
+<span id="L236"><span class="lineNum">     236</span>              :       {int? concurrency, String? coverage, bool stopOnFirstFailure = false}) {</span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaUNC">           0 :     var engine = Engine(</span></span>
+<span id="L238"><span class="lineNum">     238</span>              :       concurrency: concurrency,</span>
+<span id="L239"><span class="lineNum">     239</span>              :       coverage: coverage,</span>
+<span id="L240"><span class="lineNum">     240</span>              :       stopOnFirstFailure: stopOnFirstFailure,</span>
+<span id="L241"><span class="lineNum">     241</span>              :     );</span>
+<span id="L242"><span class="lineNum">     242</span> <span class="tlaUNC">           0 :     for (var suite in suites) {</span></span>
+<span id="L243"><span class="lineNum">     243</span> <span class="tlaUNC">           0 :       engine.suiteSink.add(suite);</span></span>
+<span id="L244"><span class="lineNum">     244</span>              :     }</span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaUNC">           0 :     engine.suiteSink.close();</span></span>
+<span id="L246"><span class="lineNum">     246</span>              :     return engine;</span>
+<span id="L247"><span class="lineNum">     247</span>              :   }</span>
+<span id="L248"><span class="lineNum">     248</span>              : </span>
+<span id="L249"><span class="lineNum">     249</span>              :   /// Runs all tests in all suites defined by this engine.</span>
+<span id="L250"><span class="lineNum">     250</span>              :   ///</span>
+<span id="L251"><span class="lineNum">     251</span>              :   /// This returns `true` if all tests succeed, and `false` otherwise. It will</span>
+<span id="L252"><span class="lineNum">     252</span>              :   /// only return once all tests have finished running and [suiteSink] has been</span>
+<span id="L253"><span class="lineNum">     253</span>              :   /// closed.</span>
+<span id="L254"><span class="lineNum">     254</span>              :   ///</span>
+<span id="L255"><span class="lineNum">     255</span>              :   /// If [success] completes with `null` this will complete with `null`.</span>
+<span id="L256"><span class="lineNum">     256</span> <span class="tlaUNC">           0 :   Future&lt;bool?&gt; run() {</span></span>
+<span id="L257"><span class="lineNum">     257</span> <span class="tlaUNC">           0 :     if (_runCalled) {</span></span>
+<span id="L258"><span class="lineNum">     258</span> <span class="tlaUNC">           0 :       throw StateError('Engine.run() may not be called more than once.');</span></span>
+<span id="L259"><span class="lineNum">     259</span>              :     }</span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaUNC">           0 :     _runCalled = true;</span></span>
+<span id="L261"><span class="lineNum">     261</span>              : </span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaUNC">           0 :     var subscription = _suiteController.stream.listen(null);</span></span>
+<span id="L263"><span class="lineNum">     263</span>              :     subscription</span>
+<span id="L264"><span class="lineNum">     264</span> <span class="tlaUNC">           0 :       ..onData((suite) {</span></span>
+<span id="L265"><span class="lineNum">     265</span> <span class="tlaUNC">           0 :         _addedSuites.add(suite);</span></span>
+<span id="L266"><span class="lineNum">     266</span> <span class="tlaUNC">           0 :         _onSuiteAddedController.add(suite);</span></span>
+<span id="L267"><span class="lineNum">     267</span>              : </span>
+<span id="L268"><span class="lineNum">     268</span> <span class="tlaUNC">           0 :         _group.add(() async {</span></span>
+<span id="L269"><span class="lineNum">     269</span> <span class="tlaUNC">           0 :           var resource = await _runPool.request();</span></span>
+<span id="L270"><span class="lineNum">     270</span>              :           LiveSuiteController? controller;</span>
+<span id="L271"><span class="lineNum">     271</span>              :           try {</span>
+<span id="L272"><span class="lineNum">     272</span> <span class="tlaUNC">           0 :             if (suite is LoadSuite) {</span></span>
+<span id="L273"><span class="lineNum">     273</span> <span class="tlaUNC">           0 :               await _onUnpaused;</span></span>
+<span id="L274"><span class="lineNum">     274</span> <span class="tlaUNC">           0 :               controller = await _addLoadSuite(suite);</span></span>
+<span id="L275"><span class="lineNum">     275</span>              :               if (controller == null) return;</span>
+<span id="L276"><span class="lineNum">     276</span>              :             } else {</span>
+<span id="L277"><span class="lineNum">     277</span> <span class="tlaUNC">           0 :               controller = LiveSuiteController(suite);</span></span>
+<span id="L278"><span class="lineNum">     278</span>              :             }</span>
+<span id="L279"><span class="lineNum">     279</span>              : </span>
+<span id="L280"><span class="lineNum">     280</span> <span class="tlaUNC">           0 :             _addLiveSuite(controller.liveSuite);</span></span>
+<span id="L281"><span class="lineNum">     281</span>              : </span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaUNC">           0 :             if (_closed) return;</span></span>
+<span id="L283"><span class="lineNum">     283</span> <span class="tlaUNC">           0 :             await _runGroup(controller, controller.liveSuite.suite.group, []);</span></span>
+<span id="L284"><span class="lineNum">     284</span> <span class="tlaUNC">           0 :             controller.noMoreLiveTests();</span></span>
+<span id="L285"><span class="lineNum">     285</span> <span class="tlaUNC">           0 :             if (_coverage != null) await writeCoverage(_coverage!, controller);</span></span>
+<span id="L286"><span class="lineNum">     286</span>              :           } finally {</span>
+<span id="L287"><span class="lineNum">     287</span> <span class="tlaUNC">           0 :             resource.allowRelease(() =&gt; controller?.close());</span></span>
+<span id="L288"><span class="lineNum">     288</span>              :           }</span>
+<span id="L289"><span class="lineNum">     289</span> <span class="tlaUNC">           0 :         }());</span></span>
+<span id="L290"><span class="lineNum">     290</span>              :       })</span>
+<span id="L291"><span class="lineNum">     291</span> <span class="tlaUNC">           0 :       ..onDone(() {</span></span>
+<span id="L292"><span class="lineNum">     292</span> <span class="tlaUNC">           0 :         _subscriptions.remove(subscription);</span></span>
+<span id="L293"><span class="lineNum">     293</span> <span class="tlaUNC">           0 :         _onSuiteAddedController.close();</span></span>
+<span id="L294"><span class="lineNum">     294</span> <span class="tlaUNC">           0 :         _group.close();</span></span>
+<span id="L295"><span class="lineNum">     295</span> <span class="tlaUNC">           0 :         _runPool.close();</span></span>
+<span id="L296"><span class="lineNum">     296</span>              :       });</span>
+<span id="L297"><span class="lineNum">     297</span> <span class="tlaUNC">           0 :     _subscriptions.add(subscription);</span></span>
+<span id="L298"><span class="lineNum">     298</span>              : </span>
+<span id="L299"><span class="lineNum">     299</span> <span class="tlaUNC">           0 :     return success;</span></span>
+<span id="L300"><span class="lineNum">     300</span>              :   }</span>
+<span id="L301"><span class="lineNum">     301</span>              : </span>
+<span id="L302"><span class="lineNum">     302</span>              :   /// Runs all the entries in [group] in sequence.</span>
+<span id="L303"><span class="lineNum">     303</span>              :   ///</span>
+<span id="L304"><span class="lineNum">     304</span>              :   /// [suiteController] is the controller fo the suite that contains [group].</span>
+<span id="L305"><span class="lineNum">     305</span>              :   /// [parents] is a list of groups that contain [group]. It may be modified,</span>
+<span id="L306"><span class="lineNum">     306</span>              :   /// but it's guaranteed to be in its original state once this function has</span>
+<span id="L307"><span class="lineNum">     307</span>              :   /// finished.</span>
+<span id="L308"><span class="lineNum">     308</span> <span class="tlaUNC">           0 :   Future _runGroup(LiveSuiteController suiteController, Group group,</span></span>
+<span id="L309"><span class="lineNum">     309</span>              :       List&lt;Group&gt; parents) async {</span>
+<span id="L310"><span class="lineNum">     310</span> <span class="tlaUNC">           0 :     parents.add(group);</span></span>
+<span id="L311"><span class="lineNum">     311</span>              :     try {</span>
+<span id="L312"><span class="lineNum">     312</span> <span class="tlaUNC">           0 :       var suiteConfig = suiteController.liveSuite.suite.config;</span></span>
+<span id="L313"><span class="lineNum">     313</span> <span class="tlaUNC">           0 :       var skipGroup = !suiteConfig.runSkipped &amp;&amp; group.metadata.skip;</span></span>
+<span id="L314"><span class="lineNum">     314</span>              :       var setUpAllSucceeded = true;</span>
+<span id="L315"><span class="lineNum">     315</span> <span class="tlaUNC">           0 :       if (!skipGroup &amp;&amp; group.setUpAll != null) {</span></span>
+<span id="L316"><span class="lineNum">     316</span> <span class="tlaUNC">           0 :         var liveTest = group.setUpAll!</span></span>
+<span id="L317"><span class="lineNum">     317</span> <span class="tlaUNC">           0 :             .load(suiteController.liveSuite.suite, groups: parents);</span></span>
+<span id="L318"><span class="lineNum">     318</span> <span class="tlaUNC">           0 :         await _runLiveTest(suiteController, liveTest, countSuccess: false);</span></span>
+<span id="L319"><span class="lineNum">     319</span> <span class="tlaUNC">           0 :         setUpAllSucceeded = liveTest.state.result.isPassing;</span></span>
+<span id="L320"><span class="lineNum">     320</span>              :       }</span>
+<span id="L321"><span class="lineNum">     321</span>              : </span>
+<span id="L322"><span class="lineNum">     322</span> <span class="tlaUNC">           0 :       if (!_closed &amp;&amp; setUpAllSucceeded) {</span></span>
+<span id="L323"><span class="lineNum">     323</span>              :         // shuffle the group entries</span>
+<span id="L324"><span class="lineNum">     324</span> <span class="tlaUNC">           0 :         var entries = group.entries.toList();</span></span>
+<span id="L325"><span class="lineNum">     325</span> <span class="tlaUNC">           0 :         if (suiteConfig.allowTestRandomization &amp;&amp;</span></span>
+<span id="L326"><span class="lineNum">     326</span> <span class="tlaUNC">           0 :             testRandomizeOrderingSeed != null &amp;&amp;</span></span>
+<span id="L327"><span class="lineNum">     327</span> <span class="tlaUNC">           0 :             testRandomizeOrderingSeed! &gt; 0) {</span></span>
+<span id="L328"><span class="lineNum">     328</span> <span class="tlaUNC">           0 :           entries.shuffle(Random(testRandomizeOrderingSeed));</span></span>
+<span id="L329"><span class="lineNum">     329</span>              :         }</span>
+<span id="L330"><span class="lineNum">     330</span>              : </span>
+<span id="L331"><span class="lineNum">     331</span> <span class="tlaUNC">           0 :         for (var entry in entries) {</span></span>
+<span id="L332"><span class="lineNum">     332</span> <span class="tlaUNC">           0 :           if (_closed) return;</span></span>
+<span id="L333"><span class="lineNum">     333</span>              : </span>
+<span id="L334"><span class="lineNum">     334</span> <span class="tlaUNC">           0 :           if (entry is Group) {</span></span>
+<span id="L335"><span class="lineNum">     335</span> <span class="tlaUNC">           0 :             await _runGroup(suiteController, entry, parents);</span></span>
+<span id="L336"><span class="lineNum">     336</span> <span class="tlaUNC">           0 :           } else if (!suiteConfig.runSkipped &amp;&amp; entry.metadata.skip) {</span></span>
+<span id="L337"><span class="lineNum">     337</span> <span class="tlaUNC">           0 :             await _runSkippedTest(suiteController, entry as Test, parents);</span></span>
+<span id="L338"><span class="lineNum">     338</span>              :           } else {</span>
+<span id="L339"><span class="lineNum">     339</span>              :             var test = entry as Test;</span>
+<span id="L340"><span class="lineNum">     340</span> <span class="tlaUNC">           0 :             await _runLiveTest(suiteController,</span></span>
+<span id="L341"><span class="lineNum">     341</span> <span class="tlaUNC">           0 :                 test.load(suiteController.liveSuite.suite, groups: parents));</span></span>
+<span id="L342"><span class="lineNum">     342</span>              :           }</span>
+<span id="L343"><span class="lineNum">     343</span>              :         }</span>
+<span id="L344"><span class="lineNum">     344</span>              :       }</span>
+<span id="L345"><span class="lineNum">     345</span>              : </span>
+<span id="L346"><span class="lineNum">     346</span>              :       // Even if we're closed or setUpAll failed, we want to run all the</span>
+<span id="L347"><span class="lineNum">     347</span>              :       // teardowns to ensure that any state is properly cleaned up.</span>
+<span id="L348"><span class="lineNum">     348</span> <span class="tlaUNC">           0 :       if (!skipGroup &amp;&amp; group.tearDownAll != null) {</span></span>
+<span id="L349"><span class="lineNum">     349</span> <span class="tlaUNC">           0 :         var liveTest = group.tearDownAll!</span></span>
+<span id="L350"><span class="lineNum">     350</span> <span class="tlaUNC">           0 :             .load(suiteController.liveSuite.suite, groups: parents);</span></span>
+<span id="L351"><span class="lineNum">     351</span> <span class="tlaUNC">           0 :         await _runLiveTest(suiteController, liveTest, countSuccess: false);</span></span>
+<span id="L352"><span class="lineNum">     352</span> <span class="tlaUNC">           0 :         if (_closed) await liveTest.close();</span></span>
+<span id="L353"><span class="lineNum">     353</span>              :       }</span>
+<span id="L354"><span class="lineNum">     354</span>              :     } finally {</span>
+<span id="L355"><span class="lineNum">     355</span> <span class="tlaUNC">           0 :       parents.remove(group);</span></span>
+<span id="L356"><span class="lineNum">     356</span>              :     }</span>
+<span id="L357"><span class="lineNum">     357</span>              :   }</span>
+<span id="L358"><span class="lineNum">     358</span>              : </span>
+<span id="L359"><span class="lineNum">     359</span>              :   /// Runs [liveTest] using [suiteController].</span>
+<span id="L360"><span class="lineNum">     360</span>              :   ///</span>
+<span id="L361"><span class="lineNum">     361</span>              :   /// If [countSuccess] is `true` (the default), the test is put into [passed]</span>
+<span id="L362"><span class="lineNum">     362</span>              :   /// if it succeeds. Otherwise, it's removed from [liveTests] entirely.</span>
+<span id="L363"><span class="lineNum">     363</span> <span class="tlaUNC">           0 :   Future _runLiveTest(LiveSuiteController suiteController, LiveTest liveTest,</span></span>
+<span id="L364"><span class="lineNum">     364</span>              :       {bool countSuccess = true}) async {</span>
+<span id="L365"><span class="lineNum">     365</span> <span class="tlaUNC">           0 :     await _onUnpaused;</span></span>
+<span id="L366"><span class="lineNum">     366</span> <span class="tlaUNC">           0 :     _active.add(liveTest);</span></span>
+<span id="L367"><span class="lineNum">     367</span>              : </span>
+<span id="L368"><span class="lineNum">     368</span> <span class="tlaUNC">           0 :     var subscription = liveTest.onStateChange.listen(null);</span></span>
+<span id="L369"><span class="lineNum">     369</span>              :     subscription</span>
+<span id="L370"><span class="lineNum">     370</span> <span class="tlaUNC">           0 :       ..onData((state) {</span></span>
+<span id="L371"><span class="lineNum">     371</span> <span class="tlaUNC">           0 :         if (state.status != Status.complete) return;</span></span>
+<span id="L372"><span class="lineNum">     372</span> <span class="tlaUNC">           0 :         _active.remove(liveTest);</span></span>
+<span id="L373"><span class="lineNum">     373</span>              :       })</span>
+<span id="L374"><span class="lineNum">     374</span> <span class="tlaUNC">           0 :       ..onDone(() {</span></span>
+<span id="L375"><span class="lineNum">     375</span> <span class="tlaUNC">           0 :         _subscriptions.remove(subscription);</span></span>
+<span id="L376"><span class="lineNum">     376</span>              :       });</span>
+<span id="L377"><span class="lineNum">     377</span> <span class="tlaUNC">           0 :     _subscriptions.add(subscription);</span></span>
+<span id="L378"><span class="lineNum">     378</span>              : </span>
+<span id="L379"><span class="lineNum">     379</span> <span class="tlaUNC">           0 :     suiteController.reportLiveTest(liveTest, countSuccess: countSuccess);</span></span>
+<span id="L380"><span class="lineNum">     380</span>              : </span>
+<span id="L381"><span class="lineNum">     381</span>              :     // Schedule a microtask to ensure that [onTestStarted] fires before the</span>
+<span id="L382"><span class="lineNum">     382</span>              :     // first [LiveTest.onStateChange] event.</span>
+<span id="L383"><span class="lineNum">     383</span> <span class="tlaUNC">           0 :     await Future.microtask(liveTest.run);</span></span>
+<span id="L384"><span class="lineNum">     384</span>              : </span>
+<span id="L385"><span class="lineNum">     385</span>              :     // Once the test finishes, use [new Future] to do a coarse-grained event</span>
+<span id="L386"><span class="lineNum">     386</span>              :     // loop pump to avoid starving non-microtask events.</span>
+<span id="L387"><span class="lineNum">     387</span> <span class="tlaUNC">           0 :     await Future(() {});</span></span>
+<span id="L388"><span class="lineNum">     388</span>              : </span>
+<span id="L389"><span class="lineNum">     389</span> <span class="tlaUNC">           0 :     if (!_restarted.contains(liveTest)) {</span></span>
+<span id="L390"><span class="lineNum">     390</span> <span class="tlaUNC">           0 :       if (_stopOnFirstFailure &amp;&amp; liveTest.state.result.isFailing) {</span></span>
+<span id="L391"><span class="lineNum">     391</span> <span class="tlaUNC">           0 :         unawaited(close());</span></span>
+<span id="L392"><span class="lineNum">     392</span>              :       }</span>
+<span id="L393"><span class="lineNum">     393</span>              :       return;</span>
+<span id="L394"><span class="lineNum">     394</span>              :     }</span>
+<span id="L395"><span class="lineNum">     395</span> <span class="tlaUNC">           0 :     await _runLiveTest(suiteController, liveTest.copy(),</span></span>
+<span id="L396"><span class="lineNum">     396</span>              :         countSuccess: countSuccess);</span>
+<span id="L397"><span class="lineNum">     397</span> <span class="tlaUNC">           0 :     _restarted.remove(liveTest);</span></span>
+<span id="L398"><span class="lineNum">     398</span>              :   }</span>
+<span id="L399"><span class="lineNum">     399</span>              : </span>
+<span id="L400"><span class="lineNum">     400</span>              :   /// Runs a dummy [LiveTest] for a test marked as &quot;skip&quot;.</span>
+<span id="L401"><span class="lineNum">     401</span>              :   ///</span>
+<span id="L402"><span class="lineNum">     402</span>              :   /// [suiteController] is the controller for the suite that contains [test].</span>
+<span id="L403"><span class="lineNum">     403</span>              :   /// [parents] is a list of groups that contain [test].</span>
+<span id="L404"><span class="lineNum">     404</span> <span class="tlaUNC">           0 :   Future _runSkippedTest(LiveSuiteController suiteController, Test test,</span></span>
+<span id="L405"><span class="lineNum">     405</span>              :       List&lt;Group&gt; parents) async {</span>
+<span id="L406"><span class="lineNum">     406</span> <span class="tlaUNC">           0 :     await _onUnpaused;</span></span>
+<span id="L407"><span class="lineNum">     407</span> <span class="tlaUNC">           0 :     var skipped = LocalTest(test.name, test.metadata, () {}, trace: test.trace);</span></span>
+<span id="L408"><span class="lineNum">     408</span>              : </span>
+<span id="L409"><span class="lineNum">     409</span>              :     late LiveTestController controller;</span>
+<span id="L410"><span class="lineNum">     410</span>              :     controller =</span>
+<span id="L411"><span class="lineNum">     411</span> <span class="tlaUNC">           0 :         LiveTestController(suiteController.liveSuite.suite, skipped, () {</span></span>
+<span id="L412"><span class="lineNum">     412</span> <span class="tlaUNC">           0 :       controller.setState(const State(Status.running, Result.success));</span></span>
+<span id="L413"><span class="lineNum">     413</span> <span class="tlaUNC">           0 :       controller.setState(const State(Status.running, Result.skipped));</span></span>
+<span id="L414"><span class="lineNum">     414</span>              : </span>
+<span id="L415"><span class="lineNum">     415</span> <span class="tlaUNC">           0 :       if (skipped.metadata.skipReason != null) {</span></span>
+<span id="L416"><span class="lineNum">     416</span>              :         controller</span>
+<span id="L417"><span class="lineNum">     417</span> <span class="tlaUNC">           0 :             .message(Message.skip('Skip: ${skipped.metadata.skipReason}'));</span></span>
+<span id="L418"><span class="lineNum">     418</span>              :       }</span>
+<span id="L419"><span class="lineNum">     419</span>              : </span>
+<span id="L420"><span class="lineNum">     420</span> <span class="tlaUNC">           0 :       controller.setState(const State(Status.complete, Result.skipped));</span></span>
+<span id="L421"><span class="lineNum">     421</span> <span class="tlaUNC">           0 :       controller.completer.complete();</span></span>
+<span id="L422"><span class="lineNum">     422</span> <span class="tlaUNC">           0 :     }, () {}, groups: parents);</span></span>
+<span id="L423"><span class="lineNum">     423</span>              : </span>
+<span id="L424"><span class="lineNum">     424</span> <span class="tlaUNC">           0 :     return await _runLiveTest(suiteController, controller);</span></span>
+<span id="L425"><span class="lineNum">     425</span>              :   }</span>
+<span id="L426"><span class="lineNum">     426</span>              : </span>
+<span id="L427"><span class="lineNum">     427</span>              :   /// Closes [liveTest] and tells the engine to re-run it once it's done</span>
+<span id="L428"><span class="lineNum">     428</span>              :   /// running.</span>
+<span id="L429"><span class="lineNum">     429</span>              :   ///</span>
+<span id="L430"><span class="lineNum">     430</span>              :   /// Returns the same future as [LiveTest.close].</span>
+<span id="L431"><span class="lineNum">     431</span> <span class="tlaUNC">           0 :   Future restartTest(LiveTest liveTest) async {</span></span>
+<span id="L432"><span class="lineNum">     432</span> <span class="tlaUNC">           0 :     if (_activeSuiteLoads.contains(liveTest)) {</span></span>
+<span id="L433"><span class="lineNum">     433</span> <span class="tlaUNC">           0 :       throw ArgumentError(&quot;Can't restart a load test.&quot;);</span></span>
+<span id="L434"><span class="lineNum">     434</span>              :     }</span>
+<span id="L435"><span class="lineNum">     435</span>              : </span>
+<span id="L436"><span class="lineNum">     436</span> <span class="tlaUNC">           0 :     if (!_active.contains(liveTest)) {</span></span>
+<span id="L437"><span class="lineNum">     437</span> <span class="tlaUNC">           0 :       throw StateError(&quot;Can't restart inactive test &quot;</span></span>
+<span id="L438"><span class="lineNum">     438</span> <span class="tlaUNC">           0 :           '&quot;${liveTest.test.name}&quot;.');</span></span>
+<span id="L439"><span class="lineNum">     439</span>              :     }</span>
+<span id="L440"><span class="lineNum">     440</span>              : </span>
+<span id="L441"><span class="lineNum">     441</span> <span class="tlaUNC">           0 :     _restarted.add(liveTest);</span></span>
+<span id="L442"><span class="lineNum">     442</span> <span class="tlaUNC">           0 :     _active.remove(liveTest);</span></span>
+<span id="L443"><span class="lineNum">     443</span> <span class="tlaUNC">           0 :     await liveTest.close();</span></span>
+<span id="L444"><span class="lineNum">     444</span>              :   }</span>
+<span id="L445"><span class="lineNum">     445</span>              : </span>
+<span id="L446"><span class="lineNum">     446</span>              :   /// Runs [suite] and returns the [LiveSuiteController] for the suite it loads.</span>
+<span id="L447"><span class="lineNum">     447</span>              :   ///</span>
+<span id="L448"><span class="lineNum">     448</span>              :   /// Returns `null` if the suite fails to load.</span>
+<span id="L449"><span class="lineNum">     449</span> <span class="tlaUNC">           0 :   Future&lt;LiveSuiteController?&gt; _addLoadSuite(LoadSuite suite) async {</span></span>
+<span id="L450"><span class="lineNum">     450</span> <span class="tlaUNC">           0 :     var controller = LiveSuiteController(suite);</span></span>
+<span id="L451"><span class="lineNum">     451</span> <span class="tlaUNC">           0 :     _addLiveSuite(controller.liveSuite);</span></span>
+<span id="L452"><span class="lineNum">     452</span>              : </span>
+<span id="L453"><span class="lineNum">     453</span> <span class="tlaUNC">           0 :     var liveTest = suite.test.load(suite);</span></span>
+<span id="L454"><span class="lineNum">     454</span> <span class="tlaUNC">           0 :     _activeSuiteLoads.add(liveTest);</span></span>
+<span id="L455"><span class="lineNum">     455</span>              : </span>
+<span id="L456"><span class="lineNum">     456</span> <span class="tlaUNC">           0 :     var subscription = liveTest.onStateChange.listen(null);</span></span>
+<span id="L457"><span class="lineNum">     457</span>              :     subscription</span>
+<span id="L458"><span class="lineNum">     458</span> <span class="tlaUNC">           0 :       ..onData((state) {</span></span>
+<span id="L459"><span class="lineNum">     459</span> <span class="tlaUNC">           0 :         if (state.status != Status.complete) return;</span></span>
+<span id="L460"><span class="lineNum">     460</span> <span class="tlaUNC">           0 :         _activeSuiteLoads.remove(liveTest);</span></span>
+<span id="L461"><span class="lineNum">     461</span>              :       })</span>
+<span id="L462"><span class="lineNum">     462</span> <span class="tlaUNC">           0 :       ..onDone(() {</span></span>
+<span id="L463"><span class="lineNum">     463</span> <span class="tlaUNC">           0 :         _subscriptions.remove(subscription);</span></span>
+<span id="L464"><span class="lineNum">     464</span>              :       });</span>
+<span id="L465"><span class="lineNum">     465</span> <span class="tlaUNC">           0 :     _subscriptions.add(subscription);</span></span>
+<span id="L466"><span class="lineNum">     466</span>              : </span>
+<span id="L467"><span class="lineNum">     467</span> <span class="tlaUNC">           0 :     controller.reportLiveTest(liveTest, countSuccess: false);</span></span>
+<span id="L468"><span class="lineNum">     468</span> <span class="tlaUNC">           0 :     controller.noMoreLiveTests();</span></span>
+<span id="L469"><span class="lineNum">     469</span>              : </span>
+<span id="L470"><span class="lineNum">     470</span>              :     // Schedule a microtask to ensure that [onTestStarted] fires before the</span>
+<span id="L471"><span class="lineNum">     471</span>              :     // first [LiveTest.onStateChange] event.</span>
+<span id="L472"><span class="lineNum">     472</span> <span class="tlaUNC">           0 :     await Future.microtask(liveTest.run);</span></span>
+<span id="L473"><span class="lineNum">     473</span>              : </span>
+<span id="L474"><span class="lineNum">     474</span> <span class="tlaUNC">           0 :     var innerSuite = await suite.suite;</span></span>
+<span id="L475"><span class="lineNum">     475</span>              :     if (innerSuite == null) return null;</span>
+<span id="L476"><span class="lineNum">     476</span>              : </span>
+<span id="L477"><span class="lineNum">     477</span> <span class="tlaUNC">           0 :     var innerController = LiveSuiteController(innerSuite);</span></span>
+<span id="L478"><span class="lineNum">     478</span> <span class="tlaUNC">           0 :     unawaited(innerController.liveSuite.onClose.whenComplete(() {</span></span>
+<span id="L479"><span class="lineNum">     479</span>              :       // When the main suite is closed, close the load suite and its test as</span>
+<span id="L480"><span class="lineNum">     480</span>              :       // well. This doesn't release any resources, but it does close streams</span>
+<span id="L481"><span class="lineNum">     481</span>              :       // which indicates that the load test won't experience an error in the</span>
+<span id="L482"><span class="lineNum">     482</span>              :       // future.</span>
+<span id="L483"><span class="lineNum">     483</span> <span class="tlaUNC">           0 :       liveTest.close();</span></span>
+<span id="L484"><span class="lineNum">     484</span> <span class="tlaUNC">           0 :       controller.close();</span></span>
+<span id="L485"><span class="lineNum">     485</span>              :     }));</span>
+<span id="L486"><span class="lineNum">     486</span>              : </span>
+<span id="L487"><span class="lineNum">     487</span>              :     return innerController;</span>
+<span id="L488"><span class="lineNum">     488</span>              :   }</span>
+<span id="L489"><span class="lineNum">     489</span>              : </span>
+<span id="L490"><span class="lineNum">     490</span>              :   /// Add [liveSuite] and the information it exposes to the engine's</span>
+<span id="L491"><span class="lineNum">     491</span>              :   /// informational streams and collections.</span>
+<span id="L492"><span class="lineNum">     492</span> <span class="tlaUNC">           0 :   void _addLiveSuite(LiveSuite liveSuite) {</span></span>
+<span id="L493"><span class="lineNum">     493</span> <span class="tlaUNC">           0 :     _onSuiteStartedController.add(liveSuite);</span></span>
+<span id="L494"><span class="lineNum">     494</span>              : </span>
+<span id="L495"><span class="lineNum">     495</span> <span class="tlaUNC">           0 :     _onTestStartedGroup.add(liveSuite.onTestStarted);</span></span>
+<span id="L496"><span class="lineNum">     496</span> <span class="tlaUNC">           0 :     _passedGroup.add(liveSuite.passed);</span></span>
+<span id="L497"><span class="lineNum">     497</span> <span class="tlaUNC">           0 :     _skippedGroup.add(liveSuite.skipped);</span></span>
+<span id="L498"><span class="lineNum">     498</span> <span class="tlaUNC">           0 :     _failedGroup.add(liveSuite.failed);</span></span>
+<span id="L499"><span class="lineNum">     499</span>              :   }</span>
+<span id="L500"><span class="lineNum">     500</span>              : </span>
+<span id="L501"><span class="lineNum">     501</span>              :   /// Pauses the engine.</span>
+<span id="L502"><span class="lineNum">     502</span>              :   ///</span>
+<span id="L503"><span class="lineNum">     503</span>              :   /// This pauses all streams and keeps any new suites from being loaded or</span>
+<span id="L504"><span class="lineNum">     504</span>              :   /// tests from being run until [resume] is called.</span>
+<span id="L505"><span class="lineNum">     505</span>              :   ///</span>
+<span id="L506"><span class="lineNum">     506</span>              :   /// This does nothing if the engine is already paused. Pauses are *not*</span>
+<span id="L507"><span class="lineNum">     507</span>              :   /// cumulative.</span>
+<span id="L508"><span class="lineNum">     508</span> <span class="tlaUNC">           0 :   void pause() {</span></span>
+<span id="L509"><span class="lineNum">     509</span> <span class="tlaUNC">           0 :     if (_pauseCompleter != null) return;</span></span>
+<span id="L510"><span class="lineNum">     510</span> <span class="tlaUNC">           0 :     _pauseCompleter = Completer();</span></span>
+<span id="L511"><span class="lineNum">     511</span> <span class="tlaUNC">           0 :     for (var subscription in _subscriptions) {</span></span>
+<span id="L512"><span class="lineNum">     512</span> <span class="tlaUNC">           0 :       subscription.pause();</span></span>
+<span id="L513"><span class="lineNum">     513</span>              :     }</span>
+<span id="L514"><span class="lineNum">     514</span>              :   }</span>
+<span id="L515"><span class="lineNum">     515</span>              : </span>
+<span id="L516"><span class="lineNum">     516</span> <span class="tlaUNC">           0 :   void resume() {</span></span>
+<span id="L517"><span class="lineNum">     517</span> <span class="tlaUNC">           0 :     if (_pauseCompleter == null) return;</span></span>
+<span id="L518"><span class="lineNum">     518</span> <span class="tlaUNC">           0 :     _pauseCompleter!.complete();</span></span>
+<span id="L519"><span class="lineNum">     519</span> <span class="tlaUNC">           0 :     _pauseCompleter = null;</span></span>
+<span id="L520"><span class="lineNum">     520</span> <span class="tlaUNC">           0 :     for (var subscription in _subscriptions) {</span></span>
+<span id="L521"><span class="lineNum">     521</span> <span class="tlaUNC">           0 :       subscription.resume();</span></span>
+<span id="L522"><span class="lineNum">     522</span>              :     }</span>
+<span id="L523"><span class="lineNum">     523</span>              :   }</span>
+<span id="L524"><span class="lineNum">     524</span>              : </span>
+<span id="L525"><span class="lineNum">     525</span>              :   /// Signals that the caller is done paying attention to test results and the</span>
+<span id="L526"><span class="lineNum">     526</span>              :   /// engine should release any resources it has allocated.</span>
+<span id="L527"><span class="lineNum">     527</span>              :   ///</span>
+<span id="L528"><span class="lineNum">     528</span>              :   /// Any actively-running tests are also closed. VM tests are allowed to finish</span>
+<span id="L529"><span class="lineNum">     529</span>              :   /// running so that any modifications they've made to the filesystem can be</span>
+<span id="L530"><span class="lineNum">     530</span>              :   /// cleaned up.</span>
+<span id="L531"><span class="lineNum">     531</span>              :   ///</span>
+<span id="L532"><span class="lineNum">     532</span>              :   /// **Note that closing the engine is not the same as closing [suiteSink].**</span>
+<span id="L533"><span class="lineNum">     533</span>              :   /// Closing [suiteSink] indicates that no more input will be provided, closing</span>
+<span id="L534"><span class="lineNum">     534</span>              :   /// the engine indicates that no more output should be emitted.</span>
+<span id="L535"><span class="lineNum">     535</span> <span class="tlaUNC">           0 :   Future close() async {</span></span>
+<span id="L536"><span class="lineNum">     536</span> <span class="tlaUNC">           0 :     _closed = true;</span></span>
+<span id="L537"><span class="lineNum">     537</span> <span class="tlaUNC">           0 :     if (_closedBeforeDone != null) _closedBeforeDone = true;</span></span>
+<span id="L538"><span class="lineNum">     538</span> <span class="tlaUNC">           0 :     await _suiteController.close();</span></span>
+<span id="L539"><span class="lineNum">     539</span> <span class="tlaUNC">           0 :     await _onSuiteAddedController.close();</span></span>
+<span id="L540"><span class="lineNum">     540</span>              : </span>
+<span id="L541"><span class="lineNum">     541</span>              :     // Close the running tests first so that we're sure to wait for them to</span>
+<span id="L542"><span class="lineNum">     542</span>              :     // finish before we close their suites and cause them to become unloaded.</span>
+<span id="L543"><span class="lineNum">     543</span> <span class="tlaUNC">           0 :     var allLiveTests = liveTests.toSet()..addAll(_activeSuiteLoads);</span></span>
+<span id="L544"><span class="lineNum">     544</span> <span class="tlaUNC">           0 :     var futures = allLiveTests.map((liveTest) =&gt; liveTest.close()).toList();</span></span>
+<span id="L545"><span class="lineNum">     545</span>              : </span>
+<span id="L546"><span class="lineNum">     546</span>              :     // Closing the run pool will close the test suites as soon as their tests</span>
+<span id="L547"><span class="lineNum">     547</span>              :     // are done. For browser suites this is effectively immediate since their</span>
+<span id="L548"><span class="lineNum">     548</span>              :     // tests shut down as soon as they're closed, but for VM suites we may need</span>
+<span id="L549"><span class="lineNum">     549</span>              :     // to wait for tearDowns or tearDownAlls to run.</span>
+<span id="L550"><span class="lineNum">     550</span> <span class="tlaUNC">           0 :     futures.add(_runPool.close());</span></span>
+<span id="L551"><span class="lineNum">     551</span> <span class="tlaUNC">           0 :     await Future.wait(futures, eagerError: true);</span></span>
+<span id="L552"><span class="lineNum">     552</span>              :   }</span>
+<span id="L553"><span class="lineNum">     553</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

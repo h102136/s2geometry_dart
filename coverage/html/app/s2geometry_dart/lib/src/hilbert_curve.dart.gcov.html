@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - app/s2geometry_dart/lib/src/hilbert_curve.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory /app/s2geometry_dart/lib/src">/app/s2geometry_dart/lib/src</a> - hilbert_curve.dart<span style="font-size: 80%;"> (source / <a href="hilbert_curve.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">92.9&nbsp;%</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">13</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : /* source code from js</span>
+<span id="L2"><span class="lineNum">       2</span>              : var pointToHilbertQuadList = function(x,y,order,face) {</span>
+<span id="L3"><span class="lineNum">       3</span>              :   var hilbertMap = {</span>
+<span id="L4"><span class="lineNum">       4</span>              :     'a': [ [0,'d'], [1,'a'], [3,'b'], [2,'a'] ],</span>
+<span id="L5"><span class="lineNum">       5</span>              :     'b': [ [2,'b'], [1,'b'], [3,'a'], [0,'c'] ],</span>
+<span id="L6"><span class="lineNum">       6</span>              :     'c': [ [2,'c'], [3,'d'], [1,'c'], [0,'b'] ],</span>
+<span id="L7"><span class="lineNum">       7</span>              :     'd': [ [0,'a'], [3,'c'], [1,'d'], [2,'d'] ]</span>
+<span id="L8"><span class="lineNum">       8</span>              :   };</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              :   if ('number' !== typeof face) {</span>
+<span id="L11"><span class="lineNum">      11</span>              :     console.warn(new Error(&quot;called pointToHilbertQuadList without face value, defaulting to '0'&quot;).stack);</span>
+<span id="L12"><span class="lineNum">      12</span>              :   }</span>
+<span id="L13"><span class="lineNum">      13</span>              :   var currentSquare = (face % 2) ? 'd' : 'a';</span>
+<span id="L14"><span class="lineNum">      14</span>              :   var positions = [];</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              :   for (var i=order-1; i&gt;=0; i--) {</span>
+<span id="L17"><span class="lineNum">      17</span>              : </span>
+<span id="L18"><span class="lineNum">      18</span>              :     var mask = 1&lt;&lt;i;</span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span>              :     var quad_x = x&amp;mask ? 1 : 0;</span>
+<span id="L21"><span class="lineNum">      21</span>              :     var quad_y = y&amp;mask ? 1 : 0;</span>
+<span id="L22"><span class="lineNum">      22</span>              : </span>
+<span id="L23"><span class="lineNum">      23</span>              :     var t = hilbertMap[currentSquare][quad_x*2+quad_y];</span>
+<span id="L24"><span class="lineNum">      24</span>              : </span>
+<span id="L25"><span class="lineNum">      25</span>              :     positions.push(t[0]);</span>
+<span id="L26"><span class="lineNum">      26</span>              : </span>
+<span id="L27"><span class="lineNum">      27</span>              :     currentSquare = t[1];</span>
+<span id="L28"><span class="lineNum">      28</span>              :   }</span>
+<span id="L29"><span class="lineNum">      29</span>              : </span>
+<span id="L30"><span class="lineNum">      30</span>              :   return positions;</span>
+<span id="L31"><span class="lineNum">      31</span>              : };</span>
+<span id="L32"><span class="lineNum">      32</span>              : */</span>
+<span id="L33"><span class="lineNum">      33</span>              : </span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC tlaBgGNC">           2 : List&lt;int&gt; pointToHilbertQuadList(int x, int y, int order, int face) {</span></span>
+<span id="L35"><span class="lineNum">      35</span>              :   </span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           2 :   if (face &lt; 0) {</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           1 :     throw Exception(&quot;Invalid face value: face cannot be negative&quot;);</span></span>
+<span id="L38"><span class="lineNum">      38</span>              :   }</span>
+<span id="L39"><span class="lineNum">      39</span>              :   // Hilbert curve map, a,b,c,d are the four quadrants</span>
+<span id="L40"><span class="lineNum">      40</span>              :   // each quadrant have 4 sub-quadrants</span>
+<span id="L41"><span class="lineNum">      41</span>              :   // [0,'d'] means the next quadrant is d, and the position is 0</span>
+<span id="L42"><span class="lineNum">      42</span>              :   const hilbertMap = {</span>
+<span id="L43"><span class="lineNum">      43</span>              :     'a': [ [0, 'd'], [1, 'a'], [3, 'b'], [2, 'a'] ],</span>
+<span id="L44"><span class="lineNum">      44</span>              :     'b': [ [2, 'b'], [1, 'b'], [3, 'a'], [0, 'c'] ],</span>
+<span id="L45"><span class="lineNum">      45</span>              :     'c': [ [2, 'c'], [3, 'd'], [1, 'c'], [0, 'b'] ],</span>
+<span id="L46"><span class="lineNum">      46</span>              :     'd': [ [0, 'a'], [3, 'c'], [1, 'd'], [2, 'd'] ]</span>
+<span id="L47"><span class="lineNum">      47</span>              :   };</span>
+<span id="L48"><span class="lineNum">      48</span>              :   </span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           4 :   String currentSquare = (face % 2 == 1) ? 'd' : 'a'; // if face is odd, start at 'd', else start at 'a'</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           2 :   List&lt;int&gt; positions = [];</span></span>
+<span id="L51"><span class="lineNum">      51</span>              : </span>
+<span id="L52"><span class="lineNum">      52</span>              :   // iterate through each bit in the hilbert curve</span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">           6 :    for (int i = order - 1; i &gt;= 0; i--) {</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           2 :     int mask = 1 &lt;&lt; i;</span></span>
+<span id="L55"><span class="lineNum">      55</span>              : </span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           4 :     int quadX = (x &amp; mask) != 0 ? 1 : 0;</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">           4 :     int quadY = (y &amp; mask) != 0 ? 1 : 0;</span></span>
+<span id="L58"><span class="lineNum">      58</span>              : </span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">           2 :     var t = hilbertMap[currentSquare];</span></span>
+<span id="L60"><span class="lineNum">      60</span>              :     if (t != null) {</span>
+<span id="L61"><span class="lineNum">      61</span> <span class="tlaGNC">           6 :       var quadData = t[quadX * 2 + quadY];</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">           4 :       positions.add(quadData[0] as int);</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">           2 :       currentSquare = quadData[1] as String;</span></span>
+<span id="L64"><span class="lineNum">      64</span>              :     } else {</span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaUNC tlaBgUNC">           0 :       throw Exception(&quot;Invalid currentSquare or hilbertMap data&quot;);</span></span>
+<span id="L66"><span class="lineNum">      66</span>              :     }</span>
+<span id="L67"><span class="lineNum">      67</span>              :   }</span>
+<span id="L68"><span class="lineNum">      68</span>              : </span>
+<span id="L69"><span class="lineNum">      69</span>              :   return positions;</span>
+<span id="L70"><span class="lineNum">      70</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

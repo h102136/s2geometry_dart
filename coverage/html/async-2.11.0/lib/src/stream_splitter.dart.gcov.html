@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - async-2.11.0/lib/src/stream_splitter.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory async-2.11.0/lib/src">async-2.11.0/lib/src</a> - stream_splitter.dart<span style="font-size: 80%;"> (source / <a href="stream_splitter.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">58</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : import 'future_group.dart';</span>
+<span id="L8"><span class="lineNum">       8</span>              : import 'result/result.dart';</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              : /// A class that splits a single source stream into an arbitrary number of</span>
+<span id="L11"><span class="lineNum">      11</span>              : /// (single-subscription) streams (called &quot;branch&quot;) that emit the same events.</span>
+<span id="L12"><span class="lineNum">      12</span>              : ///</span>
+<span id="L13"><span class="lineNum">      13</span>              : /// Each branch will emit all the same values and errors as the source stream,</span>
+<span id="L14"><span class="lineNum">      14</span>              : /// regardless of which values have been emitted on other branches. This means</span>
+<span id="L15"><span class="lineNum">      15</span>              : /// that the splitter stores every event that has been emitted so far, which may</span>
+<span id="L16"><span class="lineNum">      16</span>              : /// consume a lot of memory. The user can call [close] to indicate that no more</span>
+<span id="L17"><span class="lineNum">      17</span>              : /// branches will be created, and this memory will be released.</span>
+<span id="L18"><span class="lineNum">      18</span>              : ///</span>
+<span id="L19"><span class="lineNum">      19</span>              : /// The source stream is only listened to once a branch is created *and listened</span>
+<span id="L20"><span class="lineNum">      20</span>              : /// to*. It's paused when all branches are paused *or when all branches are</span>
+<span id="L21"><span class="lineNum">      21</span>              : /// canceled*, and resumed once there's at least one branch that's listening and</span>
+<span id="L22"><span class="lineNum">      22</span>              : /// unpaused. It's not canceled unless no branches are listening and [close] has</span>
+<span id="L23"><span class="lineNum">      23</span>              : /// been called.</span>
+<span id="L24"><span class="lineNum">      24</span>              : class StreamSplitter&lt;T&gt; {</span>
+<span id="L25"><span class="lineNum">      25</span>              :   /// The wrapped stream.</span>
+<span id="L26"><span class="lineNum">      26</span>              :   final Stream&lt;T&gt; _stream;</span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span>              :   /// The subscription to [_stream].</span>
+<span id="L29"><span class="lineNum">      29</span>              :   ///</span>
+<span id="L30"><span class="lineNum">      30</span>              :   /// This will be `null` until a branch has a listener.</span>
+<span id="L31"><span class="lineNum">      31</span>              :   StreamSubscription&lt;T&gt;? _subscription;</span>
+<span id="L32"><span class="lineNum">      32</span>              : </span>
+<span id="L33"><span class="lineNum">      33</span>              :   /// The buffer of events or errors that have already been emitted by</span>
+<span id="L34"><span class="lineNum">      34</span>              :   /// [_stream].</span>
+<span id="L35"><span class="lineNum">      35</span>              :   final _buffer = &lt;Result&lt;T&gt;&gt;[];</span>
+<span id="L36"><span class="lineNum">      36</span>              : </span>
+<span id="L37"><span class="lineNum">      37</span>              :   /// The controllers for branches that are listening for future events from</span>
+<span id="L38"><span class="lineNum">      38</span>              :   /// [_stream].</span>
+<span id="L39"><span class="lineNum">      39</span>              :   ///</span>
+<span id="L40"><span class="lineNum">      40</span>              :   /// Once a branch is canceled, it's removed from this list. When [_stream] is</span>
+<span id="L41"><span class="lineNum">      41</span>              :   /// done, all branches are removed.</span>
+<span id="L42"><span class="lineNum">      42</span>              :   final _controllers = &lt;StreamController&lt;T&gt;&gt;{};</span>
+<span id="L43"><span class="lineNum">      43</span>              : </span>
+<span id="L44"><span class="lineNum">      44</span>              :   /// A group of futures returned by [close].</span>
+<span id="L45"><span class="lineNum">      45</span>              :   ///</span>
+<span id="L46"><span class="lineNum">      46</span>              :   /// This is used to ensure that [close] doesn't complete until all</span>
+<span id="L47"><span class="lineNum">      47</span>              :   /// [StreamController.close] and [StreamSubscription.cancel] calls complete.</span>
+<span id="L48"><span class="lineNum">      48</span>              :   final _closeGroup = FutureGroup();</span>
+<span id="L49"><span class="lineNum">      49</span>              : </span>
+<span id="L50"><span class="lineNum">      50</span>              :   /// Whether [_stream] is done emitting events.</span>
+<span id="L51"><span class="lineNum">      51</span>              :   var _isDone = false;</span>
+<span id="L52"><span class="lineNum">      52</span>              : </span>
+<span id="L53"><span class="lineNum">      53</span>              :   /// Whether [close] has been called.</span>
+<span id="L54"><span class="lineNum">      54</span>              :   var _isClosed = false;</span>
+<span id="L55"><span class="lineNum">      55</span>              : </span>
+<span id="L56"><span class="lineNum">      56</span>              :   /// Splits [stream] into [count] identical streams.</span>
+<span id="L57"><span class="lineNum">      57</span>              :   ///</span>
+<span id="L58"><span class="lineNum">      58</span>              :   /// [count] defaults to 2. This is the same as creating [count] branches and</span>
+<span id="L59"><span class="lineNum">      59</span>              :   /// then closing the [StreamSplitter].</span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaUNC tlaBgUNC">           0 :   static List&lt;Stream&lt;T&gt;&gt; splitFrom&lt;T&gt;(Stream&lt;T&gt; stream, [int? count]) {</span></span>
+<span id="L61"><span class="lineNum">      61</span>              :     count ??= 2;</span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaUNC">           0 :     var splitter = StreamSplitter&lt;T&gt;(stream);</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaUNC">           0 :     var streams = List&lt;Stream&lt;T&gt;&gt;.generate(count, (_) =&gt; splitter.split());</span></span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaUNC">           0 :     splitter.close();</span></span>
+<span id="L65"><span class="lineNum">      65</span>              :     return streams;</span>
+<span id="L66"><span class="lineNum">      66</span>              :   }</span>
+<span id="L67"><span class="lineNum">      67</span>              : </span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaUNC">           0 :   StreamSplitter(this._stream);</span></span>
+<span id="L69"><span class="lineNum">      69</span>              : </span>
+<span id="L70"><span class="lineNum">      70</span>              :   /// Returns a single-subscription stream that's a copy of the input stream.</span>
+<span id="L71"><span class="lineNum">      71</span>              :   ///</span>
+<span id="L72"><span class="lineNum">      72</span>              :   /// This will throw a [StateError] if [close] has been called.</span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaUNC">           0 :   Stream&lt;T&gt; split() {</span></span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaUNC">           0 :     if (_isClosed) {</span></span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaUNC">           0 :       throw StateError(&quot;Can't call split() on a closed StreamSplitter.&quot;);</span></span>
+<span id="L76"><span class="lineNum">      76</span>              :     }</span>
+<span id="L77"><span class="lineNum">      77</span>              : </span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaUNC">           0 :     var controller = StreamController&lt;T&gt;(</span></span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaUNC">           0 :         onListen: _onListen, onPause: _onPause, onResume: _onResume);</span></span>
+<span id="L80"><span class="lineNum">      80</span> <span class="tlaUNC">           0 :     controller.onCancel = () =&gt; _onCancel(controller);</span></span>
+<span id="L81"><span class="lineNum">      81</span>              : </span>
+<span id="L82"><span class="lineNum">      82</span> <span class="tlaUNC">           0 :     for (var result in _buffer) {</span></span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaUNC">           0 :       result.addTo(controller);</span></span>
+<span id="L84"><span class="lineNum">      84</span>              :     }</span>
+<span id="L85"><span class="lineNum">      85</span>              : </span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaUNC">           0 :     if (_isDone) {</span></span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaUNC">           0 :       _closeGroup.add(controller.close());</span></span>
+<span id="L88"><span class="lineNum">      88</span>              :     } else {</span>
+<span id="L89"><span class="lineNum">      89</span> <span class="tlaUNC">           0 :       _controllers.add(controller);</span></span>
+<span id="L90"><span class="lineNum">      90</span>              :     }</span>
+<span id="L91"><span class="lineNum">      91</span>              : </span>
+<span id="L92"><span class="lineNum">      92</span> <span class="tlaUNC">           0 :     return controller.stream;</span></span>
+<span id="L93"><span class="lineNum">      93</span>              :   }</span>
+<span id="L94"><span class="lineNum">      94</span>              : </span>
+<span id="L95"><span class="lineNum">      95</span>              :   /// Indicates that no more branches will be requested via [split].</span>
+<span id="L96"><span class="lineNum">      96</span>              :   ///</span>
+<span id="L97"><span class="lineNum">      97</span>              :   /// This clears the internal buffer of events. If there are no branches or all</span>
+<span id="L98"><span class="lineNum">      98</span>              :   /// branches have been canceled, this cancels the subscription to the input</span>
+<span id="L99"><span class="lineNum">      99</span>              :   /// stream.</span>
+<span id="L100"><span class="lineNum">     100</span>              :   ///</span>
+<span id="L101"><span class="lineNum">     101</span>              :   /// Returns a [Future] that completes once all events have been processed by</span>
+<span id="L102"><span class="lineNum">     102</span>              :   /// all branches and (if applicable) the subscription to the input stream has</span>
+<span id="L103"><span class="lineNum">     103</span>              :   /// been canceled.</span>
+<span id="L104"><span class="lineNum">     104</span> <span class="tlaUNC">           0 :   Future close() {</span></span>
+<span id="L105"><span class="lineNum">     105</span> <span class="tlaUNC">           0 :     if (_isClosed) return _closeGroup.future;</span></span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaUNC">           0 :     _isClosed = true;</span></span>
+<span id="L107"><span class="lineNum">     107</span>              : </span>
+<span id="L108"><span class="lineNum">     108</span> <span class="tlaUNC">           0 :     _buffer.clear();</span></span>
+<span id="L109"><span class="lineNum">     109</span> <span class="tlaUNC">           0 :     if (_controllers.isEmpty) _cancelSubscription();</span></span>
+<span id="L110"><span class="lineNum">     110</span>              : </span>
+<span id="L111"><span class="lineNum">     111</span> <span class="tlaUNC">           0 :     return _closeGroup.future;</span></span>
+<span id="L112"><span class="lineNum">     112</span>              :   }</span>
+<span id="L113"><span class="lineNum">     113</span>              : </span>
+<span id="L114"><span class="lineNum">     114</span>              :   /// Cancel [_subscription] and close [_closeGroup].</span>
+<span id="L115"><span class="lineNum">     115</span>              :   ///</span>
+<span id="L116"><span class="lineNum">     116</span>              :   /// This should be called after all the branches' subscriptions have been</span>
+<span id="L117"><span class="lineNum">     117</span>              :   /// canceled and the splitter has been closed. In that case, we won't use the</span>
+<span id="L118"><span class="lineNum">     118</span>              :   /// events from [_subscription] any more, since there's nothing to pipe them</span>
+<span id="L119"><span class="lineNum">     119</span>              :   /// to and no more branches will be created. If [_subscription] is done,</span>
+<span id="L120"><span class="lineNum">     120</span>              :   /// canceling it will be a no-op.</span>
+<span id="L121"><span class="lineNum">     121</span>              :   ///</span>
+<span id="L122"><span class="lineNum">     122</span>              :   /// This may also be called before any branches have been created, in which</span>
+<span id="L123"><span class="lineNum">     123</span>              :   /// case [_subscription] will be `null`.</span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaUNC">           0 :   void _cancelSubscription() {</span></span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaUNC">           0 :     assert(_controllers.isEmpty);</span></span>
+<span id="L126"><span class="lineNum">     126</span> <span class="tlaUNC">           0 :     assert(_isClosed);</span></span>
+<span id="L127"><span class="lineNum">     127</span>              : </span>
+<span id="L128"><span class="lineNum">     128</span>              :     Future? future;</span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaUNC">           0 :     if (_subscription != null) future = _subscription!.cancel();</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaUNC">           0 :     if (future != null) _closeGroup.add(future);</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaUNC">           0 :     _closeGroup.close();</span></span>
+<span id="L132"><span class="lineNum">     132</span>              :   }</span>
+<span id="L133"><span class="lineNum">     133</span>              : </span>
+<span id="L134"><span class="lineNum">     134</span>              :   // StreamController events</span>
+<span id="L135"><span class="lineNum">     135</span>              : </span>
+<span id="L136"><span class="lineNum">     136</span>              :   /// Subscribe to [_stream] if we haven't yet done so, and resume the</span>
+<span id="L137"><span class="lineNum">     137</span>              :   /// subscription if we have.</span>
+<span id="L138"><span class="lineNum">     138</span> <span class="tlaUNC">           0 :   void _onListen() {</span></span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaUNC">           0 :     if (_isDone) return;</span></span>
+<span id="L140"><span class="lineNum">     140</span>              : </span>
+<span id="L141"><span class="lineNum">     141</span> <span class="tlaUNC">           0 :     if (_subscription != null) {</span></span>
+<span id="L142"><span class="lineNum">     142</span>              :       // Resume the subscription in case it was paused, either because all the</span>
+<span id="L143"><span class="lineNum">     143</span>              :       // controllers were paused or because the last one was canceled. If it</span>
+<span id="L144"><span class="lineNum">     144</span>              :       // wasn't paused, this will be a no-op.</span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaUNC">           0 :       _subscription!.resume();</span></span>
+<span id="L146"><span class="lineNum">     146</span>              :     } else {</span>
+<span id="L147"><span class="lineNum">     147</span> <span class="tlaUNC">           0 :       _subscription =</span></span>
+<span id="L148"><span class="lineNum">     148</span> <span class="tlaUNC">           0 :           _stream.listen(_onData, onError: _onError, onDone: _onDone);</span></span>
+<span id="L149"><span class="lineNum">     149</span>              :     }</span>
+<span id="L150"><span class="lineNum">     150</span>              :   }</span>
+<span id="L151"><span class="lineNum">     151</span>              : </span>
+<span id="L152"><span class="lineNum">     152</span>              :   /// Pauses [_subscription] if every controller is paused.</span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaUNC">           0 :   void _onPause() {</span></span>
+<span id="L154"><span class="lineNum">     154</span> <span class="tlaUNC">           0 :     if (!_controllers.every((controller) =&gt; controller.isPaused)) return;</span></span>
+<span id="L155"><span class="lineNum">     155</span> <span class="tlaUNC">           0 :     _subscription!.pause();</span></span>
+<span id="L156"><span class="lineNum">     156</span>              :   }</span>
+<span id="L157"><span class="lineNum">     157</span>              : </span>
+<span id="L158"><span class="lineNum">     158</span>              :   /// Resumes [_subscription].</span>
+<span id="L159"><span class="lineNum">     159</span>              :   ///</span>
+<span id="L160"><span class="lineNum">     160</span>              :   /// If [_subscription] wasn't paused, this is a no-op.</span>
+<span id="L161"><span class="lineNum">     161</span> <span class="tlaUNC">           0 :   void _onResume() {</span></span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaUNC">           0 :     _subscription!.resume();</span></span>
+<span id="L163"><span class="lineNum">     163</span>              :   }</span>
+<span id="L164"><span class="lineNum">     164</span>              : </span>
+<span id="L165"><span class="lineNum">     165</span>              :   /// Removes [controller] from [_controllers] and cancels or pauses</span>
+<span id="L166"><span class="lineNum">     166</span>              :   /// [_subscription] as appropriate.</span>
+<span id="L167"><span class="lineNum">     167</span>              :   ///</span>
+<span id="L168"><span class="lineNum">     168</span>              :   /// Since the controller emitting a done event will cause it to register as</span>
+<span id="L169"><span class="lineNum">     169</span>              :   /// canceled, this is the only way that a controller is ever removed from</span>
+<span id="L170"><span class="lineNum">     170</span>              :   /// [_controllers].</span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaUNC">           0 :   void _onCancel(StreamController controller) {</span></span>
+<span id="L172"><span class="lineNum">     172</span> <span class="tlaUNC">           0 :     _controllers.remove(controller);</span></span>
+<span id="L173"><span class="lineNum">     173</span> <span class="tlaUNC">           0 :     if (_controllers.isNotEmpty) return;</span></span>
+<span id="L174"><span class="lineNum">     174</span>              : </span>
+<span id="L175"><span class="lineNum">     175</span> <span class="tlaUNC">           0 :     if (_isClosed) {</span></span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC">           0 :       _cancelSubscription();</span></span>
+<span id="L177"><span class="lineNum">     177</span>              :     } else {</span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaUNC">           0 :       _subscription!.pause();</span></span>
+<span id="L179"><span class="lineNum">     179</span>              :     }</span>
+<span id="L180"><span class="lineNum">     180</span>              :   }</span>
+<span id="L181"><span class="lineNum">     181</span>              : </span>
+<span id="L182"><span class="lineNum">     182</span>              :   // Stream events</span>
+<span id="L183"><span class="lineNum">     183</span>              : </span>
+<span id="L184"><span class="lineNum">     184</span>              :   /// Buffers [data] and passes it to [_controllers].</span>
+<span id="L185"><span class="lineNum">     185</span> <span class="tlaUNC">           0 :   void _onData(T data) {</span></span>
+<span id="L186"><span class="lineNum">     186</span> <span class="tlaUNC">           0 :     if (!_isClosed) _buffer.add(Result.value(data));</span></span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaUNC">           0 :     for (var controller in _controllers) {</span></span>
+<span id="L188"><span class="lineNum">     188</span> <span class="tlaUNC">           0 :       controller.add(data);</span></span>
+<span id="L189"><span class="lineNum">     189</span>              :     }</span>
+<span id="L190"><span class="lineNum">     190</span>              :   }</span>
+<span id="L191"><span class="lineNum">     191</span>              : </span>
+<span id="L192"><span class="lineNum">     192</span>              :   /// Buffers [error] and passes it to [_controllers].</span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaUNC">           0 :   void _onError(Object error, StackTrace stackTrace) {</span></span>
+<span id="L194"><span class="lineNum">     194</span> <span class="tlaUNC">           0 :     if (!_isClosed) _buffer.add(Result.error(error, stackTrace));</span></span>
+<span id="L195"><span class="lineNum">     195</span> <span class="tlaUNC">           0 :     for (var controller in _controllers) {</span></span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaUNC">           0 :       controller.addError(error, stackTrace);</span></span>
+<span id="L197"><span class="lineNum">     197</span>              :     }</span>
+<span id="L198"><span class="lineNum">     198</span>              :   }</span>
+<span id="L199"><span class="lineNum">     199</span>              : </span>
+<span id="L200"><span class="lineNum">     200</span>              :   /// Marks [_controllers] as done.</span>
+<span id="L201"><span class="lineNum">     201</span> <span class="tlaUNC">           0 :   void _onDone() {</span></span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaUNC">           0 :     _isDone = true;</span></span>
+<span id="L203"><span class="lineNum">     203</span> <span class="tlaUNC">           0 :     for (var controller in _controllers) {</span></span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaUNC">           0 :       _closeGroup.add(controller.close());</span></span>
+<span id="L205"><span class="lineNum">     205</span>              :     }</span>
+<span id="L206"><span class="lineNum">     206</span>              :   }</span>
+<span id="L207"><span class="lineNum">     207</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

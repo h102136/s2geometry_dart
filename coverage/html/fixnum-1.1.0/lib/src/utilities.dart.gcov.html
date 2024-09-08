@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - fixnum-1.1.0/lib/src/utilities.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory fixnum-1.1.0/lib/src">fixnum-1.1.0/lib/src</a> - utilities.dart<span style="font-size: 80%;"> (source / <a href="utilities.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">21.7&nbsp;%</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">5</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : // Shared functionality used by multiple classes and their implementations.</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span> <span class="tlaGNC tlaBgGNC">           1 : int validateRadix(int radix) =&gt;</span></span>
+<span id="L8"><span class="lineNum">       8</span> <span class="tlaGNC">           1 :     RangeError.checkValueInInterval(radix, 2, 36, 'radix');</span></span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              : /// Converts radix digits into their numeric values.</span>
+<span id="L11"><span class="lineNum">      11</span>              : ///</span>
+<span id="L12"><span class="lineNum">      12</span>              : /// Converts the characters `0`-`9` into the values 0 through 9,</span>
+<span id="L13"><span class="lineNum">      13</span>              : /// and the letters `a`-`z` or `A`-`Z` into values 10 through 35,</span>
+<span id="L14"><span class="lineNum">      14</span>              : /// and return that value.</span>
+<span id="L15"><span class="lineNum">      15</span>              : /// Any other character returns a value above 35, which means it's</span>
+<span id="L16"><span class="lineNum">      16</span>              : /// not a valid digit in any radix in the range 2 through 36.</span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           1 : int decodeDigit(int c) {</span></span>
+<span id="L18"><span class="lineNum">      18</span>              :   // Hex digit char codes</span>
+<span id="L19"><span class="lineNum">      19</span>              :   const int c0 = 48; // '0'.codeUnitAt(0)</span>
+<span id="L20"><span class="lineNum">      20</span>              :   const int ca = 97; // 'a'.codeUnitAt(0)</span>
+<span id="L21"><span class="lineNum">      21</span>              : </span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           1 :   int digit = c ^ c0;</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">           1 :   if (digit &lt; 10) return digit;</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC tlaBgUNC">           0 :   int letter = (c | 0x20) - ca;</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaUNC">           0 :   if (letter &gt;= 0) {</span></span>
+<span id="L26"><span class="lineNum">      26</span>              :     // Returns values above 36 for invalid digits.</span>
+<span id="L27"><span class="lineNum">      27</span>              :     // The value is checked against the actual radix where the return</span>
+<span id="L28"><span class="lineNum">      28</span>              :     // value is used, so this is safe.</span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaUNC">           0 :     return letter + 10;</span></span>
+<span id="L30"><span class="lineNum">      30</span>              :   } else {</span>
+<span id="L31"><span class="lineNum">      31</span>              :     return 255; // Never a valid radix.</span>
+<span id="L32"><span class="lineNum">      32</span>              :   }</span>
+<span id="L33"><span class="lineNum">      33</span>              : }</span>
+<span id="L34"><span class="lineNum">      34</span>              : </span>
+<span id="L35"><span class="lineNum">      35</span>              : // Assumes i is &lt;= 32-bit</span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaUNC">           0 : int numberOfLeadingZeros(int i) {</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaUNC">           0 :   i |= i &gt;&gt; 1;</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaUNC">           0 :   i |= i &gt;&gt; 2;</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaUNC">           0 :   i |= i &gt;&gt; 4;</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaUNC">           0 :   i |= i &gt;&gt; 8;</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaUNC">           0 :   i |= i &gt;&gt; 16;</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaUNC">           0 :   return bitCount(~i);</span></span>
+<span id="L43"><span class="lineNum">      43</span>              : }</span>
+<span id="L44"><span class="lineNum">      44</span>              : </span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaUNC">           0 : int numberOfTrailingZeros(int i) =&gt; bitCount((i &amp; -i) - 1);</span></span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span>              : // Assumes i is &lt;= 32-bit.</span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC">           0 : int bitCount(int i) {</span></span>
+<span id="L49"><span class="lineNum">      49</span>              :   // See &quot;Hacker's Delight&quot;, section 5-1, &quot;Counting 1-Bits&quot;.</span>
+<span id="L50"><span class="lineNum">      50</span>              : </span>
+<span id="L51"><span class="lineNum">      51</span>              :   // The basic strategy is to use &quot;divide and conquer&quot; to</span>
+<span id="L52"><span class="lineNum">      52</span>              :   // add pairs (then quads, etc.) of bits together to obtain</span>
+<span id="L53"><span class="lineNum">      53</span>              :   // sub-counts.</span>
+<span id="L54"><span class="lineNum">      54</span>              :   //</span>
+<span id="L55"><span class="lineNum">      55</span>              :   // A straightforward approach would look like:</span>
+<span id="L56"><span class="lineNum">      56</span>              :   //</span>
+<span id="L57"><span class="lineNum">      57</span>              :   // i = (i &amp; 0x55555555) + ((i &gt;&gt;  1) &amp; 0x55555555);</span>
+<span id="L58"><span class="lineNum">      58</span>              :   // i = (i &amp; 0x33333333) + ((i &gt;&gt;  2) &amp; 0x33333333);</span>
+<span id="L59"><span class="lineNum">      59</span>              :   // i = (i &amp; 0x0F0F0F0F) + ((i &gt;&gt;  4) &amp; 0x0F0F0F0F);</span>
+<span id="L60"><span class="lineNum">      60</span>              :   // i = (i &amp; 0x00FF00FF) + ((i &gt;&gt;  8) &amp; 0x00FF00FF);</span>
+<span id="L61"><span class="lineNum">      61</span>              :   // i = (i &amp; 0x0000FFFF) + ((i &gt;&gt; 16) &amp; 0x0000FFFF);</span>
+<span id="L62"><span class="lineNum">      62</span>              :   //</span>
+<span id="L63"><span class="lineNum">      63</span>              :   // The code below removes unnecessary &amp;'s and uses a</span>
+<span id="L64"><span class="lineNum">      64</span>              :   // trick to remove one instruction in the first line.</span>
+<span id="L65"><span class="lineNum">      65</span>              : </span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaUNC">           0 :   i -= (i &gt;&gt; 1) &amp; 0x55555555;</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaUNC">           0 :   i = (i &amp; 0x33333333) + ((i &gt;&gt; 2) &amp; 0x33333333);</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaUNC">           0 :   i = (i + (i &gt;&gt; 4)) &amp; 0x0F0F0F0F;</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaUNC">           0 :   i += i &gt;&gt; 8;</span></span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaUNC">           0 :   i += i &gt;&gt; 16;</span></span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaUNC">           0 :   return i &amp; 0x0000003F;</span></span>
+<span id="L72"><span class="lineNum">      72</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

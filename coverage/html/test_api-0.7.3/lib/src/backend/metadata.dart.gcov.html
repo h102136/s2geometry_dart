@@ -1,0 +1,496 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - test_api-0.7.3/lib/src/backend/metadata.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory test_api-0.7.3/lib/src/backend">test_api-0.7.3/lib/src/backend</a> - metadata.dart<span style="font-size: 80%;"> (source / <a href="metadata.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">54.4&nbsp;%</td>
+            <td class="headerCovTableEntry">149</td>
+            <td class="headerCovTableEntry">81</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'package:boolean_selector/boolean_selector.dart';</span>
+<span id="L6"><span class="lineNum">       6</span>              : import 'package:collection/collection.dart';</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : import 'configuration/skip.dart';</span>
+<span id="L9"><span class="lineNum">       9</span>              : import 'configuration/timeout.dart';</span>
+<span id="L10"><span class="lineNum">      10</span>              : import 'platform_selector.dart';</span>
+<span id="L11"><span class="lineNum">      11</span>              : import 'suite_platform.dart';</span>
+<span id="L12"><span class="lineNum">      12</span>              : import 'util/identifier_regex.dart';</span>
+<span id="L13"><span class="lineNum">      13</span>              : import 'util/pretty_print.dart';</span>
+<span id="L14"><span class="lineNum">      14</span>              : </span>
+<span id="L15"><span class="lineNum">      15</span>              : /// Metadata for a test or test suite.</span>
+<span id="L16"><span class="lineNum">      16</span>              : ///</span>
+<span id="L17"><span class="lineNum">      17</span>              : /// This metadata comes from declarations on the test itself; it doesn't include</span>
+<span id="L18"><span class="lineNum">      18</span>              : /// configuration from the user.</span>
+<span id="L19"><span class="lineNum">      19</span>              : final class Metadata {</span>
+<span id="L20"><span class="lineNum">      20</span>              :   /// Empty metadata with only default values.</span>
+<span id="L21"><span class="lineNum">      21</span>              :   ///</span>
+<span id="L22"><span class="lineNum">      22</span>              :   /// Using this is slightly more efficient than manually constructing a new</span>
+<span id="L23"><span class="lineNum">      23</span>              :   /// metadata with no arguments.</span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC tlaBgUNC">           0 :   static final empty = Metadata._();</span></span>
+<span id="L25"><span class="lineNum">      25</span>              : </span>
+<span id="L26"><span class="lineNum">      26</span>              :   /// The selector indicating which platforms the suite supports.</span>
+<span id="L27"><span class="lineNum">      27</span>              :   final PlatformSelector testOn;</span>
+<span id="L28"><span class="lineNum">      28</span>              : </span>
+<span id="L29"><span class="lineNum">      29</span>              :   /// The modification to the timeout for the test or suite.</span>
+<span id="L30"><span class="lineNum">      30</span>              :   final Timeout timeout;</span>
+<span id="L31"><span class="lineNum">      31</span>              : </span>
+<span id="L32"><span class="lineNum">      32</span>              :   /// Whether the test or suite should be skipped.</span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaUNC">           0 :   bool get skip =&gt; _skip ?? false;</span></span>
+<span id="L34"><span class="lineNum">      34</span>              :   final bool? _skip;</span>
+<span id="L35"><span class="lineNum">      35</span>              : </span>
+<span id="L36"><span class="lineNum">      36</span>              :   /// The reason the test or suite should be skipped, if given.</span>
+<span id="L37"><span class="lineNum">      37</span>              :   final String? skipReason;</span>
+<span id="L38"><span class="lineNum">      38</span>              : </span>
+<span id="L39"><span class="lineNum">      39</span>              :   /// Whether to use verbose stack traces.</span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC tlaBgGNC">          12 :   bool get verboseTrace =&gt; _verboseTrace ?? false;</span></span>
+<span id="L41"><span class="lineNum">      41</span>              :   final bool? _verboseTrace;</span>
+<span id="L42"><span class="lineNum">      42</span>              : </span>
+<span id="L43"><span class="lineNum">      43</span>              :   /// Whether to chain stack traces.</span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">          18 :   bool get chainStackTraces =&gt; _chainStackTraces ?? _verboseTrace ?? false;</span></span>
+<span id="L45"><span class="lineNum">      45</span>              :   final bool? _chainStackTraces;</span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span>              :   /// The user-defined tags attached to the test or suite.</span>
+<span id="L48"><span class="lineNum">      48</span>              :   final Set&lt;String&gt; tags;</span>
+<span id="L49"><span class="lineNum">      49</span>              : </span>
+<span id="L50"><span class="lineNum">      50</span>              :   /// The number of times to re-run a test before being marked as a failure.</span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaUNC tlaBgUNC">           0 :   int get retry =&gt; _retry ?? 0;</span></span>
+<span id="L52"><span class="lineNum">      52</span>              :   final int? _retry;</span>
+<span id="L53"><span class="lineNum">      53</span>              : </span>
+<span id="L54"><span class="lineNum">      54</span>              :   /// Platform-specific metadata.</span>
+<span id="L55"><span class="lineNum">      55</span>              :   ///</span>
+<span id="L56"><span class="lineNum">      56</span>              :   /// Each key identifies a platform, and its value identifies the specific</span>
+<span id="L57"><span class="lineNum">      57</span>              :   /// metadata for that platform. These can be applied by calling [forPlatform].</span>
+<span id="L58"><span class="lineNum">      58</span>              :   final Map&lt;PlatformSelector, Metadata&gt; onPlatform;</span>
+<span id="L59"><span class="lineNum">      59</span>              : </span>
+<span id="L60"><span class="lineNum">      60</span>              :   /// Metadata that applies only when specific tags are applied.</span>
+<span id="L61"><span class="lineNum">      61</span>              :   ///</span>
+<span id="L62"><span class="lineNum">      62</span>              :   /// Tag-specific metadata is applied when merging this with other metadata.</span>
+<span id="L63"><span class="lineNum">      63</span>              :   /// Note that unlike [onPlatform], the base metadata takes precedence over any</span>
+<span id="L64"><span class="lineNum">      64</span>              :   /// tag-specific metadata.</span>
+<span id="L65"><span class="lineNum">      65</span>              :   ///</span>
+<span id="L66"><span class="lineNum">      66</span>              :   /// This is guaranteed not to have any keys that match [tags]; those are</span>
+<span id="L67"><span class="lineNum">      67</span>              :   /// resolved when the metadata is constructed.</span>
+<span id="L68"><span class="lineNum">      68</span>              :   final Map&lt;BooleanSelector, Metadata&gt; forTag;</span>
+<span id="L69"><span class="lineNum">      69</span>              : </span>
+<span id="L70"><span class="lineNum">      70</span>              :   /// The language version comment, if one is present.</span>
+<span id="L71"><span class="lineNum">      71</span>              :   ///</span>
+<span id="L72"><span class="lineNum">      72</span>              :   /// Only available for test suites and not individual tests.</span>
+<span id="L73"><span class="lineNum">      73</span>              :   final String? languageVersionComment;</span>
+<span id="L74"><span class="lineNum">      74</span>              : </span>
+<span id="L75"><span class="lineNum">      75</span>              :   /// Parses a user-provided map into the value for [onPlatform].</span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC tlaBgGNC">           6 :   static Map&lt;PlatformSelector, Metadata&gt; _parseOnPlatform(</span></span>
+<span id="L77"><span class="lineNum">      77</span>              :       Map&lt;String, dynamic&gt;? onPlatform) {</span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">           6 :     if (onPlatform == null) return {};</span></span>
+<span id="L79"><span class="lineNum">      79</span>              : </span>
+<span id="L80"><span class="lineNum">      80</span> <span class="tlaUNC tlaBgUNC">           0 :     var result = &lt;PlatformSelector, Metadata&gt;{};</span></span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaUNC">           0 :     onPlatform.forEach((platform, metadata) {</span></span>
+<span id="L82"><span class="lineNum">      82</span> <span class="tlaUNC">           0 :       var selector = PlatformSelector.parse(platform);</span></span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaUNC">           0 :       if (metadata is Timeout || metadata is Skip) {</span></span>
+<span id="L84"><span class="lineNum">      84</span> <span class="tlaUNC">           0 :         result[selector] = _parsePlatformOptions(platform, [metadata]);</span></span>
+<span id="L85"><span class="lineNum">      85</span> <span class="tlaUNC">           0 :       } else if (metadata is List) {</span></span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaUNC">           0 :         result[selector] = _parsePlatformOptions(platform, metadata);</span></span>
+<span id="L87"><span class="lineNum">      87</span>              :       } else {</span>
+<span id="L88"><span class="lineNum">      88</span> <span class="tlaUNC">           0 :         throw ArgumentError('Metadata for platform &quot;$platform&quot; must be a '</span></span>
+<span id="L89"><span class="lineNum">      89</span>              :             'Timeout, Skip, or List of those; was &quot;$metadata&quot;.');</span>
+<span id="L90"><span class="lineNum">      90</span>              :       }</span>
+<span id="L91"><span class="lineNum">      91</span>              :     });</span>
+<span id="L92"><span class="lineNum">      92</span>              :     return result;</span>
+<span id="L93"><span class="lineNum">      93</span>              :   }</span>
+<span id="L94"><span class="lineNum">      94</span>              : </span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaUNC">           0 :   static Metadata _parsePlatformOptions(</span></span>
+<span id="L96"><span class="lineNum">      96</span>              :       String platform, List&lt;dynamic&gt; metadata) {</span>
+<span id="L97"><span class="lineNum">      97</span>              :     Timeout? timeout;</span>
+<span id="L98"><span class="lineNum">      98</span>              :     dynamic skip;</span>
+<span id="L99"><span class="lineNum">      99</span> <span class="tlaUNC">           0 :     for (var metadatum in metadata) {</span></span>
+<span id="L100"><span class="lineNum">     100</span> <span class="tlaUNC">           0 :       if (metadatum is Timeout) {</span></span>
+<span id="L101"><span class="lineNum">     101</span>              :         if (timeout != null) {</span>
+<span id="L102"><span class="lineNum">     102</span> <span class="tlaUNC">           0 :           throw ArgumentError('Only a single Timeout may be declared for '</span></span>
+<span id="L103"><span class="lineNum">     103</span>              :               '&quot;$platform&quot;.');</span>
+<span id="L104"><span class="lineNum">     104</span>              :         }</span>
+<span id="L105"><span class="lineNum">     105</span>              : </span>
+<span id="L106"><span class="lineNum">     106</span>              :         timeout = metadatum;</span>
+<span id="L107"><span class="lineNum">     107</span> <span class="tlaUNC">           0 :       } else if (metadatum is Skip) {</span></span>
+<span id="L108"><span class="lineNum">     108</span>              :         if (skip != null) {</span>
+<span id="L109"><span class="lineNum">     109</span> <span class="tlaUNC">           0 :           throw ArgumentError('Only a single Skip may be declared for '</span></span>
+<span id="L110"><span class="lineNum">     110</span>              :               '&quot;$platform&quot;.');</span>
+<span id="L111"><span class="lineNum">     111</span>              :         }</span>
+<span id="L112"><span class="lineNum">     112</span>              : </span>
+<span id="L113"><span class="lineNum">     113</span> <span class="tlaUNC">           0 :         skip = metadatum.reason ?? true;</span></span>
+<span id="L114"><span class="lineNum">     114</span>              :       } else {</span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaUNC">           0 :         throw ArgumentError('Metadata for platform &quot;$platform&quot; must be a '</span></span>
+<span id="L116"><span class="lineNum">     116</span>              :             'Timeout, Skip, or List of those; was &quot;$metadata&quot;.');</span>
+<span id="L117"><span class="lineNum">     117</span>              :       }</span>
+<span id="L118"><span class="lineNum">     118</span>              :     }</span>
+<span id="L119"><span class="lineNum">     119</span>              : </span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaUNC">           0 :     return Metadata.parse(timeout: timeout, skip: skip);</span></span>
+<span id="L121"><span class="lineNum">     121</span>              :   }</span>
+<span id="L122"><span class="lineNum">     122</span>              : </span>
+<span id="L123"><span class="lineNum">     123</span>              :   /// Parses a user-provided [String] or [Iterable] into the value for [tags].</span>
+<span id="L124"><span class="lineNum">     124</span>              :   ///</span>
+<span id="L125"><span class="lineNum">     125</span>              :   /// Throws an [ArgumentError] if [tags] is not a [String] or an [Iterable].</span>
+<span id="L126"><span class="lineNum">     126</span> <span class="tlaGNC tlaBgGNC">           6 :   static Set&lt;String&gt; _parseTags(Object? tags) {</span></span>
+<span id="L127"><span class="lineNum">     127</span>              :     if (tags == null) return {};</span>
+<span id="L128"><span class="lineNum">     128</span> <span class="tlaUNC tlaBgUNC">           0 :     if (tags is String) return {tags};</span></span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaUNC">           0 :     if (tags is! Iterable) {</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaUNC">           0 :       throw ArgumentError.value(</span></span>
+<span id="L131"><span class="lineNum">     131</span>              :           tags, 'tags', 'must be either a String or an Iterable.');</span>
+<span id="L132"><span class="lineNum">     132</span>              :     }</span>
+<span id="L133"><span class="lineNum">     133</span>              : </span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaUNC">           0 :     if (tags.any((tag) =&gt; tag is! String)) {</span></span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaUNC">           0 :       throw ArgumentError.value(tags, 'tags', 'must contain only Strings.');</span></span>
+<span id="L136"><span class="lineNum">     136</span>              :     }</span>
+<span id="L137"><span class="lineNum">     137</span>              : </span>
+<span id="L138"><span class="lineNum">     138</span> <span class="tlaUNC">           0 :     return Set.from(tags);</span></span>
+<span id="L139"><span class="lineNum">     139</span>              :   }</span>
+<span id="L140"><span class="lineNum">     140</span>              : </span>
+<span id="L141"><span class="lineNum">     141</span>              :   /// Creates new Metadata.</span>
+<span id="L142"><span class="lineNum">     142</span>              :   ///</span>
+<span id="L143"><span class="lineNum">     143</span>              :   /// [testOn] defaults to [PlatformSelector.all].</span>
+<span id="L144"><span class="lineNum">     144</span>              :   ///</span>
+<span id="L145"><span class="lineNum">     145</span>              :   /// If [forTag] contains metadata that applies to [tags], that metadata is</span>
+<span id="L146"><span class="lineNum">     146</span>              :   /// included inline in the returned value. The values directly passed to the</span>
+<span id="L147"><span class="lineNum">     147</span>              :   /// constructor take precedence over tag-specific metadata.</span>
+<span id="L148"><span class="lineNum">     148</span> <span class="tlaGNC tlaBgGNC">           6 :   factory Metadata(</span></span>
+<span id="L149"><span class="lineNum">     149</span>              :       {PlatformSelector? testOn,</span>
+<span id="L150"><span class="lineNum">     150</span>              :       Timeout? timeout,</span>
+<span id="L151"><span class="lineNum">     151</span>              :       bool? skip,</span>
+<span id="L152"><span class="lineNum">     152</span>              :       bool? verboseTrace,</span>
+<span id="L153"><span class="lineNum">     153</span>              :       bool? chainStackTraces,</span>
+<span id="L154"><span class="lineNum">     154</span>              :       int? retry,</span>
+<span id="L155"><span class="lineNum">     155</span>              :       String? skipReason,</span>
+<span id="L156"><span class="lineNum">     156</span>              :       Iterable&lt;String&gt;? tags,</span>
+<span id="L157"><span class="lineNum">     157</span>              :       Map&lt;PlatformSelector, Metadata&gt;? onPlatform,</span>
+<span id="L158"><span class="lineNum">     158</span>              :       Map&lt;BooleanSelector, Metadata&gt;? forTag,</span>
+<span id="L159"><span class="lineNum">     159</span>              :       String? languageVersionComment}) {</span>
+<span id="L160"><span class="lineNum">     160</span>              :     // Returns metadata without forTag resolved at all.</span>
+<span id="L161"><span class="lineNum">     161</span> <span class="tlaGNC">          12 :     Metadata unresolved() =&gt; Metadata._(</span></span>
+<span id="L162"><span class="lineNum">     162</span>              :         testOn: testOn,</span>
+<span id="L163"><span class="lineNum">     163</span>              :         timeout: timeout,</span>
+<span id="L164"><span class="lineNum">     164</span>              :         skip: skip,</span>
+<span id="L165"><span class="lineNum">     165</span>              :         verboseTrace: verboseTrace,</span>
+<span id="L166"><span class="lineNum">     166</span>              :         chainStackTraces: chainStackTraces,</span>
+<span id="L167"><span class="lineNum">     167</span>              :         retry: retry,</span>
+<span id="L168"><span class="lineNum">     168</span>              :         skipReason: skipReason,</span>
+<span id="L169"><span class="lineNum">     169</span>              :         tags: tags,</span>
+<span id="L170"><span class="lineNum">     170</span>              :         onPlatform: onPlatform,</span>
+<span id="L171"><span class="lineNum">     171</span>              :         forTag: forTag,</span>
+<span id="L172"><span class="lineNum">     172</span>              :         languageVersionComment: languageVersionComment);</span>
+<span id="L173"><span class="lineNum">     173</span>              : </span>
+<span id="L174"><span class="lineNum">     174</span>              :     // If there's no tag-specific metadata, or if none of it applies, just</span>
+<span id="L175"><span class="lineNum">     175</span>              :     // return the metadata as-is.</span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC tlaBgUNC">           0 :     if (forTag == null || tags == null) return unresolved();</span></span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC tlaBgGNC">           6 :     tags = Set.from(tags);</span></span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">           6 :     forTag = Map.from(forTag);</span></span>
+<span id="L179"><span class="lineNum">     179</span>              : </span>
+<span id="L180"><span class="lineNum">     180</span>              :     // Otherwise, resolve the tag-specific components. Doing this eagerly means</span>
+<span id="L181"><span class="lineNum">     181</span>              :     // we only have to resolve suite- or group-level tags once, rather than</span>
+<span id="L182"><span class="lineNum">     182</span>              :     // doing it for every test individually.</span>
+<span id="L183"><span class="lineNum">     183</span> <span class="tlaGNC">           6 :     var empty = Metadata._();</span></span>
+<span id="L184"><span class="lineNum">     184</span> <span class="tlaGNC">          18 :     var merged = forTag.keys.toList().fold(empty, (Metadata merged, selector) {</span></span>
+<span id="L185"><span class="lineNum">     185</span> <span class="tlaUNC tlaBgUNC">           0 :       if (!selector.evaluate(tags!.contains)) return merged;</span></span>
+<span id="L186"><span class="lineNum">     186</span> <span class="tlaUNC">           0 :       return merged.merge(forTag!.remove(selector)!);</span></span>
+<span id="L187"><span class="lineNum">     187</span>              :     });</span>
+<span id="L188"><span class="lineNum">     188</span>              : </span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC tlaBgGNC">          12 :     if (merged == empty) return unresolved();</span></span>
+<span id="L190"><span class="lineNum">     190</span> <span class="tlaUNC tlaBgUNC">           0 :     return merged.merge(unresolved());</span></span>
+<span id="L191"><span class="lineNum">     191</span>              :   }</span>
+<span id="L192"><span class="lineNum">     192</span>              : </span>
+<span id="L193"><span class="lineNum">     193</span>              :   /// Creates new Metadata.</span>
+<span id="L194"><span class="lineNum">     194</span>              :   ///</span>
+<span id="L195"><span class="lineNum">     195</span>              :   /// Unlike [Metadata], this assumes [forTag] is already resolved.</span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC tlaBgGNC">           6 :   Metadata._({</span></span>
+<span id="L197"><span class="lineNum">     197</span>              :     PlatformSelector? testOn,</span>
+<span id="L198"><span class="lineNum">     198</span>              :     Timeout? timeout,</span>
+<span id="L199"><span class="lineNum">     199</span>              :     bool? skip,</span>
+<span id="L200"><span class="lineNum">     200</span>              :     this.skipReason,</span>
+<span id="L201"><span class="lineNum">     201</span>              :     bool? verboseTrace,</span>
+<span id="L202"><span class="lineNum">     202</span>              :     bool? chainStackTraces,</span>
+<span id="L203"><span class="lineNum">     203</span>              :     int? retry,</span>
+<span id="L204"><span class="lineNum">     204</span>              :     Iterable&lt;String&gt;? tags,</span>
+<span id="L205"><span class="lineNum">     205</span>              :     Map&lt;PlatformSelector, Metadata&gt;? onPlatform,</span>
+<span id="L206"><span class="lineNum">     206</span>              :     Map&lt;BooleanSelector, Metadata&gt;? forTag,</span>
+<span id="L207"><span class="lineNum">     207</span>              :     this.languageVersionComment,</span>
+<span id="L208"><span class="lineNum">     208</span>              :   })  : testOn = testOn ?? PlatformSelector.all,</span>
+<span id="L209"><span class="lineNum">     209</span>              :         timeout = timeout ?? const Timeout.factor(1),</span>
+<span id="L210"><span class="lineNum">     210</span>              :         _skip = skip,</span>
+<span id="L211"><span class="lineNum">     211</span>              :         _verboseTrace = verboseTrace,</span>
+<span id="L212"><span class="lineNum">     212</span>              :         _chainStackTraces = chainStackTraces,</span>
+<span id="L213"><span class="lineNum">     213</span>              :         _retry = retry,</span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          12 :         tags = UnmodifiableSetView(tags == null ? {} : tags.toSet()),</span></span>
+<span id="L215"><span class="lineNum">     215</span>              :         onPlatform =</span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">           6 :             onPlatform == null ? const {} : UnmodifiableMapView(onPlatform),</span></span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">           6 :         forTag = forTag == null ? const {} : UnmodifiableMapView(forTag) {</span></span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaUNC tlaBgUNC">           0 :     if (retry != null) RangeError.checkNotNegative(retry, 'retry');</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC tlaBgGNC">           6 :     _validateTags();</span></span>
+<span id="L220"><span class="lineNum">     220</span>              :   }</span>
+<span id="L221"><span class="lineNum">     221</span>              : </span>
+<span id="L222"><span class="lineNum">     222</span>              :   /// Creates a new Metadata, but with fields parsed from caller-friendly values</span>
+<span id="L223"><span class="lineNum">     223</span>              :   /// where applicable.</span>
+<span id="L224"><span class="lineNum">     224</span>              :   ///</span>
+<span id="L225"><span class="lineNum">     225</span>              :   /// Throws a [FormatException] if any field is invalid.</span>
+<span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">           6 :   Metadata.parse(</span></span>
+<span id="L227"><span class="lineNum">     227</span>              :       {String? testOn,</span>
+<span id="L228"><span class="lineNum">     228</span>              :       Timeout? timeout,</span>
+<span id="L229"><span class="lineNum">     229</span>              :       dynamic skip,</span>
+<span id="L230"><span class="lineNum">     230</span>              :       bool? verboseTrace,</span>
+<span id="L231"><span class="lineNum">     231</span>              :       bool? chainStackTraces,</span>
+<span id="L232"><span class="lineNum">     232</span>              :       int? retry,</span>
+<span id="L233"><span class="lineNum">     233</span>              :       Map&lt;String, dynamic&gt;? onPlatform,</span>
+<span id="L234"><span class="lineNum">     234</span>              :       Object? /* String|Iterable&lt;String&gt; */ tags,</span>
+<span id="L235"><span class="lineNum">     235</span>              :       this.languageVersionComment})</span>
+<span id="L236"><span class="lineNum">     236</span>              :       : testOn = testOn == null</span>
+<span id="L237"><span class="lineNum">     237</span>              :             ? PlatformSelector.all</span>
+<span id="L238"><span class="lineNum">     238</span> <span class="tlaUNC tlaBgUNC">           0 :             : PlatformSelector.parse(testOn),</span></span>
+<span id="L239"><span class="lineNum">     239</span>              :         timeout = timeout ?? const Timeout.factor(1),</span>
+<span id="L240"><span class="lineNum">     240</span> <span class="tlaUNC">           0 :         _skip = skip == null ? null : skip != false,</span></span>
+<span id="L241"><span class="lineNum">     241</span>              :         _verboseTrace = verboseTrace,</span>
+<span id="L242"><span class="lineNum">     242</span>              :         _chainStackTraces = chainStackTraces,</span>
+<span id="L243"><span class="lineNum">     243</span>              :         _retry = retry,</span>
+<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC tlaBgGNC">           6 :         skipReason = skip is String ? skip : null,</span></span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">           6 :         onPlatform = _parseOnPlatform(onPlatform),</span></span>
+<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">           6 :         tags = _parseTags(tags),</span></span>
+<span id="L247"><span class="lineNum">     247</span>              :         forTag = const {} {</span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaUNC tlaBgUNC">           0 :     if (skip != null &amp;&amp; skip is! String &amp;&amp; skip is! bool) {</span></span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaUNC">           0 :       throw ArgumentError('&quot;skip&quot; must be a String or a bool, was &quot;$skip&quot;.');</span></span>
+<span id="L250"><span class="lineNum">     250</span>              :     }</span>
+<span id="L251"><span class="lineNum">     251</span>              : </span>
+<span id="L252"><span class="lineNum">     252</span> <span class="tlaUNC">           0 :     if (retry != null) RangeError.checkNotNegative(retry, 'retry');</span></span>
+<span id="L253"><span class="lineNum">     253</span>              : </span>
+<span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC tlaBgGNC">           6 :     _validateTags();</span></span>
+<span id="L255"><span class="lineNum">     255</span>              :   }</span>
+<span id="L256"><span class="lineNum">     256</span>              : </span>
+<span id="L257"><span class="lineNum">     257</span>              :   /// Deserializes the result of [Metadata.serialize] into a new [Metadata].</span>
+<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC">           6 :   Metadata.deserialize(Map serialized)</span></span>
+<span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">           6 :       : testOn = serialized['testOn'] == null</span></span>
+<span id="L260"><span class="lineNum">     260</span>              :             ? PlatformSelector.all</span>
+<span id="L261"><span class="lineNum">     261</span> <span class="tlaUNC tlaBgUNC">           0 :             : PlatformSelector.parse(serialized['testOn'] as String),</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC tlaBgGNC">          12 :         timeout = _deserializeTimeout(serialized['timeout']),</span></span>
+<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC">           6 :         _skip = serialized['skip'] as bool?,</span></span>
+<span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">           6 :         skipReason = serialized['skipReason'] as String?,</span></span>
+<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">           6 :         _verboseTrace = serialized['verboseTrace'] as bool?,</span></span>
+<span id="L266"><span class="lineNum">     266</span> <span class="tlaGNC">           6 :         _chainStackTraces = serialized['chainStackTraces'] as bool?,</span></span>
+<span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">           6 :         _retry = (serialized['retry'] as num?)?.toInt(),</span></span>
+<span id="L268"><span class="lineNum">     268</span> <span class="tlaGNC">          12 :         tags = Set.from(serialized['tags'] as Iterable),</span></span>
+<span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">           6 :         onPlatform = {</span></span>
+<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          12 :           for (var pair in serialized['onPlatform'] as List)</span></span>
+<span id="L271"><span class="lineNum">     271</span> <span class="tlaUNC tlaBgUNC">           0 :             PlatformSelector.parse(pair.first as String):</span></span>
+<span id="L272"><span class="lineNum">     272</span> <span class="tlaUNC">           0 :                 Metadata.deserialize(pair.last as Map)</span></span>
+<span id="L273"><span class="lineNum">     273</span>              :         },</span>
+<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC tlaBgGNC">          12 :         forTag = (serialized['forTag'] as Map).map((key, nested) =&gt; MapEntry(</span></span>
+<span id="L275"><span class="lineNum">     275</span> <span class="tlaUNC tlaBgUNC">           0 :             BooleanSelector.parse(key as String),</span></span>
+<span id="L276"><span class="lineNum">     276</span> <span class="tlaUNC">           0 :             Metadata.deserialize(nested as Map))),</span></span>
+<span id="L277"><span class="lineNum">     277</span>              :         languageVersionComment =</span>
+<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC tlaBgGNC">           6 :             serialized['languageVersionComment'] as String?;</span></span>
+<span id="L279"><span class="lineNum">     279</span>              : </span>
+<span id="L280"><span class="lineNum">     280</span>              :   /// Deserializes timeout from the format returned by [_serializeTimeout].</span>
+<span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">           6 :   static Timeout _deserializeTimeout(Object? serialized) {</span></span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">           6 :     if (serialized == 'none') return Timeout.none;</span></span>
+<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">           6 :     var scaleFactor = (serialized as Map)['scaleFactor'];</span></span>
+<span id="L284"><span class="lineNum">     284</span> <span class="tlaGNC">           6 :     if (scaleFactor != null) return Timeout.factor(scaleFactor as num);</span></span>
+<span id="L285"><span class="lineNum">     285</span> <span class="tlaUNC tlaBgUNC">           0 :     return Timeout(</span></span>
+<span id="L286"><span class="lineNum">     286</span> <span class="tlaUNC">           0 :         Duration(microseconds: (serialized['duration'] as num).toInt()));</span></span>
+<span id="L287"><span class="lineNum">     287</span>              :   }</span>
+<span id="L288"><span class="lineNum">     288</span>              : </span>
+<span id="L289"><span class="lineNum">     289</span>              :   /// Throws an [ArgumentError] if any tags in [tags] aren't hyphenated</span>
+<span id="L290"><span class="lineNum">     290</span>              :   /// identifiers.</span>
+<span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC tlaBgGNC">           6 :   void _validateTags() {</span></span>
+<span id="L292"><span class="lineNum">     292</span> <span class="tlaGNC">           6 :     var invalidTags = tags</span></span>
+<span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">           6 :         .where((tag) =&gt; !tag.contains(anchoredHyphenatedIdentifier))</span></span>
+<span id="L294"><span class="lineNum">     294</span> <span class="tlaGNC">           6 :         .map((tag) =&gt; '&quot;$tag&quot;')</span></span>
+<span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">           6 :         .toList();</span></span>
+<span id="L296"><span class="lineNum">     296</span>              : </span>
+<span id="L297"><span class="lineNum">     297</span> <span class="tlaGNC">           6 :     if (invalidTags.isEmpty) return;</span></span>
+<span id="L298"><span class="lineNum">     298</span>              : </span>
+<span id="L299"><span class="lineNum">     299</span> <span class="tlaUNC tlaBgUNC">           0 :     throw ArgumentError(&quot;Invalid ${pluralize('tag', invalidTags.length)} &quot;</span></span>
+<span id="L300"><span class="lineNum">     300</span> <span class="tlaUNC">           0 :         '${toSentence(invalidTags)}. Tags must be (optionally hyphenated) '</span></span>
+<span id="L301"><span class="lineNum">     301</span>              :         'Dart identifiers.');</span>
+<span id="L302"><span class="lineNum">     302</span>              :   }</span>
+<span id="L303"><span class="lineNum">     303</span>              : </span>
+<span id="L304"><span class="lineNum">     304</span>              :   /// Throws a [FormatException] if any [PlatformSelector]s use any variables</span>
+<span id="L305"><span class="lineNum">     305</span>              :   /// that don't appear either in [validVariables] or in the set of variables</span>
+<span id="L306"><span class="lineNum">     306</span>              :   /// that are known to be valid for all selectors.</span>
+<span id="L307"><span class="lineNum">     307</span> <span class="tlaGNC tlaBgGNC">           6 :   void validatePlatformSelectors(Set&lt;String&gt; validVariables) {</span></span>
+<span id="L308"><span class="lineNum">     308</span> <span class="tlaGNC">          12 :     testOn.validate(validVariables);</span></span>
+<span id="L309"><span class="lineNum">     309</span> <span class="tlaGNC">          12 :     onPlatform.forEach((selector, metadata) {</span></span>
+<span id="L310"><span class="lineNum">     310</span> <span class="tlaUNC tlaBgUNC">           0 :       selector.validate(validVariables);</span></span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaUNC">           0 :       metadata.validatePlatformSelectors(validVariables);</span></span>
+<span id="L312"><span class="lineNum">     312</span>              :     });</span>
+<span id="L313"><span class="lineNum">     313</span>              :   }</span>
+<span id="L314"><span class="lineNum">     314</span>              : </span>
+<span id="L315"><span class="lineNum">     315</span>              :   /// Return a new [Metadata] that merges [this] with [other].</span>
+<span id="L316"><span class="lineNum">     316</span>              :   ///</span>
+<span id="L317"><span class="lineNum">     317</span>              :   /// If the two [Metadata]s have conflicting properties, [other] wins. If</span>
+<span id="L318"><span class="lineNum">     318</span>              :   /// either has a [forTag] metadata for one of the other's tags, that metadata</span>
+<span id="L319"><span class="lineNum">     319</span>              :   /// is merged as well.</span>
+<span id="L320"><span class="lineNum">     320</span> <span class="tlaGNC tlaBgGNC">          12 :   Metadata merge(Metadata other) =&gt; Metadata(</span></span>
+<span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC">          18 :       testOn: testOn.intersection(other.testOn),</span></span>
+<span id="L322"><span class="lineNum">     322</span> <span class="tlaGNC">          18 :       timeout: timeout.merge(other.timeout),</span></span>
+<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">          12 :       skip: other._skip ?? _skip,</span></span>
+<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">          12 :       skipReason: other.skipReason ?? skipReason,</span></span>
+<span id="L325"><span class="lineNum">     325</span> <span class="tlaGNC">          12 :       verboseTrace: other._verboseTrace ?? _verboseTrace,</span></span>
+<span id="L326"><span class="lineNum">     326</span> <span class="tlaGNC">          12 :       chainStackTraces: other._chainStackTraces ?? _chainStackTraces,</span></span>
+<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">          12 :       retry: other._retry ?? _retry,</span></span>
+<span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">          18 :       tags: tags.union(other.tags),</span></span>
+<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">          18 :       onPlatform: mergeMaps(onPlatform, other.onPlatform,</span></span>
+<span id="L330"><span class="lineNum">     330</span> <span class="tlaUNC tlaBgUNC">           0 :           value: (metadata1, metadata2) =&gt; metadata1.merge(metadata2)),</span></span>
+<span id="L331"><span class="lineNum">     331</span> <span class="tlaGNC tlaBgGNC">          18 :       forTag: mergeMaps(forTag, other.forTag,</span></span>
+<span id="L332"><span class="lineNum">     332</span> <span class="tlaUNC tlaBgUNC">           0 :           value: (metadata1, metadata2) =&gt; metadata1.merge(metadata2)),</span></span>
+<span id="L333"><span class="lineNum">     333</span>              :       languageVersionComment:</span>
+<span id="L334"><span class="lineNum">     334</span> <span class="tlaGNC tlaBgGNC">          12 :           other.languageVersionComment ?? languageVersionComment);</span></span>
+<span id="L335"><span class="lineNum">     335</span>              : </span>
+<span id="L336"><span class="lineNum">     336</span>              :   /// Returns a copy of [this] with the given fields changed.</span>
+<span id="L337"><span class="lineNum">     337</span> <span class="tlaUNC tlaBgUNC">           0 :   Metadata change(</span></span>
+<span id="L338"><span class="lineNum">     338</span>              :       {PlatformSelector? testOn,</span>
+<span id="L339"><span class="lineNum">     339</span>              :       Timeout? timeout,</span>
+<span id="L340"><span class="lineNum">     340</span>              :       bool? skip,</span>
+<span id="L341"><span class="lineNum">     341</span>              :       bool? verboseTrace,</span>
+<span id="L342"><span class="lineNum">     342</span>              :       bool? chainStackTraces,</span>
+<span id="L343"><span class="lineNum">     343</span>              :       int? retry,</span>
+<span id="L344"><span class="lineNum">     344</span>              :       String? skipReason,</span>
+<span id="L345"><span class="lineNum">     345</span>              :       Map&lt;PlatformSelector, Metadata&gt;? onPlatform,</span>
+<span id="L346"><span class="lineNum">     346</span>              :       Set&lt;String&gt;? tags,</span>
+<span id="L347"><span class="lineNum">     347</span>              :       Map&lt;BooleanSelector, Metadata&gt;? forTag,</span>
+<span id="L348"><span class="lineNum">     348</span>              :       String? languageVersionComment}) {</span>
+<span id="L349"><span class="lineNum">     349</span> <span class="tlaUNC">           0 :     testOn ??= this.testOn;</span></span>
+<span id="L350"><span class="lineNum">     350</span> <span class="tlaUNC">           0 :     timeout ??= this.timeout;</span></span>
+<span id="L351"><span class="lineNum">     351</span> <span class="tlaUNC">           0 :     skip ??= _skip;</span></span>
+<span id="L352"><span class="lineNum">     352</span> <span class="tlaUNC">           0 :     verboseTrace ??= _verboseTrace;</span></span>
+<span id="L353"><span class="lineNum">     353</span> <span class="tlaUNC">           0 :     chainStackTraces ??= _chainStackTraces;</span></span>
+<span id="L354"><span class="lineNum">     354</span> <span class="tlaUNC">           0 :     retry ??= _retry;</span></span>
+<span id="L355"><span class="lineNum">     355</span> <span class="tlaUNC">           0 :     skipReason ??= this.skipReason;</span></span>
+<span id="L356"><span class="lineNum">     356</span> <span class="tlaUNC">           0 :     onPlatform ??= this.onPlatform;</span></span>
+<span id="L357"><span class="lineNum">     357</span> <span class="tlaUNC">           0 :     tags ??= this.tags;</span></span>
+<span id="L358"><span class="lineNum">     358</span> <span class="tlaUNC">           0 :     forTag ??= this.forTag;</span></span>
+<span id="L359"><span class="lineNum">     359</span> <span class="tlaUNC">           0 :     languageVersionComment ??= this.languageVersionComment;</span></span>
+<span id="L360"><span class="lineNum">     360</span> <span class="tlaUNC">           0 :     return Metadata(</span></span>
+<span id="L361"><span class="lineNum">     361</span>              :         testOn: testOn,</span>
+<span id="L362"><span class="lineNum">     362</span>              :         timeout: timeout,</span>
+<span id="L363"><span class="lineNum">     363</span>              :         skip: skip,</span>
+<span id="L364"><span class="lineNum">     364</span>              :         verboseTrace: verboseTrace,</span>
+<span id="L365"><span class="lineNum">     365</span>              :         chainStackTraces: chainStackTraces,</span>
+<span id="L366"><span class="lineNum">     366</span>              :         skipReason: skipReason,</span>
+<span id="L367"><span class="lineNum">     367</span>              :         onPlatform: onPlatform,</span>
+<span id="L368"><span class="lineNum">     368</span>              :         tags: tags,</span>
+<span id="L369"><span class="lineNum">     369</span>              :         forTag: forTag,</span>
+<span id="L370"><span class="lineNum">     370</span>              :         retry: retry,</span>
+<span id="L371"><span class="lineNum">     371</span>              :         languageVersionComment: languageVersionComment);</span>
+<span id="L372"><span class="lineNum">     372</span>              :   }</span>
+<span id="L373"><span class="lineNum">     373</span>              : </span>
+<span id="L374"><span class="lineNum">     374</span>              :   /// Returns a copy of [this] with all platform-specific metadata from</span>
+<span id="L375"><span class="lineNum">     375</span>              :   /// [onPlatform] resolved.</span>
+<span id="L376"><span class="lineNum">     376</span> <span class="tlaGNC tlaBgGNC">           6 :   Metadata forPlatform(SuitePlatform platform) {</span></span>
+<span id="L377"><span class="lineNum">     377</span> <span class="tlaGNC">          12 :     if (onPlatform.isEmpty) return this;</span></span>
+<span id="L378"><span class="lineNum">     378</span>              : </span>
+<span id="L379"><span class="lineNum">     379</span>              :     var metadata = this;</span>
+<span id="L380"><span class="lineNum">     380</span> <span class="tlaUNC tlaBgUNC">           0 :     onPlatform.forEach((platformSelector, platformMetadata) {</span></span>
+<span id="L381"><span class="lineNum">     381</span> <span class="tlaUNC">           0 :       if (!platformSelector.evaluate(platform)) return;</span></span>
+<span id="L382"><span class="lineNum">     382</span> <span class="tlaUNC">           0 :       metadata = metadata.merge(platformMetadata);</span></span>
+<span id="L383"><span class="lineNum">     383</span>              :     });</span>
+<span id="L384"><span class="lineNum">     384</span> <span class="tlaUNC">           0 :     return metadata.change(onPlatform: {});</span></span>
+<span id="L385"><span class="lineNum">     385</span>              :   }</span>
+<span id="L386"><span class="lineNum">     386</span>              : </span>
+<span id="L387"><span class="lineNum">     387</span>              :   /// Serializes [this] into a JSON-safe object that can be deserialized using</span>
+<span id="L388"><span class="lineNum">     388</span>              :   /// [Metadata.deserialize].</span>
+<span id="L389"><span class="lineNum">     389</span> <span class="tlaGNC tlaBgGNC">           6 :   Map&lt;String, dynamic&gt; serialize() {</span></span>
+<span id="L390"><span class="lineNum">     390</span>              :     // Make this a list to guarantee that the order is preserved.</span>
+<span id="L391"><span class="lineNum">     391</span> <span class="tlaGNC">           6 :     var serializedOnPlatform = &lt;List&lt;Object&gt;&gt;[];</span></span>
+<span id="L392"><span class="lineNum">     392</span> <span class="tlaGNC">          12 :     onPlatform.forEach((key, value) {</span></span>
+<span id="L393"><span class="lineNum">     393</span> <span class="tlaUNC tlaBgUNC">           0 :       serializedOnPlatform.add([key.toString(), value.serialize()]);</span></span>
+<span id="L394"><span class="lineNum">     394</span>              :     });</span>
+<span id="L395"><span class="lineNum">     395</span>              : </span>
+<span id="L396"><span class="lineNum">     396</span> <span class="tlaGNC tlaBgGNC">           6 :     return {</span></span>
+<span id="L397"><span class="lineNum">     397</span> <span class="tlaGNC">          12 :       'testOn': testOn == PlatformSelector.all ? null : testOn.toString(),</span></span>
+<span id="L398"><span class="lineNum">     398</span> <span class="tlaGNC">          12 :       'timeout': _serializeTimeout(timeout),</span></span>
+<span id="L399"><span class="lineNum">     399</span> <span class="tlaGNC">           6 :       'skip': _skip,</span></span>
+<span id="L400"><span class="lineNum">     400</span> <span class="tlaGNC">           6 :       'skipReason': skipReason,</span></span>
+<span id="L401"><span class="lineNum">     401</span> <span class="tlaGNC">           6 :       'verboseTrace': _verboseTrace,</span></span>
+<span id="L402"><span class="lineNum">     402</span> <span class="tlaGNC">           6 :       'chainStackTraces': _chainStackTraces,</span></span>
+<span id="L403"><span class="lineNum">     403</span> <span class="tlaGNC">           6 :       'retry': _retry,</span></span>
+<span id="L404"><span class="lineNum">     404</span> <span class="tlaGNC">          12 :       'tags': tags.toList(),</span></span>
+<span id="L405"><span class="lineNum">     405</span>              :       'onPlatform': serializedOnPlatform,</span>
+<span id="L406"><span class="lineNum">     406</span> <span class="tlaGNC">          12 :       'forTag': forTag.map((selector, metadata) =&gt;</span></span>
+<span id="L407"><span class="lineNum">     407</span> <span class="tlaUNC tlaBgUNC">           0 :           MapEntry(selector.toString(), metadata.serialize())),</span></span>
+<span id="L408"><span class="lineNum">     408</span> <span class="tlaGNC tlaBgGNC">           6 :       'languageVersionComment': languageVersionComment,</span></span>
+<span id="L409"><span class="lineNum">     409</span>              :     };</span>
+<span id="L410"><span class="lineNum">     410</span>              :   }</span>
+<span id="L411"><span class="lineNum">     411</span>              : </span>
+<span id="L412"><span class="lineNum">     412</span>              :   /// Serializes timeout into a JSON-safe object.</span>
+<span id="L413"><span class="lineNum">     413</span> <span class="tlaGNC">           6 :   dynamic _serializeTimeout(Timeout timeout) {</span></span>
+<span id="L414"><span class="lineNum">     414</span> <span class="tlaGNC">           6 :     if (timeout == Timeout.none) return 'none';</span></span>
+<span id="L415"><span class="lineNum">     415</span> <span class="tlaGNC">           6 :     return {</span></span>
+<span id="L416"><span class="lineNum">     416</span> <span class="tlaGNC">           6 :       'duration': timeout.duration?.inMicroseconds,</span></span>
+<span id="L417"><span class="lineNum">     417</span> <span class="tlaGNC">           6 :       'scaleFactor': timeout.scaleFactor</span></span>
+<span id="L418"><span class="lineNum">     418</span>              :     };</span>
+<span id="L419"><span class="lineNum">     419</span>              :   }</span>
+<span id="L420"><span class="lineNum">     420</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

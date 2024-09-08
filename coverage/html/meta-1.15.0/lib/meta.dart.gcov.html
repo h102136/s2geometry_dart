@@ -1,0 +1,866 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - meta-1.15.0/lib/meta.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory meta-1.15.0/lib">meta-1.15.0/lib</a> - meta.dart<span style="font-size: 80%;"> (source / <a href="meta.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">80.6&nbsp;%</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntry">25</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2016, the Dart project authors. Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : // ignore_for_file: library_private_types_in_public_api</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : /// Annotations that developers can use to express the intentions that otherwise</span>
+<span id="L8"><span class="lineNum">       8</span>              : /// can't be deduced by statically analyzing the source code.</span>
+<span id="L9"><span class="lineNum">       9</span>              : ///</span>
+<span id="L10"><span class="lineNum">      10</span>              : /// See also @[deprecated] and @[override] in the `dart:core` library.</span>
+<span id="L11"><span class="lineNum">      11</span>              : ///</span>
+<span id="L12"><span class="lineNum">      12</span>              : /// Annotations provide semantic information that tools can use to provide a</span>
+<span id="L13"><span class="lineNum">      13</span>              : /// better user experience. For example, an IDE might not autocomplete the name</span>
+<span id="L14"><span class="lineNum">      14</span>              : /// of a function that's been marked `@deprecated`, or it might display the</span>
+<span id="L15"><span class="lineNum">      15</span>              : /// function's name differently.</span>
+<span id="L16"><span class="lineNum">      16</span>              : ///</span>
+<span id="L17"><span class="lineNum">      17</span>              : /// For information on installing and importing this library, see the</span>
+<span id="L18"><span class="lineNum">      18</span>              : /// [meta package on pub.dev](https://pub.dev/packages/meta). To learn more</span>
+<span id="L19"><span class="lineNum">      19</span>              : /// about using annotations, check out the</span>
+<span id="L20"><span class="lineNum">      20</span>              : /// [Metadata](https://dart.dev/language/metadata) documentation.</span>
+<span id="L21"><span class="lineNum">      21</span>              : library meta;</span>
+<span id="L22"><span class="lineNum">      22</span>              : </span>
+<span id="L23"><span class="lineNum">      23</span>              : import 'meta_meta.dart';</span>
+<span id="L24"><span class="lineNum">      24</span>              : </span>
+<span id="L25"><span class="lineNum">      25</span>              : /// Used to annotate a function `f`. Indicates that `f` always throws an</span>
+<span id="L26"><span class="lineNum">      26</span>              : /// exception. Any functions that override `f`, in class inheritance, are also</span>
+<span id="L27"><span class="lineNum">      27</span>              : /// expected to conform to this contract.</span>
+<span id="L28"><span class="lineNum">      28</span>              : ///</span>
+<span id="L29"><span class="lineNum">      29</span>              : /// Tools, such as the analyzer, can use this to understand whether a block of</span>
+<span id="L30"><span class="lineNum">      30</span>              : /// code &quot;exits&quot;. For example:</span>
+<span id="L31"><span class="lineNum">      31</span>              : ///</span>
+<span id="L32"><span class="lineNum">      32</span>              : /// ```dart</span>
+<span id="L33"><span class="lineNum">      33</span>              : /// @alwaysThrows toss() { throw 'Thrown'; }</span>
+<span id="L34"><span class="lineNum">      34</span>              : ///</span>
+<span id="L35"><span class="lineNum">      35</span>              : /// int fn(bool b) {</span>
+<span id="L36"><span class="lineNum">      36</span>              : ///   if (b) {</span>
+<span id="L37"><span class="lineNum">      37</span>              : ///     return 0;</span>
+<span id="L38"><span class="lineNum">      38</span>              : ///   } else {</span>
+<span id="L39"><span class="lineNum">      39</span>              : ///     toss();</span>
+<span id="L40"><span class="lineNum">      40</span>              : ///     print(&quot;Hello.&quot;);</span>
+<span id="L41"><span class="lineNum">      41</span>              : ///   }</span>
+<span id="L42"><span class="lineNum">      42</span>              : /// }</span>
+<span id="L43"><span class="lineNum">      43</span>              : /// ```</span>
+<span id="L44"><span class="lineNum">      44</span>              : ///</span>
+<span id="L45"><span class="lineNum">      45</span>              : /// Without the annotation on `toss`, it would look as though `fn` doesn't</span>
+<span id="L46"><span class="lineNum">      46</span>              : /// always return a value. The annotation shows that `fn` does always exit. In</span>
+<span id="L47"><span class="lineNum">      47</span>              : /// addition, the annotation reveals that any statements following a call to</span>
+<span id="L48"><span class="lineNum">      48</span>              : /// `toss` (like the `print` call) are dead code.</span>
+<span id="L49"><span class="lineNum">      49</span>              : ///</span>
+<span id="L50"><span class="lineNum">      50</span>              : /// Tools, such as the analyzer, can also expect this contract to be enforced;</span>
+<span id="L51"><span class="lineNum">      51</span>              : /// that is, tools may emit warnings if a function with this annotation</span>
+<span id="L52"><span class="lineNum">      52</span>              : /// _doesn't_ always throw.</span>
+<span id="L53"><span class="lineNum">      53</span>              : ///</span>
+<span id="L54"><span class="lineNum">      54</span>              : /// **Deprecated:** This annotation is deprecated and will be</span>
+<span id="L55"><span class="lineNum">      55</span>              : /// removed in a future release of `package:meta`.</span>
+<span id="L56"><span class="lineNum">      56</span>              : /// After Dart 2.9, you can instead specify a return type of `Never`</span>
+<span id="L57"><span class="lineNum">      57</span>              : /// to indicate that a function never returns.</span>
+<span id="L58"><span class="lineNum">      58</span>              : @Deprecated(&quot;Use a return type of 'Never' instead&quot;)</span>
+<span id="L59"><span class="lineNum">      59</span>              : const _AlwaysThrows alwaysThrows = _AlwaysThrows();</span>
+<span id="L60"><span class="lineNum">      60</span>              : </span>
+<span id="L61"><span class="lineNum">      61</span>              : /// Used to annotate a parameter of an instance method that overrides another</span>
+<span id="L62"><span class="lineNum">      62</span>              : /// method.</span>
+<span id="L63"><span class="lineNum">      63</span>              : ///</span>
+<span id="L64"><span class="lineNum">      64</span>              : /// Indicates that this parameter may have a tighter type than the parameter on</span>
+<span id="L65"><span class="lineNum">      65</span>              : /// its superclass. The actual argument will be checked at runtime to ensure it</span>
+<span id="L66"><span class="lineNum">      66</span>              : /// is a subtype of the overridden parameter type.</span>
+<span id="L67"><span class="lineNum">      67</span>              : ///</span>
+<span id="L68"><span class="lineNum">      68</span>              : /// **Deprecated:** This annotation is deprecated and will be</span>
+<span id="L69"><span class="lineNum">      69</span>              : /// removed in a future release of `package:meta`.</span>
+<span id="L70"><span class="lineNum">      70</span>              : /// In Dart 2 and later, you can instead use the built-in `covariant` modifier.</span>
+<span id="L71"><span class="lineNum">      71</span>              : @Deprecated('Use the `covariant` modifier instead')</span>
+<span id="L72"><span class="lineNum">      72</span>              : const _Checked checked = _Checked();</span>
+<span id="L73"><span class="lineNum">      73</span>              : </span>
+<span id="L74"><span class="lineNum">      74</span>              : /// Used to annotate a method, getter or top-level getter or function to</span>
+<span id="L75"><span class="lineNum">      75</span>              : /// indicate that the value obtained by invoking it should not be stored in a</span>
+<span id="L76"><span class="lineNum">      76</span>              : /// field or top-level variable. The annotation can also be applied to a class</span>
+<span id="L77"><span class="lineNum">      77</span>              : /// to implicitly annotate all of the valid members of the class, or applied to</span>
+<span id="L78"><span class="lineNum">      78</span>              : /// a library to annotate all of the valid members of the library, including</span>
+<span id="L79"><span class="lineNum">      79</span>              : /// classes. If a value returned by an element marked as `doNotStore` is returned</span>
+<span id="L80"><span class="lineNum">      80</span>              : /// from a function or getter, that function or getter should be similarly</span>
+<span id="L81"><span class="lineNum">      81</span>              : /// annotated.</span>
+<span id="L82"><span class="lineNum">      82</span>              : ///</span>
+<span id="L83"><span class="lineNum">      83</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L84"><span class="lineNum">      84</span>              : ///</span>
+<span id="L85"><span class="lineNum">      85</span>              : /// * the annotation is associated with anything other than a library, class,</span>
+<span id="L86"><span class="lineNum">      86</span>              : ///   method or getter, top-level getter or function, or</span>
+<span id="L87"><span class="lineNum">      87</span>              : /// * an invocation of a member that has this annotation is returned by a method,</span>
+<span id="L88"><span class="lineNum">      88</span>              : ///   getter or function that is not similarly annotated as `doNotStore`, or</span>
+<span id="L89"><span class="lineNum">      89</span>              : /// * an invocation of a member that has this annotation is assigned to a field</span>
+<span id="L90"><span class="lineNum">      90</span>              : ///   or top-level variable.</span>
+<span id="L91"><span class="lineNum">      91</span>              : const _DoNotStore doNotStore = _DoNotStore();</span>
+<span id="L92"><span class="lineNum">      92</span>              : </span>
+<span id="L93"><span class="lineNum">      93</span>              : /// Used to annotate a method, getter or top-level getter or function that is</span>
+<span id="L94"><span class="lineNum">      94</span>              : /// not intended to be accessed in checked-in code, but might be ephemerally</span>
+<span id="L95"><span class="lineNum">      95</span>              : /// used during development or local testing.</span>
+<span id="L96"><span class="lineNum">      96</span>              : ///</span>
+<span id="L97"><span class="lineNum">      97</span>              : /// The intention of this annotation is to signify an API is available for</span>
+<span id="L98"><span class="lineNum">      98</span>              : /// temporary or ephemeral use (such as debugging or local testing), but should</span>
+<span id="L99"><span class="lineNum">      99</span>              : /// be removed before the code is submitted or merged into a tested branch of</span>
+<span id="L100"><span class="lineNum">     100</span>              : /// the repository (e.g. `main` or similar).</span>
+<span id="L101"><span class="lineNum">     101</span>              : ///</span>
+<span id="L102"><span class="lineNum">     102</span>              : /// For example:</span>
+<span id="L103"><span class="lineNum">     103</span>              : ///</span>
+<span id="L104"><span class="lineNum">     104</span>              : /// ```dart</span>
+<span id="L105"><span class="lineNum">     105</span>              : /// void test(</span>
+<span id="L106"><span class="lineNum">     106</span>              : ///   String name,</span>
+<span id="L107"><span class="lineNum">     107</span>              : ///   void Function() testFunction, {</span>
+<span id="L108"><span class="lineNum">     108</span>              : ///   @doNotSubmit bool skip = false,</span>
+<span id="L109"><span class="lineNum">     109</span>              : /// }) { /* ... */ }</span>
+<span id="L110"><span class="lineNum">     110</span>              : ///</span>
+<span id="L111"><span class="lineNum">     111</span>              : /// void main() {</span>
+<span id="L112"><span class="lineNum">     112</span>              : ///   // OK.</span>
+<span id="L113"><span class="lineNum">     113</span>              : ///   test('foo', () =&gt; print('foo'));</span>
+<span id="L114"><span class="lineNum">     114</span>              : ///</span>
+<span id="L115"><span class="lineNum">     115</span>              : ///   // HINT: Remove before submitting.</span>
+<span id="L116"><span class="lineNum">     116</span>              : ///   test('bar', () =&gt; print('bar'), skip: true);</span>
+<span id="L117"><span class="lineNum">     117</span>              : /// }</span>
+<span id="L118"><span class="lineNum">     118</span>              : /// ```</span>
+<span id="L119"><span class="lineNum">     119</span>              : ///</span>
+<span id="L120"><span class="lineNum">     120</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L121"><span class="lineNum">     121</span>              : ///</span>
+<span id="L122"><span class="lineNum">     122</span>              : /// * a declaration that has this annotation is referenced anywhere, including</span>
+<span id="L123"><span class="lineNum">     123</span>              : ///   the library in which it is declared, in checked-in code. Exceptions are</span>
+<span id="L124"><span class="lineNum">     124</span>              : ///   being referenced by a declaration that is also annotated with</span>
+<span id="L125"><span class="lineNum">     125</span>              : ///   `@doNotSubmit` _or_ referencing a parameter that is annotated with</span>
+<span id="L126"><span class="lineNum">     126</span>              : ///   `@doNotSubmit` in the same method or function.</span>
+<span id="L127"><span class="lineNum">     127</span>              : const _DoNotSubmit doNotSubmit = _DoNotSubmit();</span>
+<span id="L128"><span class="lineNum">     128</span>              : </span>
+<span id="L129"><span class="lineNum">     129</span>              : /// Used to annotate a library, or any declaration that is part of the public</span>
+<span id="L130"><span class="lineNum">     130</span>              : /// interface of a library (such as top-level members, class members, and</span>
+<span id="L131"><span class="lineNum">     131</span>              : /// function parameters) to indicate that the annotated API is experimental and</span>
+<span id="L132"><span class="lineNum">     132</span>              : /// may be removed or changed at any-time without updating the version of the</span>
+<span id="L133"><span class="lineNum">     133</span>              : /// containing package, despite the fact that it would otherwise be a breaking</span>
+<span id="L134"><span class="lineNum">     134</span>              : /// change.</span>
+<span id="L135"><span class="lineNum">     135</span>              : ///</span>
+<span id="L136"><span class="lineNum">     136</span>              : /// If the annotation is applied to a library then it is equivalent to applying</span>
+<span id="L137"><span class="lineNum">     137</span>              : /// the annotation to all of the top-level members of the library. Applying the</span>
+<span id="L138"><span class="lineNum">     138</span>              : /// annotation to a class does *not* apply the annotation to subclasses, but</span>
+<span id="L139"><span class="lineNum">     139</span>              : /// does apply the annotation to members of the class.</span>
+<span id="L140"><span class="lineNum">     140</span>              : ///</span>
+<span id="L141"><span class="lineNum">     141</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L142"><span class="lineNum">     142</span>              : ///</span>
+<span id="L143"><span class="lineNum">     143</span>              : /// * the annotation is associated with a declaration that is not part of the</span>
+<span id="L144"><span class="lineNum">     144</span>              : ///   public interface of a library (such as a local variable or a declaration</span>
+<span id="L145"><span class="lineNum">     145</span>              : ///   that is private) or a directive other than the first directive in the</span>
+<span id="L146"><span class="lineNum">     146</span>              : ///   library, or</span>
+<span id="L147"><span class="lineNum">     147</span>              : /// * the declaration is referenced by a package that has not explicitly</span>
+<span id="L148"><span class="lineNum">     148</span>              : ///   indicated its intention to use experimental APIs (details TBD).</span>
+<span id="L149"><span class="lineNum">     149</span>              : const _Experimental experimental = _Experimental();</span>
+<span id="L150"><span class="lineNum">     150</span>              : </span>
+<span id="L151"><span class="lineNum">     151</span>              : /// Used to annotate an instance or static method `m`. Indicates that `m` must</span>
+<span id="L152"><span class="lineNum">     152</span>              : /// either be abstract or must return a newly allocated object or `null`. In</span>
+<span id="L153"><span class="lineNum">     153</span>              : /// addition, every method that either implements or overrides `m` is implicitly</span>
+<span id="L154"><span class="lineNum">     154</span>              : /// annotated with this same annotation.</span>
+<span id="L155"><span class="lineNum">     155</span>              : ///</span>
+<span id="L156"><span class="lineNum">     156</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L157"><span class="lineNum">     157</span>              : ///</span>
+<span id="L158"><span class="lineNum">     158</span>              : /// * the annotation is associated with anything other than a method, or</span>
+<span id="L159"><span class="lineNum">     159</span>              : /// * a method that has this annotation can return anything other than a newly</span>
+<span id="L160"><span class="lineNum">     160</span>              : ///   allocated object or `null`.</span>
+<span id="L161"><span class="lineNum">     161</span>              : const _Factory factory = _Factory();</span>
+<span id="L162"><span class="lineNum">     162</span>              : </span>
+<span id="L163"><span class="lineNum">     163</span>              : /// Used to annotate a class `C`. Indicates that `C` and all subtypes of `C`</span>
+<span id="L164"><span class="lineNum">     164</span>              : /// must be immutable.</span>
+<span id="L165"><span class="lineNum">     165</span>              : ///</span>
+<span id="L166"><span class="lineNum">     166</span>              : /// A class is immutable if all of the instance fields of the class, whether</span>
+<span id="L167"><span class="lineNum">     167</span>              : /// defined directly or inherited, are `final`.</span>
+<span id="L168"><span class="lineNum">     168</span>              : ///</span>
+<span id="L169"><span class="lineNum">     169</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L170"><span class="lineNum">     170</span>              : ///</span>
+<span id="L171"><span class="lineNum">     171</span>              : /// * the annotation is associated with anything other than a class, or</span>
+<span id="L172"><span class="lineNum">     172</span>              : /// * a class that has this annotation or extends, implements or mixes in a</span>
+<span id="L173"><span class="lineNum">     173</span>              : ///   class that has this annotation is not immutable.</span>
+<span id="L174"><span class="lineNum">     174</span>              : const Immutable immutable = Immutable();</span>
+<span id="L175"><span class="lineNum">     175</span>              : </span>
+<span id="L176"><span class="lineNum">     176</span>              : /// Used to annotate a declaration which should only be used from within the</span>
+<span id="L177"><span class="lineNum">     177</span>              : /// package in which it is declared, and which should not be exposed from said</span>
+<span id="L178"><span class="lineNum">     178</span>              : /// package's public API.</span>
+<span id="L179"><span class="lineNum">     179</span>              : ///</span>
+<span id="L180"><span class="lineNum">     180</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L181"><span class="lineNum">     181</span>              : ///</span>
+<span id="L182"><span class="lineNum">     182</span>              : /// * the declaration is declared in a package's public API, or is exposed from</span>
+<span id="L183"><span class="lineNum">     183</span>              : ///   a package's public API, or</span>
+<span id="L184"><span class="lineNum">     184</span>              : /// * the declaration is private, an unnamed extension, a static member of a</span>
+<span id="L185"><span class="lineNum">     185</span>              : ///   private class, mixin, or extension, a value of a private enum, or a</span>
+<span id="L186"><span class="lineNum">     186</span>              : ///   constructor of a private class, or</span>
+<span id="L187"><span class="lineNum">     187</span>              : /// * the declaration is referenced outside the package in which it is declared.</span>
+<span id="L188"><span class="lineNum">     188</span>              : const _Internal internal = _Internal();</span>
+<span id="L189"><span class="lineNum">     189</span>              : </span>
+<span id="L190"><span class="lineNum">     190</span>              : /// Used to annotate a test framework function that runs a single test.</span>
+<span id="L191"><span class="lineNum">     191</span>              : ///</span>
+<span id="L192"><span class="lineNum">     192</span>              : /// Tools, such as IDEs, can show invocations of such function in a file</span>
+<span id="L193"><span class="lineNum">     193</span>              : /// structure view to help the user navigating in large test files.</span>
+<span id="L194"><span class="lineNum">     194</span>              : ///</span>
+<span id="L195"><span class="lineNum">     195</span>              : /// The first parameter of the function must be the description of the test.</span>
+<span id="L196"><span class="lineNum">     196</span>              : const _IsTest isTest = _IsTest();</span>
+<span id="L197"><span class="lineNum">     197</span>              : </span>
+<span id="L198"><span class="lineNum">     198</span>              : /// Used to annotate a test framework function that runs a group of tests.</span>
+<span id="L199"><span class="lineNum">     199</span>              : ///</span>
+<span id="L200"><span class="lineNum">     200</span>              : /// Tools, such as IDEs, can show invocations of such function in a file</span>
+<span id="L201"><span class="lineNum">     201</span>              : /// structure view to help the user navigating in large test files.</span>
+<span id="L202"><span class="lineNum">     202</span>              : ///</span>
+<span id="L203"><span class="lineNum">     203</span>              : /// The first parameter of the function must be the description of the group.</span>
+<span id="L204"><span class="lineNum">     204</span>              : const _IsTestGroup isTestGroup = _IsTestGroup();</span>
+<span id="L205"><span class="lineNum">     205</span>              : </span>
+<span id="L206"><span class="lineNum">     206</span>              : /// Used to annotate a const constructor `c`. Indicates that any invocation of</span>
+<span id="L207"><span class="lineNum">     207</span>              : /// the constructor must use the keyword `const` unless one or more of the</span>
+<span id="L208"><span class="lineNum">     208</span>              : /// arguments to the constructor is not a compile-time constant.</span>
+<span id="L209"><span class="lineNum">     209</span>              : ///</span>
+<span id="L210"><span class="lineNum">     210</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L211"><span class="lineNum">     211</span>              : ///</span>
+<span id="L212"><span class="lineNum">     212</span>              : /// * the annotation is associated with anything other than a const constructor,</span>
+<span id="L213"><span class="lineNum">     213</span>              : ///   or</span>
+<span id="L214"><span class="lineNum">     214</span>              : /// * an invocation of a constructor that has this annotation is not invoked</span>
+<span id="L215"><span class="lineNum">     215</span>              : ///   using the `const` keyword unless one or more of the arguments to the</span>
+<span id="L216"><span class="lineNum">     216</span>              : ///   constructor is not a compile-time constant.</span>
+<span id="L217"><span class="lineNum">     217</span>              : const _Literal literal = _Literal();</span>
+<span id="L218"><span class="lineNum">     218</span>              : </span>
+<span id="L219"><span class="lineNum">     219</span>              : /// Used to annotate a parameter which should be constant.</span>
+<span id="L220"><span class="lineNum">     220</span>              : ///</span>
+<span id="L221"><span class="lineNum">     221</span>              : /// The Dart type system does not allow distinguishing values of constant</span>
+<span id="L222"><span class="lineNum">     222</span>              : /// expressions from other values of the same type, so a function cannot</span>
+<span id="L223"><span class="lineNum">     223</span>              : /// ask to have only constant values as arguments.</span>
+<span id="L224"><span class="lineNum">     224</span>              : /// This annotation marks a parameter as requiring a constant expression as</span>
+<span id="L225"><span class="lineNum">     225</span>              : /// argument. The analyzer can warn, or err if so configured, if a non-constant</span>
+<span id="L226"><span class="lineNum">     226</span>              : /// expression is used as argument.</span>
+<span id="L227"><span class="lineNum">     227</span>              : ///</span>
+<span id="L228"><span class="lineNum">     228</span>              : /// The annotation can be applied to any parameter, but if it is applied to a</span>
+<span id="L229"><span class="lineNum">     229</span>              : /// parameter of an instance member, subclasses overriding the member will not</span>
+<span id="L230"><span class="lineNum">     230</span>              : /// inherit the annotation. If the subclass member also wants a constant</span>
+<span id="L231"><span class="lineNum">     231</span>              : /// argument, it must annotate its own parameter as well.</span>
+<span id="L232"><span class="lineNum">     232</span>              : ///</span>
+<span id="L233"><span class="lineNum">     233</span>              : /// Notice that if an annotatated instance member overrides a superclass member</span>
+<span id="L234"><span class="lineNum">     234</span>              : /// where the same parameter is not annotated with this annotation, then a user</span>
+<span id="L235"><span class="lineNum">     235</span>              : /// can cast to the superclass and invoke with a non-constant argument without</span>
+<span id="L236"><span class="lineNum">     236</span>              : /// any warnings.</span>
+<span id="L237"><span class="lineNum">     237</span>              : ///</span>
+<span id="L238"><span class="lineNum">     238</span>              : /// An example use could be the arguments to functions annotated with</span>
+<span id="L239"><span class="lineNum">     239</span>              : /// [ResourceIdentifier], as only constant arguments can be made available</span>
+<span id="L240"><span class="lineNum">     240</span>              : /// to the post-compile steps.</span>
+<span id="L241"><span class="lineNum">     241</span>              : ///</span>
+<span id="L242"><span class="lineNum">     242</span>              : /// ```dart</span>
+<span id="L243"><span class="lineNum">     243</span>              : /// import 'package:meta/meta.dart' show mustBeConst;</span>
+<span id="L244"><span class="lineNum">     244</span>              : ///</span>
+<span id="L245"><span class="lineNum">     245</span>              : /// void main() {</span>
+<span id="L246"><span class="lineNum">     246</span>              : ///   f();</span>
+<span id="L247"><span class="lineNum">     247</span>              : ///   A().i = 3;</span>
+<span id="L248"><span class="lineNum">     248</span>              : /// }</span>
+<span id="L249"><span class="lineNum">     249</span>              : ///</span>
+<span id="L250"><span class="lineNum">     250</span>              : /// const v = 3;</span>
+<span id="L251"><span class="lineNum">     251</span>              : ///</span>
+<span id="L252"><span class="lineNum">     252</span>              : /// int f() =&gt; g(v);</span>
+<span id="L253"><span class="lineNum">     253</span>              : ///</span>
+<span id="L254"><span class="lineNum">     254</span>              : /// int g(@mustBeConst int value) =&gt; value + 1;</span>
+<span id="L255"><span class="lineNum">     255</span>              : ///</span>
+<span id="L256"><span class="lineNum">     256</span>              : /// class A {</span>
+<span id="L257"><span class="lineNum">     257</span>              : ///   int? _i;</span>
+<span id="L258"><span class="lineNum">     258</span>              : ///</span>
+<span id="L259"><span class="lineNum">     259</span>              : ///   int? get i =&gt; _i;</span>
+<span id="L260"><span class="lineNum">     260</span>              : ///</span>
+<span id="L261"><span class="lineNum">     261</span>              : ///   set i(@mustBeConst int? value) {</span>
+<span id="L262"><span class="lineNum">     262</span>              : ///     _i = value;</span>
+<span id="L263"><span class="lineNum">     263</span>              : ///   }</span>
+<span id="L264"><span class="lineNum">     264</span>              : /// }</span>
+<span id="L265"><span class="lineNum">     265</span>              : /// ```</span>
+<span id="L266"><span class="lineNum">     266</span>              : @experimental</span>
+<span id="L267"><span class="lineNum">     267</span>              : const _MustBeConst mustBeConst = _MustBeConst();</span>
+<span id="L268"><span class="lineNum">     268</span>              : </span>
+<span id="L269"><span class="lineNum">     269</span>              : /// Used to annotate an instance member `m` declared on a class or mixin `C`.</span>
+<span id="L270"><span class="lineNum">     270</span>              : /// Indicates that every concrete subclass of `C` must directly override `m`.</span>
+<span id="L271"><span class="lineNum">     271</span>              : ///</span>
+<span id="L272"><span class="lineNum">     272</span>              : /// The intention of this annotation is to &quot;re-abtract&quot; a member that was</span>
+<span id="L273"><span class="lineNum">     273</span>              : /// previously concrete, and to ensure that subclasses provide their own</span>
+<span id="L274"><span class="lineNum">     274</span>              : /// implementation of the member. For example:</span>
+<span id="L275"><span class="lineNum">     275</span>              : ///</span>
+<span id="L276"><span class="lineNum">     276</span>              : /// ```dart</span>
+<span id="L277"><span class="lineNum">     277</span>              : /// base class Entity {</span>
+<span id="L278"><span class="lineNum">     278</span>              : ///   @mustBeOverridden</span>
+<span id="L279"><span class="lineNum">     279</span>              : ///   String toString();</span>
+<span id="L280"><span class="lineNum">     280</span>              : /// }</span>
+<span id="L281"><span class="lineNum">     281</span>              : ///</span>
+<span id="L282"><span class="lineNum">     282</span>              : /// abstract class AbstractEntity extends Entity {</span>
+<span id="L283"><span class="lineNum">     283</span>              : ///   // OK: AbstractEntity is abstract.</span>
+<span id="L284"><span class="lineNum">     284</span>              : /// }</span>
+<span id="L285"><span class="lineNum">     285</span>              : ///</span>
+<span id="L286"><span class="lineNum">     286</span>              : /// sealed class SealedEntity extends Entity {</span>
+<span id="L287"><span class="lineNum">     287</span>              : ///   // OK: SealedEntity is sealed, which implies abstract.</span>
+<span id="L288"><span class="lineNum">     288</span>              : /// }</span>
+<span id="L289"><span class="lineNum">     289</span>              : ///</span>
+<span id="L290"><span class="lineNum">     290</span>              : /// mixin MixinEntity on Entity {</span>
+<span id="L291"><span class="lineNum">     291</span>              : ///  // OK: MixinEntity is abstract.</span>
+<span id="L292"><span class="lineNum">     292</span>              : /// }</span>
+<span id="L293"><span class="lineNum">     293</span>              : ///</span>
+<span id="L294"><span class="lineNum">     294</span>              : /// class Person extends Entity {</span>
+<span id="L295"><span class="lineNum">     295</span>              : ///   // ERROR: Missing new implementation of 'toString'.</span>
+<span id="L296"><span class="lineNum">     296</span>              : /// }</span>
+<span id="L297"><span class="lineNum">     297</span>              : ///</span>
+<span id="L298"><span class="lineNum">     298</span>              : /// class Animal extends Entity {</span>
+<span id="L299"><span class="lineNum">     299</span>              : ///   // OK: Animal provides its own implementation of 'toString'.</span>
+<span id="L300"><span class="lineNum">     300</span>              : ///   String toString() =&gt; 'Animal';</span>
+<span id="L301"><span class="lineNum">     301</span>              : /// }</span>
+<span id="L302"><span class="lineNum">     302</span>              : /// ```</span>
+<span id="L303"><span class="lineNum">     303</span>              : ///</span>
+<span id="L304"><span class="lineNum">     304</span>              : /// This annotation places no restrictions on the overriding members. In</span>
+<span id="L305"><span class="lineNum">     305</span>              : /// particular, it does not require that the overriding members invoke the</span>
+<span id="L306"><span class="lineNum">     306</span>              : /// overridden member. The annotation [mustCallSuper] can be used to add that</span>
+<span id="L307"><span class="lineNum">     307</span>              : /// requirement.</span>
+<span id="L308"><span class="lineNum">     308</span>              : ///</span>
+<span id="L309"><span class="lineNum">     309</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L310"><span class="lineNum">     310</span>              : ///</span>
+<span id="L311"><span class="lineNum">     311</span>              : /// * the annotation is associated with anything other than an instance member</span>
+<span id="L312"><span class="lineNum">     312</span>              : ///   (a method, operator, field, getter, or setter) of a class or of a mixin,</span>
+<span id="L313"><span class="lineNum">     313</span>              : ///   or</span>
+<span id="L314"><span class="lineNum">     314</span>              : /// * the annotation is associated with a member `m` in class or mixin `C`, and</span>
+<span id="L315"><span class="lineNum">     315</span>              : ///   there is a concrete class `D` which is a subclass of `C` (directly or</span>
+<span id="L316"><span class="lineNum">     316</span>              : ///   indirectly), and `D` does not directly declare a concrete override of `m`</span>
+<span id="L317"><span class="lineNum">     317</span>              : ///   and does not directly declare a concrete override of `noSuchMethod`.</span>
+<span id="L318"><span class="lineNum">     318</span>              : const _MustBeOverridden mustBeOverridden = _MustBeOverridden();</span>
+<span id="L319"><span class="lineNum">     319</span>              : </span>
+<span id="L320"><span class="lineNum">     320</span>              : /// Used to annotate an instance member (method, getter, setter, operator, or</span>
+<span id="L321"><span class="lineNum">     321</span>              : /// field) `m`. Indicates that every invocation of a member that overrides `m`</span>
+<span id="L322"><span class="lineNum">     322</span>              : /// must also invoke `m`. In addition, every method that overrides `m` is</span>
+<span id="L323"><span class="lineNum">     323</span>              : /// implicitly annotated with this same annotation.</span>
+<span id="L324"><span class="lineNum">     324</span>              : ///</span>
+<span id="L325"><span class="lineNum">     325</span>              : /// Note that private members with this annotation cannot be validly overridden</span>
+<span id="L326"><span class="lineNum">     326</span>              : /// outside of the library that defines the annotated member.</span>
+<span id="L327"><span class="lineNum">     327</span>              : ///</span>
+<span id="L328"><span class="lineNum">     328</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L329"><span class="lineNum">     329</span>              : ///</span>
+<span id="L330"><span class="lineNum">     330</span>              : /// * the annotation is associated with anything other than an instance member,</span>
+<span id="L331"><span class="lineNum">     331</span>              : ///   or</span>
+<span id="L332"><span class="lineNum">     332</span>              : /// * a member that overrides a member that has this annotation can return</span>
+<span id="L333"><span class="lineNum">     333</span>              : ///   without invoking the overridden member.</span>
+<span id="L334"><span class="lineNum">     334</span>              : const _MustCallSuper mustCallSuper = _MustCallSuper();</span>
+<span id="L335"><span class="lineNum">     335</span>              : </span>
+<span id="L336"><span class="lineNum">     336</span>              : /// Used to annotate an instance member (method, getter, setter, operator, or</span>
+<span id="L337"><span class="lineNum">     337</span>              : /// field) `m` in a class `C` or mixin `M`. Indicates that `m` should not be</span>
+<span id="L338"><span class="lineNum">     338</span>              : /// overridden in any classes that extend or mixin `C` or `M`.</span>
+<span id="L339"><span class="lineNum">     339</span>              : ///</span>
+<span id="L340"><span class="lineNum">     340</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L341"><span class="lineNum">     341</span>              : ///</span>
+<span id="L342"><span class="lineNum">     342</span>              : /// * the annotation is associated with anything other than an instance member,</span>
+<span id="L343"><span class="lineNum">     343</span>              : /// * the annotation is associated with an abstract member (because subclasses</span>
+<span id="L344"><span class="lineNum">     344</span>              : ///   are required to override the member),</span>
+<span id="L345"><span class="lineNum">     345</span>              : /// * the annotation is associated with an extension method,</span>
+<span id="L346"><span class="lineNum">     346</span>              : /// * the annotation is associated with a member `m` in class `C`, and there is</span>
+<span id="L347"><span class="lineNum">     347</span>              : ///   a class `D` or mixin `M`, that extends or mixes in `C`, that declares an</span>
+<span id="L348"><span class="lineNum">     348</span>              : ///   overriding member `m`.</span>
+<span id="L349"><span class="lineNum">     349</span>              : const _NonVirtual nonVirtual = _NonVirtual();</span>
+<span id="L350"><span class="lineNum">     350</span>              : </span>
+<span id="L351"><span class="lineNum">     351</span>              : /// Used to annotate a class, mixin, extension, function, method, or typedef</span>
+<span id="L352"><span class="lineNum">     352</span>              : /// declaration `C`. Indicates that any type arguments declared on `C` are to</span>
+<span id="L353"><span class="lineNum">     353</span>              : /// be treated as optional.</span>
+<span id="L354"><span class="lineNum">     354</span>              : ///</span>
+<span id="L355"><span class="lineNum">     355</span>              : /// Tools such as the analyzer and linter can use this information to suppress</span>
+<span id="L356"><span class="lineNum">     356</span>              : /// warnings that would otherwise require type arguments on `C` to be provided.</span>
+<span id="L357"><span class="lineNum">     357</span>              : const _OptionalTypeArgs optionalTypeArgs = _OptionalTypeArgs();</span>
+<span id="L358"><span class="lineNum">     358</span>              : </span>
+<span id="L359"><span class="lineNum">     359</span>              : /// Used to annotate an instance member in a class or mixin which is meant to</span>
+<span id="L360"><span class="lineNum">     360</span>              : /// be visible only within the declaring library, and to other instance members</span>
+<span id="L361"><span class="lineNum">     361</span>              : /// of the class or mixin, and their subtypes.</span>
+<span id="L362"><span class="lineNum">     362</span>              : ///</span>
+<span id="L363"><span class="lineNum">     363</span>              : /// If the annotation is on a field it applies to the getter, and setter if</span>
+<span id="L364"><span class="lineNum">     364</span>              : /// appropriate, that are induced by the field.</span>
+<span id="L365"><span class="lineNum">     365</span>              : ///</span>
+<span id="L366"><span class="lineNum">     366</span>              : /// Indicates that the annotated instance member (method, getter, setter,</span>
+<span id="L367"><span class="lineNum">     367</span>              : /// operator, or field) `m` in a class or mixin `C` should only be referenced</span>
+<span id="L368"><span class="lineNum">     368</span>              : /// in specific locations. A reference from within the library in which `C` is</span>
+<span id="L369"><span class="lineNum">     369</span>              : /// declared is valid. Additionally, a reference from within an instance member</span>
+<span id="L370"><span class="lineNum">     370</span>              : /// in `C`, or a class that extends, implements, or mixes in `C` (either</span>
+<span id="L371"><span class="lineNum">     371</span>              : /// directly or indirectly) or a mixin that uses `C` as a superclass constraint</span>
+<span id="L372"><span class="lineNum">     372</span>              : /// is valid. Additionally a reference from within an instance member in an</span>
+<span id="L373"><span class="lineNum">     373</span>              : /// extension that applies to `C` is valid.</span>
+<span id="L374"><span class="lineNum">     374</span>              : ///</span>
+<span id="L375"><span class="lineNum">     375</span>              : /// Additionally restricts the instance of `C` on which `m` is referenced: a</span>
+<span id="L376"><span class="lineNum">     376</span>              : /// reference to `m` should either be in the same library in which `C` is</span>
+<span id="L377"><span class="lineNum">     377</span>              : /// declared, or should refer to `this.m` (explicitly or implicitly), and not</span>
+<span id="L378"><span class="lineNum">     378</span>              : /// `m` on any other instance of `C`.</span>
+<span id="L379"><span class="lineNum">     379</span>              : ///</span>
+<span id="L380"><span class="lineNum">     380</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L381"><span class="lineNum">     381</span>              : ///</span>
+<span id="L382"><span class="lineNum">     382</span>              : /// * the annotation is associated with anything other than an instance member,</span>
+<span id="L383"><span class="lineNum">     383</span>              : ///   or</span>
+<span id="L384"><span class="lineNum">     384</span>              : /// * a reference to a member `m` which has this annotation, declared in a</span>
+<span id="L385"><span class="lineNum">     385</span>              : ///   class or mixin `C`, is found outside of the declaring library and outside</span>
+<span id="L386"><span class="lineNum">     386</span>              : ///   of an instance member in any class that extends, implements, or mixes in</span>
+<span id="L387"><span class="lineNum">     387</span>              : ///   `C` or any mixin that uses `C` as a superclass constraint, or</span>
+<span id="L388"><span class="lineNum">     388</span>              : /// * a reference to a member `m` which has this annotation, declared in a</span>
+<span id="L389"><span class="lineNum">     389</span>              : ///   class or mixin `C`, is found outside of the declaring library and the</span>
+<span id="L390"><span class="lineNum">     390</span>              : ///   receiver is something other than `this`.</span>
+<span id="L391"><span class="lineNum">     391</span>              : // TODO(srawlins): Add a sentence which defines &quot;referencing&quot; and explicitly</span>
+<span id="L392"><span class="lineNum">     392</span>              : // mentions tearing off, here and on the other annotations which use the word</span>
+<span id="L393"><span class="lineNum">     393</span>              : // &quot;referenced.&quot;</span>
+<span id="L394"><span class="lineNum">     394</span>              : const _Protected protected = _Protected();</span>
+<span id="L395"><span class="lineNum">     395</span>              : </span>
+<span id="L396"><span class="lineNum">     396</span>              : /// Used to annotate an instance member of an extension type that</span>
+<span id="L397"><span class="lineNum">     397</span>              : /// redeclares a member from a superinterface.</span>
+<span id="L398"><span class="lineNum">     398</span>              : ///</span>
+<span id="L399"><span class="lineNum">     399</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L400"><span class="lineNum">     400</span>              : ///</span>
+<span id="L401"><span class="lineNum">     401</span>              : /// * the annotation is associated with anything other than a valid instance</span>
+<span id="L402"><span class="lineNum">     402</span>              : ///   member of an extension type (a method, operator, getter, or setter) or</span>
+<span id="L403"><span class="lineNum">     403</span>              : /// * is applied to a member that does not redeclare a member from either the</span>
+<span id="L404"><span class="lineNum">     404</span>              : ///   extended type or a superinterface.</span>
+<span id="L405"><span class="lineNum">     405</span>              : @experimental</span>
+<span id="L406"><span class="lineNum">     406</span>              : const _Redeclare redeclare = _Redeclare();</span>
+<span id="L407"><span class="lineNum">     407</span>              : </span>
+<span id="L408"><span class="lineNum">     408</span>              : /// Annotation for intentionally loosening restrictions on subtyping that would</span>
+<span id="L409"><span class="lineNum">     409</span>              : /// otherwise cause lint warnings to be produced by the `implicit_reopen` lint.</span>
+<span id="L410"><span class="lineNum">     410</span>              : ///</span>
+<span id="L411"><span class="lineNum">     411</span>              : /// Indicates that the annotated class, mixin, or mixin class declaration</span>
+<span id="L412"><span class="lineNum">     412</span>              : /// intentionally allows subtypes outside the library to implement it, or extend</span>
+<span id="L413"><span class="lineNum">     413</span>              : /// it, or mix it in, even though it has some superinterfaces whose restrictions</span>
+<span id="L414"><span class="lineNum">     414</span>              : /// prevent inheritance.</span>
+<span id="L415"><span class="lineNum">     415</span>              : ///</span>
+<span id="L416"><span class="lineNum">     416</span>              : /// A class, mixin, or mixin class declaration prevents inheritance if:</span>
+<span id="L417"><span class="lineNum">     417</span>              : ///</span>
+<span id="L418"><span class="lineNum">     418</span>              : /// * it is marked `interface` or `final`</span>
+<span id="L419"><span class="lineNum">     419</span>              : /// * it is marked `sealed`, and is implicitly `interface` or `final`</span>
+<span id="L420"><span class="lineNum">     420</span>              : ///   based on the modifiers of its superinterfaces</span>
+<span id="L421"><span class="lineNum">     421</span>              : /// * it is an anonymous mixin application, and is implicitly `interface` or</span>
+<span id="L422"><span class="lineNum">     422</span>              : ///   `final` based on the modifiers of its superinterfaces</span>
+<span id="L423"><span class="lineNum">     423</span>              : ///</span>
+<span id="L424"><span class="lineNum">     424</span>              : /// A declaration annotated with `@reopen` will suppress warnings from the</span>
+<span id="L425"><span class="lineNum">     425</span>              : /// [`implicit_reopen`](https://dart.dev/lints/implicit_reopen) lint.</span>
+<span id="L426"><span class="lineNum">     426</span>              : /// That lint will otherwise warn when a subtype has restrictions that are</span>
+<span id="L427"><span class="lineNum">     427</span>              : /// not sufficient to enforce the restrictions declared by class modifiers on</span>
+<span id="L428"><span class="lineNum">     428</span>              : /// one or more superinterfaces.</span>
+<span id="L429"><span class="lineNum">     429</span>              : ///</span>
+<span id="L430"><span class="lineNum">     430</span>              : /// In addition, tools, such as the analyzer, can provide feedback if</span>
+<span id="L431"><span class="lineNum">     431</span>              : ///</span>
+<span id="L432"><span class="lineNum">     432</span>              : /// * The annotation is applied to anything other than a class, mixin, or mixin</span>
+<span id="L433"><span class="lineNum">     433</span>              : ///   class.</span>
+<span id="L434"><span class="lineNum">     434</span>              : /// * The annotation is applied to a class or mixin which does not require it.</span>
+<span id="L435"><span class="lineNum">     435</span>              : ///   (The intent to reopen was not satisfied.)</span>
+<span id="L436"><span class="lineNum">     436</span>              : const _Reopen reopen = _Reopen();</span>
+<span id="L437"><span class="lineNum">     437</span>              : </span>
+<span id="L438"><span class="lineNum">     438</span>              : /// Used to annotate a named parameter `p` in a method or function `f`.</span>
+<span id="L439"><span class="lineNum">     439</span>              : /// Indicates that every invocation of `f` must include an argument</span>
+<span id="L440"><span class="lineNum">     440</span>              : /// corresponding to `p`, despite the fact that `p` would otherwise be an</span>
+<span id="L441"><span class="lineNum">     441</span>              : /// optional parameter.</span>
+<span id="L442"><span class="lineNum">     442</span>              : ///</span>
+<span id="L443"><span class="lineNum">     443</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L444"><span class="lineNum">     444</span>              : ///</span>
+<span id="L445"><span class="lineNum">     445</span>              : /// * the annotation is associated with anything other than a named parameter,</span>
+<span id="L446"><span class="lineNum">     446</span>              : /// * the annotation is associated with a named parameter in a method `m1` that</span>
+<span id="L447"><span class="lineNum">     447</span>              : ///   overrides a method `m0` and `m0` defines a named parameter with the same</span>
+<span id="L448"><span class="lineNum">     448</span>              : ///   name that does not have this annotation, or</span>
+<span id="L449"><span class="lineNum">     449</span>              : /// * an invocation of a method or function does not include an argument</span>
+<span id="L450"><span class="lineNum">     450</span>              : ///   corresponding to a named parameter that has this annotation.</span>
+<span id="L451"><span class="lineNum">     451</span>              : ///</span>
+<span id="L452"><span class="lineNum">     452</span>              : /// **Deprecated:** This annotation is set to be deprecated and later</span>
+<span id="L453"><span class="lineNum">     453</span>              : /// removed in a future release of `package:meta`.</span>
+<span id="L454"><span class="lineNum">     454</span>              : /// In Dart 2.12 and later, use the built-in `required` keyword</span>
+<span id="L455"><span class="lineNum">     455</span>              : /// to mark a named parameter as required.</span>
+<span id="L456"><span class="lineNum">     456</span>              : /// To learn more about `required`, check out the documentation on</span>
+<span id="L457"><span class="lineNum">     457</span>              : /// [named parameters](https://dart.dev/language/functions#named-parameters).</span>
+<span id="L458"><span class="lineNum">     458</span>              : const Required required = Required();</span>
+<span id="L459"><span class="lineNum">     459</span>              : </span>
+<span id="L460"><span class="lineNum">     460</span>              : /// Annotation marking a class as not allowed as a super-type</span>
+<span id="L461"><span class="lineNum">     461</span>              : /// outside of the current package.</span>
+<span id="L462"><span class="lineNum">     462</span>              : ///</span>
+<span id="L463"><span class="lineNum">     463</span>              : /// Classes in the same package as the marked class may extend, implement or</span>
+<span id="L464"><span class="lineNum">     464</span>              : /// mix-in the annotated class.</span>
+<span id="L465"><span class="lineNum">     465</span>              : ///</span>
+<span id="L466"><span class="lineNum">     466</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L467"><span class="lineNum">     467</span>              : ///</span>
+<span id="L468"><span class="lineNum">     468</span>              : /// * the annotation is associated with anything other than a class,</span>
+<span id="L469"><span class="lineNum">     469</span>              : /// * the annotation is associated with a class `C`, and there is a class or</span>
+<span id="L470"><span class="lineNum">     470</span>              : ///   mixin `D`, which extends, implements, mixes in, or constrains to `C`, and</span>
+<span id="L471"><span class="lineNum">     471</span>              : ///   `C` and `D` are declared in different packages.</span>
+<span id="L472"><span class="lineNum">     472</span>              : ///</span>
+<span id="L473"><span class="lineNum">     473</span>              : /// **Note:** In Dart 3 and later, you can use built-in class modifiers to</span>
+<span id="L474"><span class="lineNum">     474</span>              : /// control what forms of subtyping are allowed outside the current library.</span>
+<span id="L475"><span class="lineNum">     475</span>              : /// To learn more about using class modifiers, check out the</span>
+<span id="L476"><span class="lineNum">     476</span>              : /// [Class modifiers](https://dart.dev/language/class-modifiers) documentation.</span>
+<span id="L477"><span class="lineNum">     477</span>              : const _Sealed sealed = _Sealed();</span>
+<span id="L478"><span class="lineNum">     478</span>              : </span>
+<span id="L479"><span class="lineNum">     479</span>              : /// Used to annotate a method, field, or getter within a class, mixin, or</span>
+<span id="L480"><span class="lineNum">     480</span>              : /// extension, or a or top-level getter, variable or function to indicate that</span>
+<span id="L481"><span class="lineNum">     481</span>              : /// the value obtained by invoking it should be used. A value is considered used</span>
+<span id="L482"><span class="lineNum">     482</span>              : /// if it is assigned to a variable, passed to a function, or used as the target</span>
+<span id="L483"><span class="lineNum">     483</span>              : /// of an invocation, or invoked (if the result is itself a function).</span>
+<span id="L484"><span class="lineNum">     484</span>              : ///</span>
+<span id="L485"><span class="lineNum">     485</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L486"><span class="lineNum">     486</span>              : ///</span>
+<span id="L487"><span class="lineNum">     487</span>              : /// * the annotation is associated with anything other than a method, field or</span>
+<span id="L488"><span class="lineNum">     488</span>              : ///   getter, top-level variable, getter or function or</span>
+<span id="L489"><span class="lineNum">     489</span>              : /// * the value obtained by a method, field, getter or top-level getter,</span>
+<span id="L490"><span class="lineNum">     490</span>              : ///   variable or function annotated with `@useResult` is not used.</span>
+<span id="L491"><span class="lineNum">     491</span>              : const UseResult useResult = UseResult();</span>
+<span id="L492"><span class="lineNum">     492</span>              : </span>
+<span id="L493"><span class="lineNum">     493</span>              : /// Used to annotate a field that is allowed to be overridden in Strong Mode.</span>
+<span id="L494"><span class="lineNum">     494</span>              : ///</span>
+<span id="L495"><span class="lineNum">     495</span>              : /// **Deprecated:** This annotation is deprecated and will be</span>
+<span id="L496"><span class="lineNum">     496</span>              : /// removed in a future release of `package:meta`.</span>
+<span id="L497"><span class="lineNum">     497</span>              : /// In Dart 2 and later, overriding fields is allowed by default,</span>
+<span id="L498"><span class="lineNum">     498</span>              : /// so this annotation no longer has any meaning.</span>
+<span id="L499"><span class="lineNum">     499</span>              : /// All uses of the annotation should be removed.</span>
+<span id="L500"><span class="lineNum">     500</span>              : @Deprecated('No longer has meaning')</span>
+<span id="L501"><span class="lineNum">     501</span>              : const _Virtual virtual = _Virtual();</span>
+<span id="L502"><span class="lineNum">     502</span>              : </span>
+<span id="L503"><span class="lineNum">     503</span>              : /// Used to annotate an instance member that was made public so that it could be</span>
+<span id="L504"><span class="lineNum">     504</span>              : /// overridden but that is not intended to be referenced from outside the</span>
+<span id="L505"><span class="lineNum">     505</span>              : /// defining library.</span>
+<span id="L506"><span class="lineNum">     506</span>              : ///</span>
+<span id="L507"><span class="lineNum">     507</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L508"><span class="lineNum">     508</span>              : ///</span>
+<span id="L509"><span class="lineNum">     509</span>              : /// * the annotation is associated with a declaration other than a public</span>
+<span id="L510"><span class="lineNum">     510</span>              : ///   instance member in a class or mixin, or</span>
+<span id="L511"><span class="lineNum">     511</span>              : /// * the member is referenced outside of the defining library.</span>
+<span id="L512"><span class="lineNum">     512</span>              : const _VisibleForOverriding visibleForOverriding = _VisibleForOverriding();</span>
+<span id="L513"><span class="lineNum">     513</span>              : </span>
+<span id="L514"><span class="lineNum">     514</span>              : /// Used to annotate a declaration that was made public, so that it is more</span>
+<span id="L515"><span class="lineNum">     515</span>              : /// visible than otherwise necessary, to make code testable.</span>
+<span id="L516"><span class="lineNum">     516</span>              : ///</span>
+<span id="L517"><span class="lineNum">     517</span>              : /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L518"><span class="lineNum">     518</span>              : ///</span>
+<span id="L519"><span class="lineNum">     519</span>              : /// * the annotation is associated with a declaration not in the `lib` folder</span>
+<span id="L520"><span class="lineNum">     520</span>              : ///   of a package, or a private declaration, or a declaration in an unnamed</span>
+<span id="L521"><span class="lineNum">     521</span>              : ///   static extension, or</span>
+<span id="L522"><span class="lineNum">     522</span>              : /// * the declaration is referenced outside of its defining library or a</span>
+<span id="L523"><span class="lineNum">     523</span>              : ///   library which is in the `test` folder of the defining package.</span>
+<span id="L524"><span class="lineNum">     524</span>              : const _VisibleForTesting visibleForTesting = _VisibleForTesting();</span>
+<span id="L525"><span class="lineNum">     525</span>              : </span>
+<span id="L526"><span class="lineNum">     526</span>              : /// Used to annotate a class.</span>
+<span id="L527"><span class="lineNum">     527</span>              : ///</span>
+<span id="L528"><span class="lineNum">     528</span>              : /// See [immutable] for more details.</span>
+<span id="L529"><span class="lineNum">     529</span>              : // TODO(srawlins): Enforce with `TargetKind.classtype`.</span>
+<span id="L530"><span class="lineNum">     530</span>              : class Immutable {</span>
+<span id="L531"><span class="lineNum">     531</span>              :   /// A human-readable explanation of the reason why the class is immutable.</span>
+<span id="L532"><span class="lineNum">     532</span>              :   final String reason;</span>
+<span id="L533"><span class="lineNum">     533</span>              : </span>
+<span id="L534"><span class="lineNum">     534</span>              :   /// Initialize a newly created instance to have the given [reason].</span>
+<span id="L535"><span class="lineNum">     535</span> <span class="tlaGNC tlaBgGNC">           6 :   const Immutable([this.reason = '']);</span></span>
+<span id="L536"><span class="lineNum">     536</span>              : }</span>
+<span id="L537"><span class="lineNum">     537</span>              : </span>
+<span id="L538"><span class="lineNum">     538</span>              : /// Used to annotate a named parameter `p` in a method or function `f`.</span>
+<span id="L539"><span class="lineNum">     539</span>              : ///</span>
+<span id="L540"><span class="lineNum">     540</span>              : /// See [required] for more details.</span>
+<span id="L541"><span class="lineNum">     541</span>              : ///</span>
+<span id="L542"><span class="lineNum">     542</span>              : /// **Deprecated:** This annotation is set to be deprecated and later</span>
+<span id="L543"><span class="lineNum">     543</span>              : /// removed in a future release of `package:meta`.</span>
+<span id="L544"><span class="lineNum">     544</span>              : /// In Dart 2.12 and later, use the built-in `required` keyword</span>
+<span id="L545"><span class="lineNum">     545</span>              : /// to mark a named parameter as required.</span>
+<span id="L546"><span class="lineNum">     546</span>              : /// To learn more about `required`, check out the documentation on</span>
+<span id="L547"><span class="lineNum">     547</span>              : /// [named parameters](https://dart.dev/language/functions#named-parameters).</span>
+<span id="L548"><span class="lineNum">     548</span>              : class Required {</span>
+<span id="L549"><span class="lineNum">     549</span>              :   /// A human-readable explanation of the reason why the annotated parameter is</span>
+<span id="L550"><span class="lineNum">     550</span>              :   /// required. For example, the annotation might look like:</span>
+<span id="L551"><span class="lineNum">     551</span>              :   ///</span>
+<span id="L552"><span class="lineNum">     552</span>              :   /// ```dart</span>
+<span id="L553"><span class="lineNum">     553</span>              :   /// ButtonWidget({</span>
+<span id="L554"><span class="lineNum">     554</span>              :   ///     Function onHover,</span>
+<span id="L555"><span class="lineNum">     555</span>              :   ///     @Required('Buttons must do something when pressed')</span>
+<span id="L556"><span class="lineNum">     556</span>              :   ///     Function onPressed,</span>
+<span id="L557"><span class="lineNum">     557</span>              :   ///     ...</span>
+<span id="L558"><span class="lineNum">     558</span>              :   /// }) ...</span>
+<span id="L559"><span class="lineNum">     559</span>              :   /// ```</span>
+<span id="L560"><span class="lineNum">     560</span>              :   final String reason;</span>
+<span id="L561"><span class="lineNum">     561</span>              : </span>
+<span id="L562"><span class="lineNum">     562</span>              :   /// Initialize a newly created instance to have the given [reason].</span>
+<span id="L563"><span class="lineNum">     563</span> <span class="tlaGNC">           6 :   const Required([this.reason = '']);</span></span>
+<span id="L564"><span class="lineNum">     564</span>              : }</span>
+<span id="L565"><span class="lineNum">     565</span>              : </span>
+<span id="L566"><span class="lineNum">     566</span>              : /// Annotates a static method as referencing a native resource.</span>
+<span id="L567"><span class="lineNum">     567</span>              : ///</span>
+<span id="L568"><span class="lineNum">     568</span>              : /// Applies to static functions, top-level functions, or extension methods.</span>
+<span id="L569"><span class="lineNum">     569</span>              : ///</span>
+<span id="L570"><span class="lineNum">     570</span>              : /// During compilation, all statically resolved calls to an annotated function</span>
+<span id="L571"><span class="lineNum">     571</span>              : /// are registered, and information about the annotated functions, the calls,</span>
+<span id="L572"><span class="lineNum">     572</span>              : /// and their arguments, is then made available to post-compile steps.</span>
+<span id="L573"><span class="lineNum">     573</span>              : // TODO(srawlins): Enforce with `TargetKind.method`.</span>
+<span id="L574"><span class="lineNum">     574</span>              : @experimental</span>
+<span id="L575"><span class="lineNum">     575</span>              : class ResourceIdentifier {</span>
+<span id="L576"><span class="lineNum">     576</span>              :   /// Information which is stored together with the function call.</span>
+<span id="L577"><span class="lineNum">     577</span>              :   ///</span>
+<span id="L578"><span class="lineNum">     578</span>              :   /// This could, for example, be the name of the package containing the</span>
+<span id="L579"><span class="lineNum">     579</span>              :   /// function annotated with this annotation. Allowed types are [bool], [int],</span>
+<span id="L580"><span class="lineNum">     580</span>              :   /// [double], and [String].</span>
+<span id="L581"><span class="lineNum">     581</span>              :   final Object? metadata;</span>
+<span id="L582"><span class="lineNum">     582</span>              : </span>
+<span id="L583"><span class="lineNum">     583</span>              :   /// Creates a [ResourceIdentifier] instance.</span>
+<span id="L584"><span class="lineNum">     584</span>              :   ///</span>
+<span id="L585"><span class="lineNum">     585</span>              :   /// This annotation can be placed as an annotation on functions whose</span>
+<span id="L586"><span class="lineNum">     586</span>              :   /// statically resolved calls should be registered together with the optional</span>
+<span id="L587"><span class="lineNum">     587</span>              :   /// [metadata] information.</span>
+<span id="L588"><span class="lineNum">     588</span> <span class="tlaUNC tlaBgUNC">           0 :   const ResourceIdentifier([this.metadata])</span></span>
+<span id="L589"><span class="lineNum">     589</span>              :       : assert(</span>
+<span id="L590"><span class="lineNum">     590</span> <span class="tlaUNC">           0 :           metadata == null ||</span></span>
+<span id="L591"><span class="lineNum">     591</span> <span class="tlaUNC">           0 :               metadata is bool ||</span></span>
+<span id="L592"><span class="lineNum">     592</span> <span class="tlaUNC">           0 :               metadata is num ||</span></span>
+<span id="L593"><span class="lineNum">     593</span> <span class="tlaUNC">           0 :               metadata is String,</span></span>
+<span id="L594"><span class="lineNum">     594</span>              :           'Valid metadata types are bool, int, double, and String.',</span>
+<span id="L595"><span class="lineNum">     595</span>              :         );</span>
+<span id="L596"><span class="lineNum">     596</span>              : }</span>
+<span id="L597"><span class="lineNum">     597</span>              : </span>
+<span id="L598"><span class="lineNum">     598</span>              : /// See [useResult] for more details.</span>
+<span id="L599"><span class="lineNum">     599</span>              : @Target({</span>
+<span id="L600"><span class="lineNum">     600</span>              :   TargetKind.constructor,</span>
+<span id="L601"><span class="lineNum">     601</span>              :   TargetKind.field,</span>
+<span id="L602"><span class="lineNum">     602</span>              :   TargetKind.function,</span>
+<span id="L603"><span class="lineNum">     603</span>              :   TargetKind.getter,</span>
+<span id="L604"><span class="lineNum">     604</span>              :   TargetKind.method,</span>
+<span id="L605"><span class="lineNum">     605</span>              :   TargetKind.topLevelVariable,</span>
+<span id="L606"><span class="lineNum">     606</span>              : })</span>
+<span id="L607"><span class="lineNum">     607</span>              : class UseResult {</span>
+<span id="L608"><span class="lineNum">     608</span>              :   /// A human-readable explanation of the reason why the value returned by</span>
+<span id="L609"><span class="lineNum">     609</span>              :   /// accessing this member should be used.</span>
+<span id="L610"><span class="lineNum">     610</span>              :   final String reason;</span>
+<span id="L611"><span class="lineNum">     611</span>              : </span>
+<span id="L612"><span class="lineNum">     612</span>              :   /// Names a parameter of a method or function that, when present, signals that</span>
+<span id="L613"><span class="lineNum">     613</span>              :   /// the annotated member's value is used by that method or function and does</span>
+<span id="L614"><span class="lineNum">     614</span>              :   /// not need to be further checked.</span>
+<span id="L615"><span class="lineNum">     615</span>              :   final String? parameterDefined;</span>
+<span id="L616"><span class="lineNum">     616</span>              : </span>
+<span id="L617"><span class="lineNum">     617</span>              :   /// Initialize a newly created instance to have the given [reason].</span>
+<span id="L618"><span class="lineNum">     618</span> <span class="tlaGNC tlaBgGNC">           6 :   const UseResult([this.reason = '']) : parameterDefined = null;</span></span>
+<span id="L619"><span class="lineNum">     619</span>              : </span>
+<span id="L620"><span class="lineNum">     620</span>              :   /// Initialize a newly created instance to annotate a function or method that</span>
+<span id="L621"><span class="lineNum">     621</span>              :   /// identifies a parameter [parameterDefined] that when present signals that</span>
+<span id="L622"><span class="lineNum">     622</span>              :   /// the result is used by the annotated member and does not need to be further</span>
+<span id="L623"><span class="lineNum">     623</span>              :   /// checked.  For values that need to be used unconditionally, use the unnamed</span>
+<span id="L624"><span class="lineNum">     624</span>              :   /// `UseResult` constructor, or if no reason is specified, the [useResult]</span>
+<span id="L625"><span class="lineNum">     625</span>              :   /// constant.</span>
+<span id="L626"><span class="lineNum">     626</span>              :   ///</span>
+<span id="L627"><span class="lineNum">     627</span>              :   /// Tools, such as the analyzer, can provide feedback if</span>
+<span id="L628"><span class="lineNum">     628</span>              :   ///</span>
+<span id="L629"><span class="lineNum">     629</span>              :   /// * a parameter named by [parameterDefined] is not declared by the annotated</span>
+<span id="L630"><span class="lineNum">     630</span>              :   ///   method or function.</span>
+<span id="L631"><span class="lineNum">     631</span> <span class="tlaUNC tlaBgUNC">           0 :   const UseResult.unless({required this.parameterDefined, this.reason = ''});</span></span>
+<span id="L632"><span class="lineNum">     632</span>              : }</span>
+<span id="L633"><span class="lineNum">     633</span>              : </span>
+<span id="L634"><span class="lineNum">     634</span>              : class _AlwaysThrows {</span>
+<span id="L635"><span class="lineNum">     635</span> <span class="tlaGNC tlaBgGNC">           6 :   const _AlwaysThrows();</span></span>
+<span id="L636"><span class="lineNum">     636</span>              : }</span>
+<span id="L637"><span class="lineNum">     637</span>              : </span>
+<span id="L638"><span class="lineNum">     638</span>              : class _Checked {</span>
+<span id="L639"><span class="lineNum">     639</span> <span class="tlaGNC">           6 :   const _Checked();</span></span>
+<span id="L640"><span class="lineNum">     640</span>              : }</span>
+<span id="L641"><span class="lineNum">     641</span>              : </span>
+<span id="L642"><span class="lineNum">     642</span>              : @Target({</span>
+<span id="L643"><span class="lineNum">     643</span>              :   TargetKind.classType,</span>
+<span id="L644"><span class="lineNum">     644</span>              :   // TODO(srawlins): Add `TargetKind.constructor` when this annotation has</span>
+<span id="L645"><span class="lineNum">     645</span>              :   // functional tests. See https://github.com/dart-lang/sdk/issues/48476.</span>
+<span id="L646"><span class="lineNum">     646</span>              :   TargetKind.function,</span>
+<span id="L647"><span class="lineNum">     647</span>              :   TargetKind.getter,</span>
+<span id="L648"><span class="lineNum">     648</span>              :   TargetKind.library,</span>
+<span id="L649"><span class="lineNum">     649</span>              :   TargetKind.method,</span>
+<span id="L650"><span class="lineNum">     650</span>              : })</span>
+<span id="L651"><span class="lineNum">     651</span>              : class _DoNotStore {</span>
+<span id="L652"><span class="lineNum">     652</span> <span class="tlaGNC">           6 :   const _DoNotStore();</span></span>
+<span id="L653"><span class="lineNum">     653</span>              : }</span>
+<span id="L654"><span class="lineNum">     654</span>              : </span>
+<span id="L655"><span class="lineNum">     655</span>              : @Target({</span>
+<span id="L656"><span class="lineNum">     656</span>              :   TargetKind.constructor,</span>
+<span id="L657"><span class="lineNum">     657</span>              :   TargetKind.function,</span>
+<span id="L658"><span class="lineNum">     658</span>              :   TargetKind.getter,</span>
+<span id="L659"><span class="lineNum">     659</span>              :   TargetKind.method,</span>
+<span id="L660"><span class="lineNum">     660</span>              :   TargetKind.parameter,</span>
+<span id="L661"><span class="lineNum">     661</span>              :   TargetKind.setter,</span>
+<span id="L662"><span class="lineNum">     662</span>              :   TargetKind.topLevelVariable,</span>
+<span id="L663"><span class="lineNum">     663</span>              : })</span>
+<span id="L664"><span class="lineNum">     664</span>              : class _DoNotSubmit {</span>
+<span id="L665"><span class="lineNum">     665</span> <span class="tlaGNC">           6 :   const _DoNotSubmit();</span></span>
+<span id="L666"><span class="lineNum">     666</span>              : }</span>
+<span id="L667"><span class="lineNum">     667</span>              : </span>
+<span id="L668"><span class="lineNum">     668</span>              : class _Experimental {</span>
+<span id="L669"><span class="lineNum">     669</span> <span class="tlaGNC">           6 :   const _Experimental();</span></span>
+<span id="L670"><span class="lineNum">     670</span>              : }</span>
+<span id="L671"><span class="lineNum">     671</span>              : </span>
+<span id="L672"><span class="lineNum">     672</span>              : // TODO(srawlins): Enforce with `TargetKind.method`.</span>
+<span id="L673"><span class="lineNum">     673</span>              : class _Factory {</span>
+<span id="L674"><span class="lineNum">     674</span> <span class="tlaGNC">           6 :   const _Factory();</span></span>
+<span id="L675"><span class="lineNum">     675</span>              : }</span>
+<span id="L676"><span class="lineNum">     676</span>              : </span>
+<span id="L677"><span class="lineNum">     677</span>              : class _Internal {</span>
+<span id="L678"><span class="lineNum">     678</span> <span class="tlaGNC">           6 :   const _Internal();</span></span>
+<span id="L679"><span class="lineNum">     679</span>              : }</span>
+<span id="L680"><span class="lineNum">     680</span>              : </span>
+<span id="L681"><span class="lineNum">     681</span>              : // TODO(srawlins): Enforce with `TargetKind.function` (and</span>
+<span id="L682"><span class="lineNum">     682</span>              : // `TargetKind.method`?).</span>
+<span id="L683"><span class="lineNum">     683</span>              : class _IsTest {</span>
+<span id="L684"><span class="lineNum">     684</span> <span class="tlaGNC">           6 :   const _IsTest();</span></span>
+<span id="L685"><span class="lineNum">     685</span>              : }</span>
+<span id="L686"><span class="lineNum">     686</span>              : </span>
+<span id="L687"><span class="lineNum">     687</span>              : // TODO(srawlins): Enforce with `TargetKind.function` (and</span>
+<span id="L688"><span class="lineNum">     688</span>              : // `TargetKind.method`?).</span>
+<span id="L689"><span class="lineNum">     689</span>              : class _IsTestGroup {</span>
+<span id="L690"><span class="lineNum">     690</span> <span class="tlaGNC">           6 :   const _IsTestGroup();</span></span>
+<span id="L691"><span class="lineNum">     691</span>              : }</span>
+<span id="L692"><span class="lineNum">     692</span>              : </span>
+<span id="L693"><span class="lineNum">     693</span>              : // TODO(srawlins): Enforce with `TargetKind.constructor`.</span>
+<span id="L694"><span class="lineNum">     694</span>              : class _Literal {</span>
+<span id="L695"><span class="lineNum">     695</span> <span class="tlaGNC">           6 :   const _Literal();</span></span>
+<span id="L696"><span class="lineNum">     696</span>              : }</span>
+<span id="L697"><span class="lineNum">     697</span>              : </span>
+<span id="L698"><span class="lineNum">     698</span>              : @Target({</span>
+<span id="L699"><span class="lineNum">     699</span>              :   TargetKind.parameter,</span>
+<span id="L700"><span class="lineNum">     700</span>              :   TargetKind.extensionType,</span>
+<span id="L701"><span class="lineNum">     701</span>              : })</span>
+<span id="L702"><span class="lineNum">     702</span>              : class _MustBeConst {</span>
+<span id="L703"><span class="lineNum">     703</span> <span class="tlaGNC">           6 :   const _MustBeConst();</span></span>
+<span id="L704"><span class="lineNum">     704</span>              : }</span>
+<span id="L705"><span class="lineNum">     705</span>              : </span>
+<span id="L706"><span class="lineNum">     706</span>              : @Target({</span>
+<span id="L707"><span class="lineNum">     707</span>              :   TargetKind.field,</span>
+<span id="L708"><span class="lineNum">     708</span>              :   TargetKind.getter,</span>
+<span id="L709"><span class="lineNum">     709</span>              :   TargetKind.method,</span>
+<span id="L710"><span class="lineNum">     710</span>              :   TargetKind.setter,</span>
+<span id="L711"><span class="lineNum">     711</span>              : })</span>
+<span id="L712"><span class="lineNum">     712</span>              : class _MustBeOverridden {</span>
+<span id="L713"><span class="lineNum">     713</span> <span class="tlaGNC">           6 :   const _MustBeOverridden();</span></span>
+<span id="L714"><span class="lineNum">     714</span>              : }</span>
+<span id="L715"><span class="lineNum">     715</span>              : </span>
+<span id="L716"><span class="lineNum">     716</span>              : @Target({</span>
+<span id="L717"><span class="lineNum">     717</span>              :   TargetKind.field,</span>
+<span id="L718"><span class="lineNum">     718</span>              :   TargetKind.getter,</span>
+<span id="L719"><span class="lineNum">     719</span>              :   TargetKind.method,</span>
+<span id="L720"><span class="lineNum">     720</span>              :   TargetKind.setter,</span>
+<span id="L721"><span class="lineNum">     721</span>              : })</span>
+<span id="L722"><span class="lineNum">     722</span>              : class _MustCallSuper {</span>
+<span id="L723"><span class="lineNum">     723</span> <span class="tlaGNC">           6 :   const _MustCallSuper();</span></span>
+<span id="L724"><span class="lineNum">     724</span>              : }</span>
+<span id="L725"><span class="lineNum">     725</span>              : </span>
+<span id="L726"><span class="lineNum">     726</span>              : // TODO(srawlins): Enforce with `TargetKind.method`, `TargetKind.getter`,</span>
+<span id="L727"><span class="lineNum">     727</span>              : // `TargetKind.setter`, `TargetKind.field`.</span>
+<span id="L728"><span class="lineNum">     728</span>              : class _NonVirtual {</span>
+<span id="L729"><span class="lineNum">     729</span> <span class="tlaGNC">           6 :   const _NonVirtual();</span></span>
+<span id="L730"><span class="lineNum">     730</span>              : }</span>
+<span id="L731"><span class="lineNum">     731</span>              : </span>
+<span id="L732"><span class="lineNum">     732</span>              : @Target({</span>
+<span id="L733"><span class="lineNum">     733</span>              :   TargetKind.classType,</span>
+<span id="L734"><span class="lineNum">     734</span>              :   TargetKind.extension,</span>
+<span id="L735"><span class="lineNum">     735</span>              :   TargetKind.extensionType,</span>
+<span id="L736"><span class="lineNum">     736</span>              :   TargetKind.function,</span>
+<span id="L737"><span class="lineNum">     737</span>              :   TargetKind.method,</span>
+<span id="L738"><span class="lineNum">     738</span>              :   TargetKind.mixinType,</span>
+<span id="L739"><span class="lineNum">     739</span>              :   TargetKind.typedefType,</span>
+<span id="L740"><span class="lineNum">     740</span>              : })</span>
+<span id="L741"><span class="lineNum">     741</span>              : class _OptionalTypeArgs {</span>
+<span id="L742"><span class="lineNum">     742</span> <span class="tlaGNC">           6 :   const _OptionalTypeArgs();</span></span>
+<span id="L743"><span class="lineNum">     743</span>              : }</span>
+<span id="L744"><span class="lineNum">     744</span>              : </span>
+<span id="L745"><span class="lineNum">     745</span>              : // TODO(srawlins): Enforce with `TargetKind.method`, `TargetKind.getter`,</span>
+<span id="L746"><span class="lineNum">     746</span>              : // `TargetKind.setter`, `TargetKind.field`.</span>
+<span id="L747"><span class="lineNum">     747</span>              : class _Protected {</span>
+<span id="L748"><span class="lineNum">     748</span> <span class="tlaGNC">           6 :   const _Protected();</span></span>
+<span id="L749"><span class="lineNum">     749</span>              : }</span>
+<span id="L750"><span class="lineNum">     750</span>              : </span>
+<span id="L751"><span class="lineNum">     751</span>              : @Target({</span>
+<span id="L752"><span class="lineNum">     752</span>              :   // TODO(pq): restrict to instance members only</span>
+<span id="L753"><span class="lineNum">     753</span>              :   TargetKind.getter,</span>
+<span id="L754"><span class="lineNum">     754</span>              :   TargetKind.setter,</span>
+<span id="L755"><span class="lineNum">     755</span>              :   TargetKind.method,</span>
+<span id="L756"><span class="lineNum">     756</span>              : })</span>
+<span id="L757"><span class="lineNum">     757</span>              : class _Redeclare {</span>
+<span id="L758"><span class="lineNum">     758</span> <span class="tlaGNC">           6 :   const _Redeclare();</span></span>
+<span id="L759"><span class="lineNum">     759</span>              : }</span>
+<span id="L760"><span class="lineNum">     760</span>              : </span>
+<span id="L761"><span class="lineNum">     761</span>              : @Target({</span>
+<span id="L762"><span class="lineNum">     762</span>              :   TargetKind.classType,</span>
+<span id="L763"><span class="lineNum">     763</span>              :   TargetKind.mixinType,</span>
+<span id="L764"><span class="lineNum">     764</span>              : })</span>
+<span id="L765"><span class="lineNum">     765</span>              : class _Reopen {</span>
+<span id="L766"><span class="lineNum">     766</span> <span class="tlaGNC">           6 :   const _Reopen();</span></span>
+<span id="L767"><span class="lineNum">     767</span>              : }</span>
+<span id="L768"><span class="lineNum">     768</span>              : </span>
+<span id="L769"><span class="lineNum">     769</span>              : class _Sealed {</span>
+<span id="L770"><span class="lineNum">     770</span> <span class="tlaGNC">           6 :   const _Sealed();</span></span>
+<span id="L771"><span class="lineNum">     771</span>              : }</span>
+<span id="L772"><span class="lineNum">     772</span>              : </span>
+<span id="L773"><span class="lineNum">     773</span>              : @Deprecated('No longer has meaning')</span>
+<span id="L774"><span class="lineNum">     774</span>              : class _Virtual {</span>
+<span id="L775"><span class="lineNum">     775</span> <span class="tlaGNC">           6 :   const _Virtual();</span></span>
+<span id="L776"><span class="lineNum">     776</span>              : }</span>
+<span id="L777"><span class="lineNum">     777</span>              : </span>
+<span id="L778"><span class="lineNum">     778</span>              : // TODO(srawlins): Enforce with `TargetKind.method`, `TargetKind.getter`,</span>
+<span id="L779"><span class="lineNum">     779</span>              : // `TargetKind.setter`, `TargetKind.field`.</span>
+<span id="L780"><span class="lineNum">     780</span>              : class _VisibleForOverriding {</span>
+<span id="L781"><span class="lineNum">     781</span> <span class="tlaGNC">           6 :   const _VisibleForOverriding();</span></span>
+<span id="L782"><span class="lineNum">     782</span>              : }</span>
+<span id="L783"><span class="lineNum">     783</span>              : </span>
+<span id="L784"><span class="lineNum">     784</span>              : // TODO(srawlins): Enforce with `TargetKind.constructor`, `TargetKind.function`,</span>
+<span id="L785"><span class="lineNum">     785</span>              : // `TargetKind.method`, `TargetKind.getter`, `TargetKind.setter`,</span>
+<span id="L786"><span class="lineNum">     786</span>              : // `TargetKind.field`, `TargetKind.parameter`, `TargetKind.typedef`,</span>
+<span id="L787"><span class="lineNum">     787</span>              : // `TargetKind.type`.</span>
+<span id="L788"><span class="lineNum">     788</span>              : class _VisibleForTesting {</span>
+<span id="L789"><span class="lineNum">     789</span> <span class="tlaGNC">           6 :   const _VisibleForTesting();</span></span>
+<span id="L790"><span class="lineNum">     790</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

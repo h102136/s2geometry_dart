@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - test_api-0.7.3/lib/hooks.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory test_api-0.7.3/lib">test_api-0.7.3/lib</a> - hooks.dart<span style="font-size: 80%;"> (source / <a href="hooks.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">21.7&nbsp;%</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">5</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2021, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : import 'package:stack_trace/stack_trace.dart';</span>
+<span id="L8"><span class="lineNum">       8</span>              : </span>
+<span id="L9"><span class="lineNum">       9</span>              : import 'src/backend/closed_exception.dart';</span>
+<span id="L10"><span class="lineNum">      10</span>              : import 'src/backend/invoker.dart';</span>
+<span id="L11"><span class="lineNum">      11</span>              : import 'src/backend/stack_trace_formatter.dart';</span>
+<span id="L12"><span class="lineNum">      12</span>              : </span>
+<span id="L13"><span class="lineNum">      13</span>              : export 'src/backend/test_failure.dart' show TestFailure;</span>
+<span id="L14"><span class="lineNum">      14</span>              : export 'src/scaffolding/utils.dart' show pumpEventQueue;</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              : final class TestHandle {</span>
+<span id="L17"><span class="lineNum">      17</span>              :   /// Returns handle for the currently running test.</span>
+<span id="L18"><span class="lineNum">      18</span>              :   ///</span>
+<span id="L19"><span class="lineNum">      19</span>              :   /// This must be called from within the zone that the test is running in. If</span>
+<span id="L20"><span class="lineNum">      20</span>              :   /// the current zone is not a test's zone throws [OutsideTestException].</span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC tlaBgGNC">           6 :   static TestHandle get current {</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           6 :     final invoker = Invoker.current;</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaUNC tlaBgUNC">           0 :     if (invoker == null) throw OutsideTestException();</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC tlaBgGNC">           6 :     return TestHandle._(</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           6 :         invoker, StackTraceFormatter.current ?? _defaultFormatter);</span></span>
+<span id="L26"><span class="lineNum">      26</span>              :   }</span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaUNC tlaBgUNC">           0 :   static final _defaultFormatter = StackTraceFormatter();</span></span>
+<span id="L29"><span class="lineNum">      29</span>              : </span>
+<span id="L30"><span class="lineNum">      30</span>              :   final Invoker _invoker;</span>
+<span id="L31"><span class="lineNum">      31</span>              :   final StackTraceFormatter _stackTraceFormatter;</span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC tlaBgGNC">           6 :   TestHandle._(this._invoker, this._stackTraceFormatter);</span></span>
+<span id="L33"><span class="lineNum">      33</span>              : </span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaUNC tlaBgUNC">           0 :   String get name =&gt; _invoker.liveTest.test.name;</span></span>
+<span id="L35"><span class="lineNum">      35</span>              : </span>
+<span id="L36"><span class="lineNum">      36</span>              :   /// Whether this test has already completed successfully.</span>
+<span id="L37"><span class="lineNum">      37</span>              :   ///</span>
+<span id="L38"><span class="lineNum">      38</span>              :   /// If a callback originating from a test case is invoked after the test has</span>
+<span id="L39"><span class="lineNum">      39</span>              :   /// already passed it may be an indication of a test that fails to wait for</span>
+<span id="L40"><span class="lineNum">      40</span>              :   /// all work to be finished, or of an asynchronous callback that is called</span>
+<span id="L41"><span class="lineNum">      41</span>              :   /// more times or later than expected.</span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaUNC">           0 :   bool get shouldBeDone =&gt; _invoker.liveTest.state.shouldBeDone;</span></span>
+<span id="L43"><span class="lineNum">      43</span>              : </span>
+<span id="L44"><span class="lineNum">      44</span>              :   /// Marks this test as skipped.</span>
+<span id="L45"><span class="lineNum">      45</span>              :   ///</span>
+<span id="L46"><span class="lineNum">      46</span>              :   /// A skipped test may still fail if any exception is thrown, including</span>
+<span id="L47"><span class="lineNum">      47</span>              :   /// uncaught asynchronous errors.</span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC">           0 :   void markSkipped(String message) {</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaUNC">           0 :     if (_invoker.closed) throw ClosedException();</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaUNC">           0 :     _invoker.skip(message);</span></span>
+<span id="L51"><span class="lineNum">      51</span>              :   }</span>
+<span id="L52"><span class="lineNum">      52</span>              : </span>
+<span id="L53"><span class="lineNum">      53</span>              :   /// Indicates that this test should not be considered done until the returned</span>
+<span id="L54"><span class="lineNum">      54</span>              :   /// [OutstandingWork] is marked as complete.</span>
+<span id="L55"><span class="lineNum">      55</span>              :   ///</span>
+<span id="L56"><span class="lineNum">      56</span>              :   /// The test may time out before the outstanding work completes.</span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaUNC">           0 :   OutstandingWork markPending() {</span></span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaUNC">           0 :     if (_invoker.closed) throw ClosedException();</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaUNC">           0 :     return OutstandingWork._(_invoker, Zone.current);</span></span>
+<span id="L60"><span class="lineNum">      60</span>              :   }</span>
+<span id="L61"><span class="lineNum">      61</span>              : </span>
+<span id="L62"><span class="lineNum">      62</span>              :   /// Converts [stackTrace] to a [Chain] according to the current test's</span>
+<span id="L63"><span class="lineNum">      63</span>              :   /// configuration.</span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaUNC">           0 :   Chain formatStackTrace(StackTrace stackTrace) =&gt;</span></span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaUNC">           0 :       _stackTraceFormatter.formatStackTrace(stackTrace);</span></span>
+<span id="L66"><span class="lineNum">      66</span>              : }</span>
+<span id="L67"><span class="lineNum">      67</span>              : </span>
+<span id="L68"><span class="lineNum">      68</span>              : final class OutstandingWork {</span>
+<span id="L69"><span class="lineNum">      69</span>              :   final Invoker _invoker;</span>
+<span id="L70"><span class="lineNum">      70</span>              :   final Zone _zone;</span>
+<span id="L71"><span class="lineNum">      71</span>              :   var _isComplete = false;</span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaUNC">           0 :   OutstandingWork._(this._invoker, this._zone) {</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaUNC">           0 :     _invoker.addOutstandingCallback();</span></span>
+<span id="L74"><span class="lineNum">      74</span>              :   }</span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaUNC">           0 :   void complete() {</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaUNC">           0 :     if (_isComplete) return;</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaUNC">           0 :     _isComplete = true;</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaUNC">           0 :     _zone.run(_invoker.removeOutstandingCallback);</span></span>
+<span id="L79"><span class="lineNum">      79</span>              :   }</span>
+<span id="L80"><span class="lineNum">      80</span>              : }</span>
+<span id="L81"><span class="lineNum">      81</span>              : </span>
+<span id="L82"><span class="lineNum">      82</span>              : final class OutsideTestException implements Exception {}</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - stream_channel-2.1.2/lib/src/guarantee_channel.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory stream_channel-2.1.2/lib/src">stream_channel-2.1.2/lib/src</a> - guarantee_channel.dart<span style="font-size: 80%;"> (source / <a href="guarantee_channel.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">38.6&nbsp;%</td>
+            <td class="headerCovTableEntry">70</td>
+            <td class="headerCovTableEntry">27</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2016, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : import 'package:async/async.dart';</span>
+<span id="L8"><span class="lineNum">       8</span>              : </span>
+<span id="L9"><span class="lineNum">       9</span>              : import '../stream_channel.dart';</span>
+<span id="L10"><span class="lineNum">      10</span>              : </span>
+<span id="L11"><span class="lineNum">      11</span>              : /// A [StreamChannel] that enforces the stream channel guarantees.</span>
+<span id="L12"><span class="lineNum">      12</span>              : ///</span>
+<span id="L13"><span class="lineNum">      13</span>              : /// This is exposed via [StreamChannel.withGuarantees].</span>
+<span id="L14"><span class="lineNum">      14</span>              : class GuaranteeChannel&lt;T&gt; extends StreamChannelMixin&lt;T&gt; {</span>
+<span id="L15"><span class="lineNum">      15</span> <span class="tlaGNC tlaBgGNC">           6 :   @override</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">          12 :   Stream&lt;T&gt; get stream =&gt; _streamController.stream;</span></span>
+<span id="L17"><span class="lineNum">      17</span>              : </span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">           6 :   @override</span></span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">           6 :   StreamSink&lt;T&gt; get sink =&gt; _sink;</span></span>
+<span id="L20"><span class="lineNum">      20</span>              :   late final _GuaranteeSink&lt;T&gt; _sink;</span>
+<span id="L21"><span class="lineNum">      21</span>              : </span>
+<span id="L22"><span class="lineNum">      22</span>              :   /// The controller for [stream].</span>
+<span id="L23"><span class="lineNum">      23</span>              :   ///</span>
+<span id="L24"><span class="lineNum">      24</span>              :   /// This intermediate controller allows us to continue listening for a done</span>
+<span id="L25"><span class="lineNum">      25</span>              :   /// event even after the user has canceled their subscription, and to send our</span>
+<span id="L26"><span class="lineNum">      26</span>              :   /// own done event when the sink is closed.</span>
+<span id="L27"><span class="lineNum">      27</span>              :   late final StreamController&lt;T&gt; _streamController;</span>
+<span id="L28"><span class="lineNum">      28</span>              : </span>
+<span id="L29"><span class="lineNum">      29</span>              :   /// The subscription to the inner stream.</span>
+<span id="L30"><span class="lineNum">      30</span>              :   StreamSubscription&lt;T&gt;? _subscription;</span>
+<span id="L31"><span class="lineNum">      31</span>              : </span>
+<span id="L32"><span class="lineNum">      32</span>              :   /// Whether the sink has closed, causing the underlying channel to disconnect.</span>
+<span id="L33"><span class="lineNum">      33</span>              :   bool _disconnected = false;</span>
+<span id="L34"><span class="lineNum">      34</span>              : </span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           6 :   GuaranteeChannel(Stream&lt;T&gt; innerStream, StreamSink&lt;T&gt; innerSink,</span></span>
+<span id="L36"><span class="lineNum">      36</span>              :       {bool allowSinkErrors = true}) {</span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          12 :     _sink = _GuaranteeSink&lt;T&gt;(innerSink, this, allowErrors: allowSinkErrors);</span></span>
+<span id="L38"><span class="lineNum">      38</span>              : </span>
+<span id="L39"><span class="lineNum">      39</span>              :     // Enforce the single-subscription guarantee by changing a broadcast stream</span>
+<span id="L40"><span class="lineNum">      40</span>              :     // to single-subscription.</span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           6 :     if (innerStream.isBroadcast) {</span></span>
+<span id="L42"><span class="lineNum">      42</span>              :       innerStream =</span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaUNC tlaBgUNC">           0 :           innerStream.transform(SingleSubscriptionTransformer&lt;T, T&gt;());</span></span>
+<span id="L44"><span class="lineNum">      44</span>              :     }</span>
+<span id="L45"><span class="lineNum">      45</span>              : </span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC tlaBgGNC">          12 :     _streamController = StreamController&lt;T&gt;(</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           6 :         onListen: () {</span></span>
+<span id="L48"><span class="lineNum">      48</span>              :           // If the sink has disconnected, we've already called</span>
+<span id="L49"><span class="lineNum">      49</span>              :           // [_streamController.close].</span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           6 :           if (_disconnected) return;</span></span>
+<span id="L51"><span class="lineNum">      51</span>              : </span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">          24 :           _subscription = innerStream.listen(_streamController.add,</span></span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">          12 :               onError: _streamController.addError, onDone: () {</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaUNC tlaBgUNC">           0 :             _sink._onStreamDisconnected();</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaUNC">           0 :             _streamController.close();</span></span>
+<span id="L56"><span class="lineNum">      56</span>              :           });</span>
+<span id="L57"><span class="lineNum">      57</span>              :         },</span>
+<span id="L58"><span class="lineNum">      58</span>              :         sync: true);</span>
+<span id="L59"><span class="lineNum">      59</span>              :   }</span>
+<span id="L60"><span class="lineNum">      60</span>              : </span>
+<span id="L61"><span class="lineNum">      61</span>              :   /// Called by [_GuaranteeSink] when the user closes it.</span>
+<span id="L62"><span class="lineNum">      62</span>              :   ///</span>
+<span id="L63"><span class="lineNum">      63</span>              :   /// The sink closing indicates that the connection is closed, so the stream</span>
+<span id="L64"><span class="lineNum">      64</span>              :   /// should stop emitting events.</span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaUNC">           0 :   void _onSinkDisconnected() {</span></span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaUNC">           0 :     _disconnected = true;</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaUNC">           0 :     var subscription = _subscription;</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaUNC">           0 :     if (subscription != null) subscription.cancel();</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaUNC">           0 :     _streamController.close();</span></span>
+<span id="L70"><span class="lineNum">      70</span>              :   }</span>
+<span id="L71"><span class="lineNum">      71</span>              : }</span>
+<span id="L72"><span class="lineNum">      72</span>              : </span>
+<span id="L73"><span class="lineNum">      73</span>              : /// The sink for [GuaranteeChannel].</span>
+<span id="L74"><span class="lineNum">      74</span>              : ///</span>
+<span id="L75"><span class="lineNum">      75</span>              : /// This wraps the inner sink to ignore events and cancel any in-progress</span>
+<span id="L76"><span class="lineNum">      76</span>              : /// [addStream] calls when the underlying channel closes.</span>
+<span id="L77"><span class="lineNum">      77</span>              : class _GuaranteeSink&lt;T&gt; implements StreamSink&lt;T&gt; {</span>
+<span id="L78"><span class="lineNum">      78</span>              :   /// The inner sink being wrapped.</span>
+<span id="L79"><span class="lineNum">      79</span>              :   final StreamSink&lt;T&gt; _inner;</span>
+<span id="L80"><span class="lineNum">      80</span>              : </span>
+<span id="L81"><span class="lineNum">      81</span>              :   /// The [GuaranteeChannel] this belongs to.</span>
+<span id="L82"><span class="lineNum">      82</span>              :   final GuaranteeChannel&lt;T&gt; _channel;</span>
+<span id="L83"><span class="lineNum">      83</span>              : </span>
+<span id="L84"><span class="lineNum">      84</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L85"><span class="lineNum">      85</span> <span class="tlaUNC">           0 :   Future&lt;void&gt; get done =&gt; _doneCompleter.future;</span></span>
+<span id="L86"><span class="lineNum">      86</span>              :   final _doneCompleter = Completer();</span>
+<span id="L87"><span class="lineNum">      87</span>              : </span>
+<span id="L88"><span class="lineNum">      88</span>              :   /// Whether connection is disconnected.</span>
+<span id="L89"><span class="lineNum">      89</span>              :   ///</span>
+<span id="L90"><span class="lineNum">      90</span>              :   /// This can happen because the stream has emitted a done event, or because</span>
+<span id="L91"><span class="lineNum">      91</span>              :   /// the user added an error when [_allowErrors] is `false`.</span>
+<span id="L92"><span class="lineNum">      92</span>              :   bool _disconnected = false;</span>
+<span id="L93"><span class="lineNum">      93</span>              : </span>
+<span id="L94"><span class="lineNum">      94</span>              :   /// Whether the user has called [close].</span>
+<span id="L95"><span class="lineNum">      95</span>              :   bool _closed = false;</span>
+<span id="L96"><span class="lineNum">      96</span>              : </span>
+<span id="L97"><span class="lineNum">      97</span>              :   /// The subscription to the stream passed to [addStream], if a stream is</span>
+<span id="L98"><span class="lineNum">      98</span>              :   /// currently being added.</span>
+<span id="L99"><span class="lineNum">      99</span>              :   StreamSubscription&lt;T&gt;? _addStreamSubscription;</span>
+<span id="L100"><span class="lineNum">     100</span>              : </span>
+<span id="L101"><span class="lineNum">     101</span>              :   /// The completer for the future returned by [addStream], if a stream is</span>
+<span id="L102"><span class="lineNum">     102</span>              :   /// currently being added.</span>
+<span id="L103"><span class="lineNum">     103</span>              :   Completer? _addStreamCompleter;</span>
+<span id="L104"><span class="lineNum">     104</span>              : </span>
+<span id="L105"><span class="lineNum">     105</span>              :   /// Whether we're currently adding a stream with [addStream].</span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaGNC tlaBgGNC">          12 :   bool get _inAddStream =&gt; _addStreamSubscription != null;</span></span>
+<span id="L107"><span class="lineNum">     107</span>              : </span>
+<span id="L108"><span class="lineNum">     108</span>              :   /// Whether errors are passed on to the underlying sink.</span>
+<span id="L109"><span class="lineNum">     109</span>              :   ///</span>
+<span id="L110"><span class="lineNum">     110</span>              :   /// If this is `false`, any error passed to the sink is piped to [done] and</span>
+<span id="L111"><span class="lineNum">     111</span>              :   /// the underlying sink is closed.</span>
+<span id="L112"><span class="lineNum">     112</span>              :   final bool _allowErrors;</span>
+<span id="L113"><span class="lineNum">     113</span>              : </span>
+<span id="L114"><span class="lineNum">     114</span> <span class="tlaGNC">           6 :   _GuaranteeSink(this._inner, this._channel, {bool allowErrors = true})</span></span>
+<span id="L115"><span class="lineNum">     115</span>              :       : _allowErrors = allowErrors;</span>
+<span id="L116"><span class="lineNum">     116</span>              : </span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">           6 :   @override</span></span>
+<span id="L118"><span class="lineNum">     118</span>              :   void add(T data) {</span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaGNC">           6 :     if (_closed) throw StateError('Cannot add event after closing.');</span></span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaGNC">           6 :     if (_inAddStream) {</span></span>
+<span id="L121"><span class="lineNum">     121</span> <span class="tlaUNC tlaBgUNC">           0 :       throw StateError('Cannot add event while adding stream.');</span></span>
+<span id="L122"><span class="lineNum">     122</span>              :     }</span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaGNC tlaBgGNC">           6 :     if (_disconnected) return;</span></span>
+<span id="L124"><span class="lineNum">     124</span>              : </span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaGNC">          12 :     _inner.add(data);</span></span>
+<span id="L126"><span class="lineNum">     126</span>              :   }</span>
+<span id="L127"><span class="lineNum">     127</span>              : </span>
+<span id="L128"><span class="lineNum">     128</span> <span class="tlaUNC tlaBgUNC">           0 :   @override</span></span>
+<span id="L129"><span class="lineNum">     129</span>              :   void addError(Object error, [StackTrace? stackTrace]) {</span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaUNC">           0 :     if (_closed) throw StateError('Cannot add event after closing.');</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaUNC">           0 :     if (_inAddStream) {</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :       throw StateError('Cannot add event while adding stream.');</span></span>
+<span id="L133"><span class="lineNum">     133</span>              :     }</span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaUNC">           0 :     if (_disconnected) return;</span></span>
+<span id="L135"><span class="lineNum">     135</span>              : </span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaUNC">           0 :     _addError(error, stackTrace);</span></span>
+<span id="L137"><span class="lineNum">     137</span>              :   }</span>
+<span id="L138"><span class="lineNum">     138</span>              : </span>
+<span id="L139"><span class="lineNum">     139</span>              :   /// Like [addError], but doesn't check to ensure that an error can be added.</span>
+<span id="L140"><span class="lineNum">     140</span>              :   ///</span>
+<span id="L141"><span class="lineNum">     141</span>              :   /// This is called from [addStream], so it shouldn't fail if a stream is being</span>
+<span id="L142"><span class="lineNum">     142</span>              :   /// added.</span>
+<span id="L143"><span class="lineNum">     143</span> <span class="tlaUNC">           0 :   void _addError(Object error, [StackTrace? stackTrace]) {</span></span>
+<span id="L144"><span class="lineNum">     144</span> <span class="tlaUNC">           0 :     if (_allowErrors) {</span></span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaUNC">           0 :       _inner.addError(error, stackTrace);</span></span>
+<span id="L146"><span class="lineNum">     146</span>              :       return;</span>
+<span id="L147"><span class="lineNum">     147</span>              :     }</span>
+<span id="L148"><span class="lineNum">     148</span>              : </span>
+<span id="L149"><span class="lineNum">     149</span> <span class="tlaUNC">           0 :     _doneCompleter.completeError(error, stackTrace);</span></span>
+<span id="L150"><span class="lineNum">     150</span>              : </span>
+<span id="L151"><span class="lineNum">     151</span>              :     // Treat an error like both the stream and sink disconnecting.</span>
+<span id="L152"><span class="lineNum">     152</span> <span class="tlaUNC">           0 :     _onStreamDisconnected();</span></span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaUNC">           0 :     _channel._onSinkDisconnected();</span></span>
+<span id="L154"><span class="lineNum">     154</span>              : </span>
+<span id="L155"><span class="lineNum">     155</span>              :     // Ignore errors from the inner sink. We're already surfacing one error, and</span>
+<span id="L156"><span class="lineNum">     156</span>              :     // if the user handles it we don't want them to have another top-level.</span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaUNC">           0 :     _inner.close().catchError((_) {});</span></span>
+<span id="L158"><span class="lineNum">     158</span>              :   }</span>
+<span id="L159"><span class="lineNum">     159</span>              : </span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC tlaBgGNC">           6 :   @override</span></span>
+<span id="L161"><span class="lineNum">     161</span>              :   Future&lt;void&gt; addStream(Stream&lt;T&gt; stream) {</span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">           6 :     if (_closed) throw StateError('Cannot add stream after closing.');</span></span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">           6 :     if (_inAddStream) {</span></span>
+<span id="L164"><span class="lineNum">     164</span> <span class="tlaUNC tlaBgUNC">           0 :       throw StateError('Cannot add stream while adding stream.');</span></span>
+<span id="L165"><span class="lineNum">     165</span>              :     }</span>
+<span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC tlaBgGNC">           6 :     if (_disconnected) return Future.value();</span></span>
+<span id="L167"><span class="lineNum">     167</span>              : </span>
+<span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          12 :     _addStreamCompleter = Completer.sync();</span></span>
+<span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          24 :     _addStreamSubscription = stream.listen(_inner.add,</span></span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC">          18 :         onError: _addError, onDone: _addStreamCompleter!.complete);</span></span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaGNC">          18 :     return _addStreamCompleter!.future.then((_) {</span></span>
+<span id="L172"><span class="lineNum">     172</span> <span class="tlaUNC tlaBgUNC">           0 :       _addStreamCompleter = null;</span></span>
+<span id="L173"><span class="lineNum">     173</span> <span class="tlaUNC">           0 :       _addStreamSubscription = null;</span></span>
+<span id="L174"><span class="lineNum">     174</span>              :     });</span>
+<span id="L175"><span class="lineNum">     175</span>              :   }</span>
+<span id="L176"><span class="lineNum">     176</span>              : </span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L178"><span class="lineNum">     178</span>              :   Future&lt;void&gt; close() {</span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaUNC">           0 :     if (_inAddStream) {</span></span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaUNC">           0 :       throw StateError('Cannot close sink while adding stream.');</span></span>
+<span id="L181"><span class="lineNum">     181</span>              :     }</span>
+<span id="L182"><span class="lineNum">     182</span>              : </span>
+<span id="L183"><span class="lineNum">     183</span> <span class="tlaUNC">           0 :     if (_closed) return done;</span></span>
+<span id="L184"><span class="lineNum">     184</span> <span class="tlaUNC">           0 :     _closed = true;</span></span>
+<span id="L185"><span class="lineNum">     185</span>              : </span>
+<span id="L186"><span class="lineNum">     186</span> <span class="tlaUNC">           0 :     if (!_disconnected) {</span></span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaUNC">           0 :       _channel._onSinkDisconnected();</span></span>
+<span id="L188"><span class="lineNum">     188</span> <span class="tlaUNC">           0 :       _doneCompleter.complete(_inner.close());</span></span>
+<span id="L189"><span class="lineNum">     189</span>              :     }</span>
+<span id="L190"><span class="lineNum">     190</span>              : </span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaUNC">           0 :     return done;</span></span>
+<span id="L192"><span class="lineNum">     192</span>              :   }</span>
+<span id="L193"><span class="lineNum">     193</span>              : </span>
+<span id="L194"><span class="lineNum">     194</span>              :   /// Called by [GuaranteeChannel] when the stream emits a done event.</span>
+<span id="L195"><span class="lineNum">     195</span>              :   ///</span>
+<span id="L196"><span class="lineNum">     196</span>              :   /// The stream being done indicates that the connection is closed, so the</span>
+<span id="L197"><span class="lineNum">     197</span>              :   /// sink should stop forwarding events.</span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaUNC">           0 :   void _onStreamDisconnected() {</span></span>
+<span id="L199"><span class="lineNum">     199</span> <span class="tlaUNC">           0 :     _disconnected = true;</span></span>
+<span id="L200"><span class="lineNum">     200</span> <span class="tlaUNC">           0 :     if (!_doneCompleter.isCompleted) _doneCompleter.complete();</span></span>
+<span id="L201"><span class="lineNum">     201</span>              : </span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaUNC">           0 :     if (!_inAddStream) return;</span></span>
+<span id="L203"><span class="lineNum">     203</span> <span class="tlaUNC">           0 :     _addStreamCompleter!.complete(_addStreamSubscription!.cancel());</span></span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaUNC">           0 :     _addStreamCompleter = null;</span></span>
+<span id="L205"><span class="lineNum">     205</span> <span class="tlaUNC">           0 :     _addStreamSubscription = null;</span></span>
+<span id="L206"><span class="lineNum">     206</span>              :   }</span>
+<span id="L207"><span class="lineNum">     207</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

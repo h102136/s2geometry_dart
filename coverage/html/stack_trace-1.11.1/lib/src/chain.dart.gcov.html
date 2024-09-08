@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - stack_trace-1.11.1/lib/src/chain.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory stack_trace-1.11.1/lib/src">stack_trace-1.11.1/lib/src</a> - chain.dart<span style="font-size: 80%;"> (source / <a href="chain.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">3.1&nbsp;%</td>
+            <td class="headerCovTableEntry">65</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : import 'dart:math' as math;</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : import 'frame.dart';</span>
+<span id="L9"><span class="lineNum">       9</span>              : import 'lazy_chain.dart';</span>
+<span id="L10"><span class="lineNum">      10</span>              : import 'stack_zone_specification.dart';</span>
+<span id="L11"><span class="lineNum">      11</span>              : import 'trace.dart';</span>
+<span id="L12"><span class="lineNum">      12</span>              : import 'utils.dart';</span>
+<span id="L13"><span class="lineNum">      13</span>              : </span>
+<span id="L14"><span class="lineNum">      14</span>              : /// A function that handles errors in the zone wrapped by [Chain.capture].</span>
+<span id="L15"><span class="lineNum">      15</span>              : @Deprecated('Will be removed in stack_trace 2.0.0.')</span>
+<span id="L16"><span class="lineNum">      16</span>              : typedef ChainHandler = void Function(dynamic error, Chain chain);</span>
+<span id="L17"><span class="lineNum">      17</span>              : </span>
+<span id="L18"><span class="lineNum">      18</span>              : /// An opaque key used to track the current [StackZoneSpecification].</span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaUNC tlaBgUNC">           0 : final _specKey = Object();</span></span>
+<span id="L20"><span class="lineNum">      20</span>              : </span>
+<span id="L21"><span class="lineNum">      21</span>              : /// A chain of stack traces.</span>
+<span id="L22"><span class="lineNum">      22</span>              : ///</span>
+<span id="L23"><span class="lineNum">      23</span>              : /// A stack chain is a collection of one or more stack traces that collectively</span>
+<span id="L24"><span class="lineNum">      24</span>              : /// represent the path from `main` through nested function calls to a particular</span>
+<span id="L25"><span class="lineNum">      25</span>              : /// code location, usually where an error was thrown. Multiple stack traces are</span>
+<span id="L26"><span class="lineNum">      26</span>              : /// necessary when using asynchronous functions, since the program's stack is</span>
+<span id="L27"><span class="lineNum">      27</span>              : /// reset before each asynchronous callback is run.</span>
+<span id="L28"><span class="lineNum">      28</span>              : ///</span>
+<span id="L29"><span class="lineNum">      29</span>              : /// Stack chains can be automatically tracked using [Chain.capture]. This sets</span>
+<span id="L30"><span class="lineNum">      30</span>              : /// up a new [Zone] in which the current stack chain is tracked and can be</span>
+<span id="L31"><span class="lineNum">      31</span>              : /// accessed using [Chain.current]. Any errors that would be top-leveled in</span>
+<span id="L32"><span class="lineNum">      32</span>              : /// the zone can be handled, along with their associated chains, with the</span>
+<span id="L33"><span class="lineNum">      33</span>              : /// `onError` callback. For example:</span>
+<span id="L34"><span class="lineNum">      34</span>              : ///</span>
+<span id="L35"><span class="lineNum">      35</span>              : ///     Chain.capture(() {</span>
+<span id="L36"><span class="lineNum">      36</span>              : ///       // ...</span>
+<span id="L37"><span class="lineNum">      37</span>              : ///     }, onError: (error, stackChain) {</span>
+<span id="L38"><span class="lineNum">      38</span>              : ///       print(&quot;Caught error $error\n&quot;</span>
+<span id="L39"><span class="lineNum">      39</span>              : ///             &quot;$stackChain&quot;);</span>
+<span id="L40"><span class="lineNum">      40</span>              : ///     });</span>
+<span id="L41"><span class="lineNum">      41</span>              : class Chain implements StackTrace {</span>
+<span id="L42"><span class="lineNum">      42</span>              :   /// The stack traces that make up this chain.</span>
+<span id="L43"><span class="lineNum">      43</span>              :   ///</span>
+<span id="L44"><span class="lineNum">      44</span>              :   /// Like the frames in a stack trace, the traces are ordered from most local</span>
+<span id="L45"><span class="lineNum">      45</span>              :   /// to least local. The first one is the trace where the actual exception was</span>
+<span id="L46"><span class="lineNum">      46</span>              :   /// raised, the second one is where that callback was scheduled, and so on.</span>
+<span id="L47"><span class="lineNum">      47</span>              :   final List&lt;Trace&gt; traces;</span>
+<span id="L48"><span class="lineNum">      48</span>              : </span>
+<span id="L49"><span class="lineNum">      49</span>              :   /// The [StackZoneSpecification] for the current zone.</span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaUNC">           0 :   static StackZoneSpecification? get _currentSpec =&gt;</span></span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaUNC">           0 :       Zone.current[_specKey] as StackZoneSpecification?;</span></span>
+<span id="L52"><span class="lineNum">      52</span>              : </span>
+<span id="L53"><span class="lineNum">      53</span>              :   /// If [when] is `true`, runs [callback] in a [Zone] in which the current</span>
+<span id="L54"><span class="lineNum">      54</span>              :   /// stack chain is tracked and automatically associated with (most) errors.</span>
+<span id="L55"><span class="lineNum">      55</span>              :   ///</span>
+<span id="L56"><span class="lineNum">      56</span>              :   /// If [when] is `false`, this does not track stack chains. Instead, it's</span>
+<span id="L57"><span class="lineNum">      57</span>              :   /// identical to [runZoned], except that it wraps any errors in</span>
+<span id="L58"><span class="lineNum">      58</span>              :   /// [Chain.forTrace]—which will only wrap the trace unless there's a different</span>
+<span id="L59"><span class="lineNum">      59</span>              :   /// [Chain.capture] active. This makes it easy for the caller to only capture</span>
+<span id="L60"><span class="lineNum">      60</span>              :   /// stack chains in debug mode or during development.</span>
+<span id="L61"><span class="lineNum">      61</span>              :   ///</span>
+<span id="L62"><span class="lineNum">      62</span>              :   /// If [onError] is passed, any error in the zone that would otherwise go</span>
+<span id="L63"><span class="lineNum">      63</span>              :   /// unhandled is passed to it, along with the [Chain] associated with that</span>
+<span id="L64"><span class="lineNum">      64</span>              :   /// error. Note that if [callback] produces multiple unhandled errors,</span>
+<span id="L65"><span class="lineNum">      65</span>              :   /// [onError] may be called more than once. If [onError] isn't passed, the</span>
+<span id="L66"><span class="lineNum">      66</span>              :   /// parent Zone's `unhandledErrorHandler` will be called with the error and</span>
+<span id="L67"><span class="lineNum">      67</span>              :   /// its chain.</span>
+<span id="L68"><span class="lineNum">      68</span>              :   ///</span>
+<span id="L69"><span class="lineNum">      69</span>              :   /// The zone this creates will be an error zone if either [onError] is</span>
+<span id="L70"><span class="lineNum">      70</span>              :   /// not `null` and [when] is false,</span>
+<span id="L71"><span class="lineNum">      71</span>              :   /// or if both [when] and [errorZone] are `true`.</span>
+<span id="L72"><span class="lineNum">      72</span>              :   ///  If [errorZone] is `false`, [onError] must be `null`.</span>
+<span id="L73"><span class="lineNum">      73</span>              :   ///</span>
+<span id="L74"><span class="lineNum">      74</span>              :   /// If [callback] returns a value, it will be returned by [capture] as well.</span>
+<span id="L75"><span class="lineNum">      75</span>              :   ///</span>
+<span id="L76"><span class="lineNum">      76</span>              :   /// [zoneValues] is added to the [runZoned] calls.</span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC tlaBgGNC">           6 :   static T capture&lt;T&gt;(T Function() callback,</span></span>
+<span id="L78"><span class="lineNum">      78</span>              :       {void Function(Object error, Chain)? onError,</span>
+<span id="L79"><span class="lineNum">      79</span>              :       bool when = true,</span>
+<span id="L80"><span class="lineNum">      80</span>              :       bool errorZone = true,</span>
+<span id="L81"><span class="lineNum">      81</span>              :       Map&lt;Object?, Object?&gt;? zoneValues}) {</span>
+<span id="L82"><span class="lineNum">      82</span>              :     if (!errorZone &amp;&amp; onError != null) {</span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaUNC tlaBgUNC">           0 :       throw ArgumentError.value(</span></span>
+<span id="L84"><span class="lineNum">      84</span>              :           onError, 'onError', 'must be null if errorZone is false');</span>
+<span id="L85"><span class="lineNum">      85</span>              :     }</span>
+<span id="L86"><span class="lineNum">      86</span>              : </span>
+<span id="L87"><span class="lineNum">      87</span>              :     if (!when) {</span>
+<span id="L88"><span class="lineNum">      88</span> <span class="tlaGNC tlaBgGNC">           6 :       if (onError == null) return runZoned(callback, zoneValues: zoneValues);</span></span>
+<span id="L89"><span class="lineNum">      89</span> <span class="tlaUNC tlaBgUNC">           0 :       return runZonedGuarded(callback, (error, stackTrace) {</span></span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaUNC">           0 :         onError(error, Chain.forTrace(stackTrace));</span></span>
+<span id="L91"><span class="lineNum">      91</span>              :       }, zoneValues: zoneValues) as T;</span>
+<span id="L92"><span class="lineNum">      92</span>              :     }</span>
+<span id="L93"><span class="lineNum">      93</span>              : </span>
+<span id="L94"><span class="lineNum">      94</span> <span class="tlaUNC">           0 :     var spec = StackZoneSpecification(onError, errorZone: errorZone);</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaUNC">           0 :     return runZoned(() {</span></span>
+<span id="L96"><span class="lineNum">      96</span>              :       try {</span>
+<span id="L97"><span class="lineNum">      97</span> <span class="tlaUNC">           0 :         return callback();</span></span>
+<span id="L98"><span class="lineNum">      98</span>              :       } on Object catch (error, stackTrace) {</span>
+<span id="L99"><span class="lineNum">      99</span>              :         // Forward synchronous errors through the async error path to match the</span>
+<span id="L100"><span class="lineNum">     100</span>              :         // behavior of `runZonedGuarded`.</span>
+<span id="L101"><span class="lineNum">     101</span> <span class="tlaUNC">           0 :         Zone.current.handleUncaughtError(error, stackTrace);</span></span>
+<span id="L102"><span class="lineNum">     102</span>              : </span>
+<span id="L103"><span class="lineNum">     103</span>              :         // If the expected return type of capture() is not nullable, this will</span>
+<span id="L104"><span class="lineNum">     104</span>              :         // throw a cast exception. But the only other alternative is to throw</span>
+<span id="L105"><span class="lineNum">     105</span>              :         // some other exception. Casting null to T at least lets existing uses</span>
+<span id="L106"><span class="lineNum">     106</span>              :         // where T is a nullable type continue to work.</span>
+<span id="L107"><span class="lineNum">     107</span>              :         return null as T;</span>
+<span id="L108"><span class="lineNum">     108</span>              :       }</span>
+<span id="L109"><span class="lineNum">     109</span> <span class="tlaUNC">           0 :     }, zoneSpecification: spec.toSpec(), zoneValues: {</span></span>
+<span id="L110"><span class="lineNum">     110</span> <span class="tlaUNC">           0 :       ...?zoneValues,</span></span>
+<span id="L111"><span class="lineNum">     111</span> <span class="tlaUNC">           0 :       _specKey: spec,</span></span>
+<span id="L112"><span class="lineNum">     112</span> <span class="tlaUNC">           0 :       StackZoneSpecification.disableKey: false</span></span>
+<span id="L113"><span class="lineNum">     113</span>              :     });</span>
+<span id="L114"><span class="lineNum">     114</span>              :   }</span>
+<span id="L115"><span class="lineNum">     115</span>              : </span>
+<span id="L116"><span class="lineNum">     116</span>              :   /// If [when] is `true` and this is called within a [Chain.capture] zone, runs</span>
+<span id="L117"><span class="lineNum">     117</span>              :   /// [callback] in a [Zone] in which chain capturing is disabled.</span>
+<span id="L118"><span class="lineNum">     118</span>              :   ///</span>
+<span id="L119"><span class="lineNum">     119</span>              :   /// If [callback] returns a value, it will be returned by [disable] as well.</span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaUNC">           0 :   static T disable&lt;T&gt;(T Function() callback, {bool when = true}) {</span></span>
+<span id="L121"><span class="lineNum">     121</span>              :     var zoneValues =</span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :         when ? {_specKey: null, StackZoneSpecification.disableKey: true} : null;</span></span>
+<span id="L123"><span class="lineNum">     123</span>              : </span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaUNC">           0 :     return runZoned(callback, zoneValues: zoneValues);</span></span>
+<span id="L125"><span class="lineNum">     125</span>              :   }</span>
+<span id="L126"><span class="lineNum">     126</span>              : </span>
+<span id="L127"><span class="lineNum">     127</span>              :   /// Returns [futureOrStream] unmodified.</span>
+<span id="L128"><span class="lineNum">     128</span>              :   ///</span>
+<span id="L129"><span class="lineNum">     129</span>              :   /// Prior to Dart 1.7, this was necessary to ensure that stack traces for</span>
+<span id="L130"><span class="lineNum">     130</span>              :   /// exceptions reported with [Completer.completeError] and</span>
+<span id="L131"><span class="lineNum">     131</span>              :   /// [StreamController.addError] were tracked correctly.</span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :   @Deprecated('Chain.track is not necessary in Dart 1.7+.')</span></span>
+<span id="L133"><span class="lineNum">     133</span>              :   static dynamic track(Object? futureOrStream) =&gt; futureOrStream;</span>
+<span id="L134"><span class="lineNum">     134</span>              : </span>
+<span id="L135"><span class="lineNum">     135</span>              :   /// Returns the current stack chain.</span>
+<span id="L136"><span class="lineNum">     136</span>              :   ///</span>
+<span id="L137"><span class="lineNum">     137</span>              :   /// By default, the first frame of the first trace will be the line where</span>
+<span id="L138"><span class="lineNum">     138</span>              :   /// [Chain.current] is called. If [level] is passed, the first trace will</span>
+<span id="L139"><span class="lineNum">     139</span>              :   /// start that many frames up instead.</span>
+<span id="L140"><span class="lineNum">     140</span>              :   ///</span>
+<span id="L141"><span class="lineNum">     141</span>              :   /// If this is called outside of a [capture] zone, it just returns a</span>
+<span id="L142"><span class="lineNum">     142</span>              :   /// single-trace chain.</span>
+<span id="L143"><span class="lineNum">     143</span> <span class="tlaUNC">           0 :   factory Chain.current([int level = 0]) {</span></span>
+<span id="L144"><span class="lineNum">     144</span> <span class="tlaUNC">           0 :     if (_currentSpec != null) return _currentSpec!.currentChain(level + 1);</span></span>
+<span id="L145"><span class="lineNum">     145</span>              : </span>
+<span id="L146"><span class="lineNum">     146</span> <span class="tlaUNC">           0 :     var chain = Chain.forTrace(StackTrace.current);</span></span>
+<span id="L147"><span class="lineNum">     147</span> <span class="tlaUNC">           0 :     return LazyChain(() {</span></span>
+<span id="L148"><span class="lineNum">     148</span>              :       // JS includes a frame for the call to StackTrace.current, but the VM</span>
+<span id="L149"><span class="lineNum">     149</span>              :       // doesn't, so we skip an extra frame in a JS context.</span>
+<span id="L150"><span class="lineNum">     150</span> <span class="tlaUNC">           0 :       var first = Trace(chain.traces.first.frames.skip(level + (inJS ? 2 : 1)),</span></span>
+<span id="L151"><span class="lineNum">     151</span> <span class="tlaUNC">           0 :           original: chain.traces.first.original.toString());</span></span>
+<span id="L152"><span class="lineNum">     152</span> <span class="tlaUNC">           0 :       return Chain([first, ...chain.traces.skip(1)]);</span></span>
+<span id="L153"><span class="lineNum">     153</span>              :     });</span>
+<span id="L154"><span class="lineNum">     154</span>              :   }</span>
+<span id="L155"><span class="lineNum">     155</span>              : </span>
+<span id="L156"><span class="lineNum">     156</span>              :   /// Returns the stack chain associated with [trace].</span>
+<span id="L157"><span class="lineNum">     157</span>              :   ///</span>
+<span id="L158"><span class="lineNum">     158</span>              :   /// The first stack trace in the returned chain will always be [trace]</span>
+<span id="L159"><span class="lineNum">     159</span>              :   /// (converted to a [Trace] if necessary). If there is no chain associated</span>
+<span id="L160"><span class="lineNum">     160</span>              :   /// with [trace] or if this is called outside of a [capture] zone, this just</span>
+<span id="L161"><span class="lineNum">     161</span>              :   /// returns a single-trace chain containing [trace].</span>
+<span id="L162"><span class="lineNum">     162</span>              :   ///</span>
+<span id="L163"><span class="lineNum">     163</span>              :   /// If [trace] is already a [Chain], it will be returned as-is.</span>
+<span id="L164"><span class="lineNum">     164</span> <span class="tlaUNC">           0 :   factory Chain.forTrace(StackTrace trace) {</span></span>
+<span id="L165"><span class="lineNum">     165</span> <span class="tlaUNC">           0 :     if (trace is Chain) return trace;</span></span>
+<span id="L166"><span class="lineNum">     166</span> <span class="tlaUNC">           0 :     if (_currentSpec != null) return _currentSpec!.chainFor(trace);</span></span>
+<span id="L167"><span class="lineNum">     167</span> <span class="tlaUNC">           0 :     if (trace is Trace) return Chain([trace]);</span></span>
+<span id="L168"><span class="lineNum">     168</span> <span class="tlaUNC">           0 :     return LazyChain(() =&gt; Chain.parse(trace.toString()));</span></span>
+<span id="L169"><span class="lineNum">     169</span>              :   }</span>
+<span id="L170"><span class="lineNum">     170</span>              : </span>
+<span id="L171"><span class="lineNum">     171</span>              :   /// Parses a string representation of a stack chain.</span>
+<span id="L172"><span class="lineNum">     172</span>              :   ///</span>
+<span id="L173"><span class="lineNum">     173</span>              :   /// If [chain] is the output of a call to [Chain.toString], it will be parsed</span>
+<span id="L174"><span class="lineNum">     174</span>              :   /// as a full stack chain. Otherwise, it will be parsed as in [Trace.parse]</span>
+<span id="L175"><span class="lineNum">     175</span>              :   /// and returned as a single-trace chain.</span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC">           0 :   factory Chain.parse(String chain) {</span></span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaUNC">           0 :     if (chain.isEmpty) return Chain([]);</span></span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaUNC">           0 :     if (chain.contains(vmChainGap)) {</span></span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaUNC">           0 :       return Chain(chain</span></span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaUNC">           0 :           .split(vmChainGap)</span></span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaUNC">           0 :           .where((line) =&gt; line.isNotEmpty)</span></span>
+<span id="L182"><span class="lineNum">     182</span> <span class="tlaUNC">           0 :           .map(Trace.parseVM));</span></span>
+<span id="L183"><span class="lineNum">     183</span>              :     }</span>
+<span id="L184"><span class="lineNum">     184</span> <span class="tlaUNC">           0 :     if (!chain.contains(chainGap)) return Chain([Trace.parse(chain)]);</span></span>
+<span id="L185"><span class="lineNum">     185</span>              : </span>
+<span id="L186"><span class="lineNum">     186</span> <span class="tlaUNC">           0 :     return Chain(chain.split(chainGap).map(Trace.parseFriendly));</span></span>
+<span id="L187"><span class="lineNum">     187</span>              :   }</span>
+<span id="L188"><span class="lineNum">     188</span>              : </span>
+<span id="L189"><span class="lineNum">     189</span>              :   /// Returns a new [Chain] comprised of [traces].</span>
+<span id="L190"><span class="lineNum">     190</span> <span class="tlaUNC">           0 :   Chain(Iterable&lt;Trace&gt; traces) : traces = List&lt;Trace&gt;.unmodifiable(traces);</span></span>
+<span id="L191"><span class="lineNum">     191</span>              : </span>
+<span id="L192"><span class="lineNum">     192</span>              :   /// Returns a terser version of this chain.</span>
+<span id="L193"><span class="lineNum">     193</span>              :   ///</span>
+<span id="L194"><span class="lineNum">     194</span>              :   /// This calls [Trace.terse] on every trace in [traces], and discards any</span>
+<span id="L195"><span class="lineNum">     195</span>              :   /// trace that contain only internal frames.</span>
+<span id="L196"><span class="lineNum">     196</span>              :   ///</span>
+<span id="L197"><span class="lineNum">     197</span>              :   /// This won't do anything with a raw JavaScript trace, since there's no way</span>
+<span id="L198"><span class="lineNum">     198</span>              :   /// to determine which frames come from which Dart libraries. However, the</span>
+<span id="L199"><span class="lineNum">     199</span>              :   /// [`source_map_stack_trace`](https://pub.dev/packages/source_map_stack_trace)</span>
+<span id="L200"><span class="lineNum">     200</span>              :   /// package can be used to convert JavaScript traces into Dart-style traces.</span>
+<span id="L201"><span class="lineNum">     201</span> <span class="tlaUNC">           0 :   Chain get terse =&gt; foldFrames((_) =&gt; false, terse: true);</span></span>
+<span id="L202"><span class="lineNum">     202</span>              : </span>
+<span id="L203"><span class="lineNum">     203</span>              :   /// Returns a new [Chain] based on this chain where multiple stack frames</span>
+<span id="L204"><span class="lineNum">     204</span>              :   /// matching [predicate] are folded together.</span>
+<span id="L205"><span class="lineNum">     205</span>              :   ///</span>
+<span id="L206"><span class="lineNum">     206</span>              :   /// This means that whenever there are multiple frames in a row that match</span>
+<span id="L207"><span class="lineNum">     207</span>              :   /// [predicate], only the last one is kept. In addition, traces that are</span>
+<span id="L208"><span class="lineNum">     208</span>              :   /// composed entirely of frames matching [predicate] are omitted.</span>
+<span id="L209"><span class="lineNum">     209</span>              :   ///</span>
+<span id="L210"><span class="lineNum">     210</span>              :   /// This is useful for limiting the amount of library code that appears in a</span>
+<span id="L211"><span class="lineNum">     211</span>              :   /// stack trace by only showing user code and code that's called by user code.</span>
+<span id="L212"><span class="lineNum">     212</span>              :   ///</span>
+<span id="L213"><span class="lineNum">     213</span>              :   /// If [terse] is true, this will also fold together frames from the core</span>
+<span id="L214"><span class="lineNum">     214</span>              :   /// library or from this package, and simplify core library frames as in</span>
+<span id="L215"><span class="lineNum">     215</span>              :   /// [Trace.terse].</span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaUNC">           0 :   Chain foldFrames(bool Function(Frame) predicate, {bool terse = false}) {</span></span>
+<span id="L217"><span class="lineNum">     217</span>              :     var foldedTraces =</span>
+<span id="L218"><span class="lineNum">     218</span> <span class="tlaUNC">           0 :         traces.map((trace) =&gt; trace.foldFrames(predicate, terse: terse));</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaUNC">           0 :     var nonEmptyTraces = foldedTraces.where((trace) {</span></span>
+<span id="L220"><span class="lineNum">     220</span>              :       // Ignore traces that contain only folded frames.</span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaUNC">           0 :       if (trace.frames.length &gt; 1) return true;</span></span>
+<span id="L222"><span class="lineNum">     222</span> <span class="tlaUNC">           0 :       if (trace.frames.isEmpty) return false;</span></span>
+<span id="L223"><span class="lineNum">     223</span>              : </span>
+<span id="L224"><span class="lineNum">     224</span>              :       // In terse mode, the trace may have removed an outer folded frame,</span>
+<span id="L225"><span class="lineNum">     225</span>              :       // leaving a single non-folded frame. We can detect a folded frame because</span>
+<span id="L226"><span class="lineNum">     226</span>              :       // it has no line information.</span>
+<span id="L227"><span class="lineNum">     227</span>              :       if (!terse) return false;</span>
+<span id="L228"><span class="lineNum">     228</span> <span class="tlaUNC">           0 :       return trace.frames.single.line != null;</span></span>
+<span id="L229"><span class="lineNum">     229</span>              :     });</span>
+<span id="L230"><span class="lineNum">     230</span>              : </span>
+<span id="L231"><span class="lineNum">     231</span>              :     // If all the traces contain only internal processing, preserve the last</span>
+<span id="L232"><span class="lineNum">     232</span>              :     // (top-most) one so that the chain isn't empty.</span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaUNC">           0 :     if (nonEmptyTraces.isEmpty &amp;&amp; foldedTraces.isNotEmpty) {</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaUNC">           0 :       return Chain([foldedTraces.last]);</span></span>
+<span id="L235"><span class="lineNum">     235</span>              :     }</span>
+<span id="L236"><span class="lineNum">     236</span>              : </span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaUNC">           0 :     return Chain(nonEmptyTraces);</span></span>
+<span id="L238"><span class="lineNum">     238</span>              :   }</span>
+<span id="L239"><span class="lineNum">     239</span>              : </span>
+<span id="L240"><span class="lineNum">     240</span>              :   /// Converts this chain to a [Trace].</span>
+<span id="L241"><span class="lineNum">     241</span>              :   ///</span>
+<span id="L242"><span class="lineNum">     242</span>              :   /// The trace version of a chain is just the concatenation of all the traces</span>
+<span id="L243"><span class="lineNum">     243</span>              :   /// in the chain.</span>
+<span id="L244"><span class="lineNum">     244</span> <span class="tlaUNC">           0 :   Trace toTrace() =&gt; Trace(traces.expand((trace) =&gt; trace.frames));</span></span>
+<span id="L245"><span class="lineNum">     245</span>              : </span>
+<span id="L246"><span class="lineNum">     246</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L247"><span class="lineNum">     247</span>              :   String toString() {</span>
+<span id="L248"><span class="lineNum">     248</span>              :     // Figure out the longest path so we know how much to pad.</span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaUNC">           0 :     var longest = traces</span></span>
+<span id="L250"><span class="lineNum">     250</span> <span class="tlaUNC">           0 :         .map((trace) =&gt; trace.frames</span></span>
+<span id="L251"><span class="lineNum">     251</span> <span class="tlaUNC">           0 :             .map((frame) =&gt; frame.location.length)</span></span>
+<span id="L252"><span class="lineNum">     252</span> <span class="tlaUNC">           0 :             .fold(0, math.max))</span></span>
+<span id="L253"><span class="lineNum">     253</span> <span class="tlaUNC">           0 :         .fold(0, math.max);</span></span>
+<span id="L254"><span class="lineNum">     254</span>              : </span>
+<span id="L255"><span class="lineNum">     255</span>              :     // Don't call out to [Trace.toString] here because that doesn't ensure that</span>
+<span id="L256"><span class="lineNum">     256</span>              :     // padding is consistent across all traces.</span>
+<span id="L257"><span class="lineNum">     257</span> <span class="tlaUNC">           0 :     return traces</span></span>
+<span id="L258"><span class="lineNum">     258</span> <span class="tlaUNC">           0 :         .map((trace) =&gt; trace.frames</span></span>
+<span id="L259"><span class="lineNum">     259</span> <span class="tlaUNC">           0 :             .map((frame) =&gt;</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaUNC">           0 :                 '${frame.location.padRight(longest)}  ${frame.member}\n')</span></span>
+<span id="L261"><span class="lineNum">     261</span> <span class="tlaUNC">           0 :             .join())</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaUNC">           0 :         .join(chainGap);</span></span>
+<span id="L263"><span class="lineNum">     263</span>              :   }</span>
+<span id="L264"><span class="lineNum">     264</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

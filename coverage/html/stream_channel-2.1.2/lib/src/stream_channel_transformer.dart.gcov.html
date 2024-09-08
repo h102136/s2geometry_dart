@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - stream_channel-2.1.2/lib/src/stream_channel_transformer.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory stream_channel-2.1.2/lib/src">stream_channel-2.1.2/lib/src</a> - stream_channel_transformer.dart<span style="font-size: 80%;"> (source / <a href="stream_channel_transformer.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2016, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : import 'dart:convert';</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : import 'package:async/async.dart';</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              : import '../stream_channel.dart';</span>
+<span id="L11"><span class="lineNum">      11</span>              : </span>
+<span id="L12"><span class="lineNum">      12</span>              : /// A [StreamChannelTransformer] transforms the events being passed to and</span>
+<span id="L13"><span class="lineNum">      13</span>              : /// emitted by a [StreamChannel].</span>
+<span id="L14"><span class="lineNum">      14</span>              : ///</span>
+<span id="L15"><span class="lineNum">      15</span>              : /// This works on the same principle as [StreamTransformer] and</span>
+<span id="L16"><span class="lineNum">      16</span>              : /// [StreamSinkTransformer]. Each transformer defines a [bind] method that takes</span>
+<span id="L17"><span class="lineNum">      17</span>              : /// in the original [StreamChannel] and returns the transformed version.</span>
+<span id="L18"><span class="lineNum">      18</span>              : ///</span>
+<span id="L19"><span class="lineNum">      19</span>              : /// Transformers must be able to have [bind] called multiple times. If a</span>
+<span id="L20"><span class="lineNum">      20</span>              : /// subclass implements [bind] explicitly, it should be sure that the returned</span>
+<span id="L21"><span class="lineNum">      21</span>              : /// stream follows the second stream channel guarantee: closing the sink causes</span>
+<span id="L22"><span class="lineNum">      22</span>              : /// the stream to close before it emits any more events. This guarantee is</span>
+<span id="L23"><span class="lineNum">      23</span>              : /// invalidated when an asynchronous gap is added between the original stream's</span>
+<span id="L24"><span class="lineNum">      24</span>              : /// event dispatch and the returned stream's, for example by transforming it</span>
+<span id="L25"><span class="lineNum">      25</span>              : /// with a [StreamTransformer]. The guarantee can be easily preserved using</span>
+<span id="L26"><span class="lineNum">      26</span>              : /// [StreamChannel.withCloseGuarantee].</span>
+<span id="L27"><span class="lineNum">      27</span>              : class StreamChannelTransformer&lt;S, T&gt; {</span>
+<span id="L28"><span class="lineNum">      28</span>              :   /// The transformer to use on the channel's stream.</span>
+<span id="L29"><span class="lineNum">      29</span>              :   final StreamTransformer&lt;T, S&gt; _streamTransformer;</span>
+<span id="L30"><span class="lineNum">      30</span>              : </span>
+<span id="L31"><span class="lineNum">      31</span>              :   /// The transformer to use on the channel's sink.</span>
+<span id="L32"><span class="lineNum">      32</span>              :   final StreamSinkTransformer&lt;S, T&gt; _sinkTransformer;</span>
+<span id="L33"><span class="lineNum">      33</span>              : </span>
+<span id="L34"><span class="lineNum">      34</span>              :   /// Creates a [StreamChannelTransformer] from existing stream and sink</span>
+<span id="L35"><span class="lineNum">      35</span>              :   /// transformers.</span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaUNC tlaBgUNC">           0 :   const StreamChannelTransformer(</span></span>
+<span id="L37"><span class="lineNum">      37</span>              :       this._streamTransformer, this._sinkTransformer);</span>
+<span id="L38"><span class="lineNum">      38</span>              : </span>
+<span id="L39"><span class="lineNum">      39</span>              :   /// Creates a [StreamChannelTransformer] from a codec's encoder and decoder.</span>
+<span id="L40"><span class="lineNum">      40</span>              :   ///</span>
+<span id="L41"><span class="lineNum">      41</span>              :   /// All input to the inner channel's sink is encoded using [Codec.encoder],</span>
+<span id="L42"><span class="lineNum">      42</span>              :   /// and all output from its stream is decoded using [Codec.decoder].</span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaUNC">           0 :   StreamChannelTransformer.fromCodec(Codec&lt;S, T&gt; codec)</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaUNC">           0 :       : this(codec.decoder,</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaUNC">           0 :             StreamSinkTransformer.fromStreamTransformer(codec.encoder));</span></span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span>              :   /// Transforms the events sent to and emitted by [channel].</span>
+<span id="L48"><span class="lineNum">      48</span>              :   ///</span>
+<span id="L49"><span class="lineNum">      49</span>              :   /// Creates a new channel. When events are passed to the returned channel's</span>
+<span id="L50"><span class="lineNum">      50</span>              :   /// sink, the transformer will transform them and pass the transformed</span>
+<span id="L51"><span class="lineNum">      51</span>              :   /// versions to `channel.sink`. When events are emitted from the</span>
+<span id="L52"><span class="lineNum">      52</span>              :   /// `channel.straem`, the transformer will transform them and pass the</span>
+<span id="L53"><span class="lineNum">      53</span>              :   /// transformed versions to the returned channel's stream.</span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaUNC">           0 :   StreamChannel&lt;S&gt; bind(StreamChannel&lt;T&gt; channel) =&gt;</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaUNC">           0 :       StreamChannel&lt;S&gt;.withCloseGuarantee(</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaUNC">           0 :           channel.stream.transform(_streamTransformer),</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaUNC">           0 :           _sinkTransformer.bind(channel.sink));</span></span>
+<span id="L58"><span class="lineNum">      58</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

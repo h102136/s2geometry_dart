@@ -1,0 +1,414 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - async-2.11.0/lib/src/stream_group.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory async-2.11.0/lib/src">async-2.11.0/lib/src</a> - stream_group.dart<span style="font-size: 80%;"> (source / <a href="stream_group.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">1.1&nbsp;%</td>
+            <td class="headerCovTableEntry">88</td>
+            <td class="headerCovTableEntry">1</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : import 'package:collection/collection.dart';</span>
+<span id="L8"><span class="lineNum">       8</span>              : </span>
+<span id="L9"><span class="lineNum">       9</span>              : /// A collection of streams whose events are unified and sent through a central</span>
+<span id="L10"><span class="lineNum">      10</span>              : /// stream.</span>
+<span id="L11"><span class="lineNum">      11</span>              : ///</span>
+<span id="L12"><span class="lineNum">      12</span>              : /// Both errors and data events are forwarded through [stream]. The streams in</span>
+<span id="L13"><span class="lineNum">      13</span>              : /// the group won't be listened to until [stream] has a listener. **Note that</span>
+<span id="L14"><span class="lineNum">      14</span>              : /// this means that events emitted by broadcast streams will be dropped until</span>
+<span id="L15"><span class="lineNum">      15</span>              : /// [stream] has a listener.**</span>
+<span id="L16"><span class="lineNum">      16</span>              : ///</span>
+<span id="L17"><span class="lineNum">      17</span>              : /// If the `StreamGroup` is constructed using [StreamGroup.new], [stream] will</span>
+<span id="L18"><span class="lineNum">      18</span>              : /// be single-subscription. In this case, if [stream] is paused or canceled, all</span>
+<span id="L19"><span class="lineNum">      19</span>              : /// streams in the group will likewise be paused or canceled, respectively.</span>
+<span id="L20"><span class="lineNum">      20</span>              : ///</span>
+<span id="L21"><span class="lineNum">      21</span>              : /// If the `StreamGroup` is constructed using [StreamGroup.broadcast],</span>
+<span id="L22"><span class="lineNum">      22</span>              : /// [stream] will be a broadcast stream. In this case, the streams in the group</span>
+<span id="L23"><span class="lineNum">      23</span>              : /// will never be paused and single-subscription streams in the group will never</span>
+<span id="L24"><span class="lineNum">      24</span>              : /// be canceled. **Note that single-subscription streams in a broadcast group</span>
+<span id="L25"><span class="lineNum">      25</span>              : /// may drop events if a listener is added and later removed.** Broadcast</span>
+<span id="L26"><span class="lineNum">      26</span>              : /// streams in the group will be canceled once [stream] has no listeners, and</span>
+<span id="L27"><span class="lineNum">      27</span>              : /// will be listened to again once [stream] has listeners.</span>
+<span id="L28"><span class="lineNum">      28</span>              : ///</span>
+<span id="L29"><span class="lineNum">      29</span>              : /// [stream] won't close until [close] is called on the group *and* every stream</span>
+<span id="L30"><span class="lineNum">      30</span>              : /// in the group closes.</span>
+<span id="L31"><span class="lineNum">      31</span>              : class StreamGroup&lt;T&gt; implements Sink&lt;Stream&lt;T&gt;&gt; {</span>
+<span id="L32"><span class="lineNum">      32</span>              :   /// The stream through which all events from streams in the group are emitted.</span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaUNC tlaBgUNC">           0 :   Stream&lt;T&gt; get stream =&gt; _controller.stream;</span></span>
+<span id="L34"><span class="lineNum">      34</span>              :   late StreamController&lt;T&gt; _controller;</span>
+<span id="L35"><span class="lineNum">      35</span>              : </span>
+<span id="L36"><span class="lineNum">      36</span>              :   /// Whether the group is closed, meaning that no more streams may be added.</span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaUNC">           0 :   bool get isClosed =&gt; _closed;</span></span>
+<span id="L38"><span class="lineNum">      38</span>              : </span>
+<span id="L39"><span class="lineNum">      39</span>              :   var _closed = false;</span>
+<span id="L40"><span class="lineNum">      40</span>              : </span>
+<span id="L41"><span class="lineNum">      41</span>              :   /// The current state of the group.</span>
+<span id="L42"><span class="lineNum">      42</span>              :   ///</span>
+<span id="L43"><span class="lineNum">      43</span>              :   /// See [_StreamGroupState] for detailed descriptions of each state.</span>
+<span id="L44"><span class="lineNum">      44</span>              :   var _state = _StreamGroupState.dormant;</span>
+<span id="L45"><span class="lineNum">      45</span>              : </span>
+<span id="L46"><span class="lineNum">      46</span>              :   /// Whether this group contains no streams.</span>
+<span id="L47"><span class="lineNum">      47</span>              :   ///</span>
+<span id="L48"><span class="lineNum">      48</span>              :   /// A [StreamGroup] is idle when it contains no streams, which is the case for</span>
+<span id="L49"><span class="lineNum">      49</span>              :   /// a newly created group or one where all added streams have been emitted</span>
+<span id="L50"><span class="lineNum">      50</span>              :   /// done events (or been [remove]d).</span>
+<span id="L51"><span class="lineNum">      51</span>              :   ///</span>
+<span id="L52"><span class="lineNum">      52</span>              :   /// If this is a single-subscription group, then cancelling the subscription</span>
+<span id="L53"><span class="lineNum">      53</span>              :   /// to [stream] will also remove all streams.</span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaUNC">           0 :   bool get isIdle =&gt; _subscriptions.isEmpty;</span></span>
+<span id="L55"><span class="lineNum">      55</span>              : </span>
+<span id="L56"><span class="lineNum">      56</span>              :   /// A broadcast stream that emits an event whenever this group becomes idle.</span>
+<span id="L57"><span class="lineNum">      57</span>              :   ///</span>
+<span id="L58"><span class="lineNum">      58</span>              :   /// A [StreamGroup] is idle when it contains no streams, which is the case for</span>
+<span id="L59"><span class="lineNum">      59</span>              :   /// a newly created group or one where all added streams have been emitted</span>
+<span id="L60"><span class="lineNum">      60</span>              :   /// done events (or been [remove]d).</span>
+<span id="L61"><span class="lineNum">      61</span>              :   ///</span>
+<span id="L62"><span class="lineNum">      62</span>              :   /// This stream will close when either:</span>
+<span id="L63"><span class="lineNum">      63</span>              :   ///</span>
+<span id="L64"><span class="lineNum">      64</span>              :   /// * This group is idle *and* [close] has been called, or</span>
+<span id="L65"><span class="lineNum">      65</span>              :   /// * [stream]'s subscription has been cancelled (if this is a</span>
+<span id="L66"><span class="lineNum">      66</span>              :   ///   single-subscription group).</span>
+<span id="L67"><span class="lineNum">      67</span>              :   ///</span>
+<span id="L68"><span class="lineNum">      68</span>              :   /// Note that:</span>
+<span id="L69"><span class="lineNum">      69</span>              :   ///</span>
+<span id="L70"><span class="lineNum">      70</span>              :   /// * Events won't be emitted on this stream until [stream] has been listened</span>
+<span id="L71"><span class="lineNum">      71</span>              :   ///   to.</span>
+<span id="L72"><span class="lineNum">      72</span>              :   /// * Events are delivered asynchronously, so it's possible for the group to</span>
+<span id="L73"><span class="lineNum">      73</span>              :   ///   become active again before the event is delivered.</span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaUNC">           0 :   Stream&lt;void&gt; get onIdle =&gt;</span></span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaUNC">           0 :       (_onIdleController ??= StreamController.broadcast()).stream;</span></span>
+<span id="L76"><span class="lineNum">      76</span>              : </span>
+<span id="L77"><span class="lineNum">      77</span>              :   StreamController&lt;void&gt;? _onIdleController;</span>
+<span id="L78"><span class="lineNum">      78</span>              : </span>
+<span id="L79"><span class="lineNum">      79</span>              :   /// Streams that have been added to the group, and their subscriptions if they</span>
+<span id="L80"><span class="lineNum">      80</span>              :   /// have been subscribed to.</span>
+<span id="L81"><span class="lineNum">      81</span>              :   ///</span>
+<span id="L82"><span class="lineNum">      82</span>              :   /// The subscriptions will be null until the group has a listener registered.</span>
+<span id="L83"><span class="lineNum">      83</span>              :   /// If it's a broadcast group and it goes dormant again, broadcast stream</span>
+<span id="L84"><span class="lineNum">      84</span>              :   /// subscriptions will be canceled and set to null again. Single-subscriber</span>
+<span id="L85"><span class="lineNum">      85</span>              :   /// stream subscriptions will be left intact, since they can't be</span>
+<span id="L86"><span class="lineNum">      86</span>              :   /// re-subscribed.</span>
+<span id="L87"><span class="lineNum">      87</span>              :   final _subscriptions = &lt;Stream&lt;T&gt;, StreamSubscription&lt;T&gt;?&gt;{};</span>
+<span id="L88"><span class="lineNum">      88</span>              : </span>
+<span id="L89"><span class="lineNum">      89</span>              :   /// Merges the events from [streams] into a single single-subscription stream.</span>
+<span id="L90"><span class="lineNum">      90</span>              :   ///</span>
+<span id="L91"><span class="lineNum">      91</span>              :   /// This is equivalent to adding [streams] to a group, closing that group, and</span>
+<span id="L92"><span class="lineNum">      92</span>              :   /// returning its stream.</span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaUNC">           0 :   static Stream&lt;T&gt; merge&lt;T&gt;(Iterable&lt;Stream&lt;T&gt;&gt; streams) {</span></span>
+<span id="L94"><span class="lineNum">      94</span> <span class="tlaUNC">           0 :     var group = StreamGroup&lt;T&gt;();</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaUNC">           0 :     streams.forEach(group.add);</span></span>
+<span id="L96"><span class="lineNum">      96</span> <span class="tlaUNC">           0 :     group.close();</span></span>
+<span id="L97"><span class="lineNum">      97</span> <span class="tlaUNC">           0 :     return group.stream;</span></span>
+<span id="L98"><span class="lineNum">      98</span>              :   }</span>
+<span id="L99"><span class="lineNum">      99</span>              : </span>
+<span id="L100"><span class="lineNum">     100</span>              :   /// Merges the events from [streams] into a single broadcast stream.</span>
+<span id="L101"><span class="lineNum">     101</span>              :   ///</span>
+<span id="L102"><span class="lineNum">     102</span>              :   /// This is equivalent to adding [streams] to a broadcast group, closing that</span>
+<span id="L103"><span class="lineNum">     103</span>              :   /// group, and returning its stream.</span>
+<span id="L104"><span class="lineNum">     104</span> <span class="tlaUNC">           0 :   static Stream&lt;T&gt; mergeBroadcast&lt;T&gt;(Iterable&lt;Stream&lt;T&gt;&gt; streams) {</span></span>
+<span id="L105"><span class="lineNum">     105</span> <span class="tlaUNC">           0 :     var group = StreamGroup&lt;T&gt;.broadcast();</span></span>
+<span id="L106"><span class="lineNum">     106</span> <span class="tlaUNC">           0 :     streams.forEach(group.add);</span></span>
+<span id="L107"><span class="lineNum">     107</span> <span class="tlaUNC">           0 :     group.close();</span></span>
+<span id="L108"><span class="lineNum">     108</span> <span class="tlaUNC">           0 :     return group.stream;</span></span>
+<span id="L109"><span class="lineNum">     109</span>              :   }</span>
+<span id="L110"><span class="lineNum">     110</span>              : </span>
+<span id="L111"><span class="lineNum">     111</span>              :   /// Creates a new stream group where [stream] is single-subscriber.</span>
+<span id="L112"><span class="lineNum">     112</span> <span class="tlaUNC">           0 :   StreamGroup() {</span></span>
+<span id="L113"><span class="lineNum">     113</span> <span class="tlaUNC">           0 :     _controller = StreamController&lt;T&gt;(</span></span>
+<span id="L114"><span class="lineNum">     114</span> <span class="tlaUNC">           0 :         onListen: _onListen,</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaUNC">           0 :         onPause: _onPause,</span></span>
+<span id="L116"><span class="lineNum">     116</span> <span class="tlaUNC">           0 :         onResume: _onResume,</span></span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaUNC">           0 :         onCancel: _onCancel,</span></span>
+<span id="L118"><span class="lineNum">     118</span>              :         sync: true);</span>
+<span id="L119"><span class="lineNum">     119</span>              :   }</span>
+<span id="L120"><span class="lineNum">     120</span>              : </span>
+<span id="L121"><span class="lineNum">     121</span>              :   /// Creates a new stream group where [stream] is a broadcast stream.</span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :   StreamGroup.broadcast() {</span></span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaUNC">           0 :     _controller = StreamController&lt;T&gt;.broadcast(</span></span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaUNC">           0 :         onListen: _onListen, onCancel: _onCancelBroadcast, sync: true);</span></span>
+<span id="L125"><span class="lineNum">     125</span>              :   }</span>
+<span id="L126"><span class="lineNum">     126</span>              : </span>
+<span id="L127"><span class="lineNum">     127</span>              :   /// Adds [stream] as a member of this group.</span>
+<span id="L128"><span class="lineNum">     128</span>              :   ///</span>
+<span id="L129"><span class="lineNum">     129</span>              :   /// Any events from [stream] will be emitted through [this.stream]. If this</span>
+<span id="L130"><span class="lineNum">     130</span>              :   /// group has a listener, [stream] will be listened to immediately; otherwise</span>
+<span id="L131"><span class="lineNum">     131</span>              :   /// it will only be listened to once this group gets a listener.</span>
+<span id="L132"><span class="lineNum">     132</span>              :   ///</span>
+<span id="L133"><span class="lineNum">     133</span>              :   /// If this is a single-subscription group and its subscription has been</span>
+<span id="L134"><span class="lineNum">     134</span>              :   /// canceled, [stream] will be canceled as soon as its added. If this returns</span>
+<span id="L135"><span class="lineNum">     135</span>              :   /// a [Future], it will be returned from [add]. Otherwise, [add] returns</span>
+<span id="L136"><span class="lineNum">     136</span>              :   /// `null`.</span>
+<span id="L137"><span class="lineNum">     137</span>              :   ///</span>
+<span id="L138"><span class="lineNum">     138</span>              :   /// Throws a [StateError] if this group is closed.</span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L140"><span class="lineNum">     140</span>              :   Future&lt;void&gt;? add(Stream&lt;T&gt; stream) {</span>
+<span id="L141"><span class="lineNum">     141</span> <span class="tlaUNC">           0 :     if (_closed) {</span></span>
+<span id="L142"><span class="lineNum">     142</span> <span class="tlaUNC">           0 :       throw StateError(&quot;Can't add a Stream to a closed StreamGroup.&quot;);</span></span>
+<span id="L143"><span class="lineNum">     143</span>              :     }</span>
+<span id="L144"><span class="lineNum">     144</span>              : </span>
+<span id="L145"><span class="lineNum">     145</span> <span class="tlaUNC">           0 :     if (_state == _StreamGroupState.dormant) {</span></span>
+<span id="L146"><span class="lineNum">     146</span> <span class="tlaUNC">           0 :       _subscriptions.putIfAbsent(stream, () =&gt; null);</span></span>
+<span id="L147"><span class="lineNum">     147</span> <span class="tlaUNC">           0 :     } else if (_state == _StreamGroupState.canceled) {</span></span>
+<span id="L148"><span class="lineNum">     148</span>              :       // Listen to the stream and cancel it immediately so that no one else can</span>
+<span id="L149"><span class="lineNum">     149</span>              :       // listen, for consistency. If the stream has an onCancel listener this</span>
+<span id="L150"><span class="lineNum">     150</span>              :       // will also fire that, which may help it clean up resources.</span>
+<span id="L151"><span class="lineNum">     151</span> <span class="tlaUNC">           0 :       return stream.listen(null).cancel();</span></span>
+<span id="L152"><span class="lineNum">     152</span>              :     } else {</span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaUNC">           0 :       _subscriptions.putIfAbsent(stream, () =&gt; _listenToStream(stream));</span></span>
+<span id="L154"><span class="lineNum">     154</span>              :     }</span>
+<span id="L155"><span class="lineNum">     155</span>              : </span>
+<span id="L156"><span class="lineNum">     156</span>              :     return null;</span>
+<span id="L157"><span class="lineNum">     157</span>              :   }</span>
+<span id="L158"><span class="lineNum">     158</span>              : </span>
+<span id="L159"><span class="lineNum">     159</span>              :   /// Removes [stream] as a member of this group.</span>
+<span id="L160"><span class="lineNum">     160</span>              :   ///</span>
+<span id="L161"><span class="lineNum">     161</span>              :   /// No further events from [stream] will be emitted through this group. If</span>
+<span id="L162"><span class="lineNum">     162</span>              :   /// [stream] has been listened to, its subscription will be canceled.</span>
+<span id="L163"><span class="lineNum">     163</span>              :   ///</span>
+<span id="L164"><span class="lineNum">     164</span>              :   /// If [stream] has been listened to, this *synchronously* cancels its</span>
+<span id="L165"><span class="lineNum">     165</span>              :   /// subscription. This means that any events from [stream] that haven't yet</span>
+<span id="L166"><span class="lineNum">     166</span>              :   /// been emitted through this group will not be.</span>
+<span id="L167"><span class="lineNum">     167</span>              :   ///</span>
+<span id="L168"><span class="lineNum">     168</span>              :   /// If [stream]'s subscription is canceled, this returns</span>
+<span id="L169"><span class="lineNum">     169</span>              :   /// [StreamSubscription.cancel]'s return value. Otherwise, it returns `null`.</span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaUNC">           0 :   Future&lt;void&gt;? remove(Stream&lt;T&gt; stream) {</span></span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaUNC">           0 :     var subscription = _subscriptions.remove(stream);</span></span>
+<span id="L172"><span class="lineNum">     172</span> <span class="tlaUNC">           0 :     var future = subscription?.cancel();</span></span>
+<span id="L173"><span class="lineNum">     173</span>              : </span>
+<span id="L174"><span class="lineNum">     174</span> <span class="tlaUNC">           0 :     if (_subscriptions.isEmpty) {</span></span>
+<span id="L175"><span class="lineNum">     175</span> <span class="tlaUNC">           0 :       _onIdleController?.add(null);</span></span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC">           0 :       if (_closed) {</span></span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaUNC">           0 :         _onIdleController?.close();</span></span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaUNC">           0 :         scheduleMicrotask(_controller.close);</span></span>
+<span id="L179"><span class="lineNum">     179</span>              :       }</span>
+<span id="L180"><span class="lineNum">     180</span>              :     }</span>
+<span id="L181"><span class="lineNum">     181</span>              : </span>
+<span id="L182"><span class="lineNum">     182</span>              :     return future;</span>
+<span id="L183"><span class="lineNum">     183</span>              :   }</span>
+<span id="L184"><span class="lineNum">     184</span>              : </span>
+<span id="L185"><span class="lineNum">     185</span>              :   /// A callback called when [stream] is listened to.</span>
+<span id="L186"><span class="lineNum">     186</span>              :   ///</span>
+<span id="L187"><span class="lineNum">     187</span>              :   /// This is called for both single-subscription and broadcast groups.</span>
+<span id="L188"><span class="lineNum">     188</span> <span class="tlaUNC">           0 :   void _onListen() {</span></span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaUNC">           0 :     _state = _StreamGroupState.listening;</span></span>
+<span id="L190"><span class="lineNum">     190</span>              : </span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaUNC">           0 :     for (var entry in [..._subscriptions.entries]) {</span></span>
+<span id="L192"><span class="lineNum">     192</span>              :       // If this is a broadcast group and this isn't the first time it's been</span>
+<span id="L193"><span class="lineNum">     193</span>              :       // listened to, there may still be some subscriptions to</span>
+<span id="L194"><span class="lineNum">     194</span>              :       // single-subscription streams.</span>
+<span id="L195"><span class="lineNum">     195</span> <span class="tlaUNC">           0 :       if (entry.value != null) continue;</span></span>
+<span id="L196"><span class="lineNum">     196</span>              : </span>
+<span id="L197"><span class="lineNum">     197</span> <span class="tlaUNC">           0 :       var stream = entry.key;</span></span>
+<span id="L198"><span class="lineNum">     198</span>              :       try {</span>
+<span id="L199"><span class="lineNum">     199</span> <span class="tlaUNC">           0 :         _subscriptions[stream] = _listenToStream(stream);</span></span>
+<span id="L200"><span class="lineNum">     200</span>              :       } catch (error) {</span>
+<span id="L201"><span class="lineNum">     201</span>              :         // If [Stream.listen] throws a synchronous error (for example because</span>
+<span id="L202"><span class="lineNum">     202</span>              :         // the stream has already been listened to), cancel all subscriptions</span>
+<span id="L203"><span class="lineNum">     203</span>              :         // and rethrow the error.</span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaUNC">           0 :         _onCancel()?.catchError((_) {});</span></span>
+<span id="L205"><span class="lineNum">     205</span>              :         rethrow;</span>
+<span id="L206"><span class="lineNum">     206</span>              :       }</span>
+<span id="L207"><span class="lineNum">     207</span>              :     }</span>
+<span id="L208"><span class="lineNum">     208</span>              :   }</span>
+<span id="L209"><span class="lineNum">     209</span>              : </span>
+<span id="L210"><span class="lineNum">     210</span>              :   /// A callback called when [stream] is paused.</span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaUNC">           0 :   void _onPause() {</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaUNC">           0 :     _state = _StreamGroupState.paused;</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaUNC">           0 :     for (var subscription in _subscriptions.values) {</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaUNC">           0 :       subscription!.pause();</span></span>
+<span id="L215"><span class="lineNum">     215</span>              :     }</span>
+<span id="L216"><span class="lineNum">     216</span>              :   }</span>
+<span id="L217"><span class="lineNum">     217</span>              : </span>
+<span id="L218"><span class="lineNum">     218</span>              :   /// A callback called when [stream] is resumed.</span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaUNC">           0 :   void _onResume() {</span></span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaUNC">           0 :     _state = _StreamGroupState.listening;</span></span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaUNC">           0 :     for (var subscription in _subscriptions.values) {</span></span>
+<span id="L222"><span class="lineNum">     222</span> <span class="tlaUNC">           0 :       subscription!.resume();</span></span>
+<span id="L223"><span class="lineNum">     223</span>              :     }</span>
+<span id="L224"><span class="lineNum">     224</span>              :   }</span>
+<span id="L225"><span class="lineNum">     225</span>              : </span>
+<span id="L226"><span class="lineNum">     226</span>              :   /// A callback called when [stream] is canceled.</span>
+<span id="L227"><span class="lineNum">     227</span>              :   ///</span>
+<span id="L228"><span class="lineNum">     228</span>              :   /// This is only called for single-subscription groups.</span>
+<span id="L229"><span class="lineNum">     229</span> <span class="tlaUNC">           0 :   Future&lt;void&gt;? _onCancel() {</span></span>
+<span id="L230"><span class="lineNum">     230</span> <span class="tlaUNC">           0 :     _state = _StreamGroupState.canceled;</span></span>
+<span id="L231"><span class="lineNum">     231</span>              : </span>
+<span id="L232"><span class="lineNum">     232</span> <span class="tlaUNC">           0 :     var futures = _subscriptions.entries</span></span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaUNC">           0 :         .map((entry) {</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaUNC">           0 :           var subscription = entry.value;</span></span>
+<span id="L235"><span class="lineNum">     235</span>              :           try {</span>
+<span id="L236"><span class="lineNum">     236</span> <span class="tlaUNC">           0 :             if (subscription != null) return subscription.cancel();</span></span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaUNC">           0 :             return entry.key.listen(null).cancel();</span></span>
+<span id="L238"><span class="lineNum">     238</span>              :           } catch (_) {</span>
+<span id="L239"><span class="lineNum">     239</span>              :             return null;</span>
+<span id="L240"><span class="lineNum">     240</span>              :           }</span>
+<span id="L241"><span class="lineNum">     241</span>              :         })</span>
+<span id="L242"><span class="lineNum">     242</span> <span class="tlaUNC">           0 :         .whereNotNull()</span></span>
+<span id="L243"><span class="lineNum">     243</span> <span class="tlaUNC">           0 :         .toList();</span></span>
+<span id="L244"><span class="lineNum">     244</span>              : </span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaUNC">           0 :     _subscriptions.clear();</span></span>
+<span id="L246"><span class="lineNum">     246</span>              : </span>
+<span id="L247"><span class="lineNum">     247</span> <span class="tlaUNC">           0 :     var onIdleController = _onIdleController;</span></span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaUNC">           0 :     if (onIdleController != null &amp;&amp; !onIdleController.isClosed) {</span></span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaUNC">           0 :       onIdleController.add(null);</span></span>
+<span id="L250"><span class="lineNum">     250</span> <span class="tlaUNC">           0 :       onIdleController.close();</span></span>
+<span id="L251"><span class="lineNum">     251</span>              :     }</span>
+<span id="L252"><span class="lineNum">     252</span>              : </span>
+<span id="L253"><span class="lineNum">     253</span> <span class="tlaUNC">           0 :     return futures.isEmpty ? null : Future.wait(futures);</span></span>
+<span id="L254"><span class="lineNum">     254</span>              :   }</span>
+<span id="L255"><span class="lineNum">     255</span>              : </span>
+<span id="L256"><span class="lineNum">     256</span>              :   /// A callback called when [stream]'s last listener is canceled.</span>
+<span id="L257"><span class="lineNum">     257</span>              :   ///</span>
+<span id="L258"><span class="lineNum">     258</span>              :   /// This is only called for broadcast groups.</span>
+<span id="L259"><span class="lineNum">     259</span> <span class="tlaUNC">           0 :   void _onCancelBroadcast() {</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaUNC">           0 :     _state = _StreamGroupState.dormant;</span></span>
+<span id="L261"><span class="lineNum">     261</span>              : </span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaUNC">           0 :     _subscriptions.forEach((stream, subscription) {</span></span>
+<span id="L263"><span class="lineNum">     263</span>              :       // Cancel the broadcast streams, since we can re-listen to those later,</span>
+<span id="L264"><span class="lineNum">     264</span>              :       // but allow the single-subscription streams to keep firing. Their events</span>
+<span id="L265"><span class="lineNum">     265</span>              :       // will still be added to [_controller], but then they'll be dropped since</span>
+<span id="L266"><span class="lineNum">     266</span>              :       // it has no listeners.</span>
+<span id="L267"><span class="lineNum">     267</span> <span class="tlaUNC">           0 :       if (!stream.isBroadcast) return;</span></span>
+<span id="L268"><span class="lineNum">     268</span> <span class="tlaUNC">           0 :       subscription!.cancel();</span></span>
+<span id="L269"><span class="lineNum">     269</span> <span class="tlaUNC">           0 :       _subscriptions[stream] = null;</span></span>
+<span id="L270"><span class="lineNum">     270</span>              :     });</span>
+<span id="L271"><span class="lineNum">     271</span>              :   }</span>
+<span id="L272"><span class="lineNum">     272</span>              : </span>
+<span id="L273"><span class="lineNum">     273</span>              :   /// Starts actively forwarding events from [stream] to [_controller].</span>
+<span id="L274"><span class="lineNum">     274</span>              :   ///</span>
+<span id="L275"><span class="lineNum">     275</span>              :   /// This will pause the resulting subscription if `this` is paused.</span>
+<span id="L276"><span class="lineNum">     276</span> <span class="tlaUNC">           0 :   StreamSubscription&lt;T&gt; _listenToStream(Stream&lt;T&gt; stream) {</span></span>
+<span id="L277"><span class="lineNum">     277</span> <span class="tlaUNC">           0 :     var subscription = stream.listen(_controller.add,</span></span>
+<span id="L278"><span class="lineNum">     278</span> <span class="tlaUNC">           0 :         onError: _controller.addError, onDone: () =&gt; remove(stream));</span></span>
+<span id="L279"><span class="lineNum">     279</span> <span class="tlaUNC">           0 :     if (_state == _StreamGroupState.paused) subscription.pause();</span></span>
+<span id="L280"><span class="lineNum">     280</span>              :     return subscription;</span>
+<span id="L281"><span class="lineNum">     281</span>              :   }</span>
+<span id="L282"><span class="lineNum">     282</span>              : </span>
+<span id="L283"><span class="lineNum">     283</span>              :   /// Closes the group, indicating that no more streams will be added.</span>
+<span id="L284"><span class="lineNum">     284</span>              :   ///</span>
+<span id="L285"><span class="lineNum">     285</span>              :   /// If there are no streams in the group, [stream] is closed immediately.</span>
+<span id="L286"><span class="lineNum">     286</span>              :   /// Otherwise, [stream] will close once all streams in the group close.</span>
+<span id="L287"><span class="lineNum">     287</span>              :   ///</span>
+<span id="L288"><span class="lineNum">     288</span>              :   /// Returns a [Future] that completes once [stream] has actually been closed.</span>
+<span id="L289"><span class="lineNum">     289</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L290"><span class="lineNum">     290</span>              :   Future&lt;void&gt; close() {</span>
+<span id="L291"><span class="lineNum">     291</span> <span class="tlaUNC">           0 :     if (_closed) return _controller.done;</span></span>
+<span id="L292"><span class="lineNum">     292</span>              : </span>
+<span id="L293"><span class="lineNum">     293</span> <span class="tlaUNC">           0 :     _closed = true;</span></span>
+<span id="L294"><span class="lineNum">     294</span> <span class="tlaUNC">           0 :     if (_subscriptions.isEmpty) _controller.close();</span></span>
+<span id="L295"><span class="lineNum">     295</span>              : </span>
+<span id="L296"><span class="lineNum">     296</span> <span class="tlaUNC">           0 :     return _controller.done;</span></span>
+<span id="L297"><span class="lineNum">     297</span>              :   }</span>
+<span id="L298"><span class="lineNum">     298</span>              : }</span>
+<span id="L299"><span class="lineNum">     299</span>              : </span>
+<span id="L300"><span class="lineNum">     300</span>              : /// An enum of possible states of a [StreamGroup].</span>
+<span id="L301"><span class="lineNum">     301</span>              : class _StreamGroupState {</span>
+<span id="L302"><span class="lineNum">     302</span>              :   /// The group has no listeners.</span>
+<span id="L303"><span class="lineNum">     303</span>              :   ///</span>
+<span id="L304"><span class="lineNum">     304</span>              :   /// New streams added to the group will be listened once the group has a</span>
+<span id="L305"><span class="lineNum">     305</span>              :   /// listener.</span>
+<span id="L306"><span class="lineNum">     306</span>              :   static const dormant = _StreamGroupState('dormant');</span>
+<span id="L307"><span class="lineNum">     307</span>              : </span>
+<span id="L308"><span class="lineNum">     308</span>              :   /// The group has one or more listeners and is actively firing events.</span>
+<span id="L309"><span class="lineNum">     309</span>              :   ///</span>
+<span id="L310"><span class="lineNum">     310</span>              :   /// New streams added to the group will be immediately listeners.</span>
+<span id="L311"><span class="lineNum">     311</span>              :   static const listening = _StreamGroupState('listening');</span>
+<span id="L312"><span class="lineNum">     312</span>              : </span>
+<span id="L313"><span class="lineNum">     313</span>              :   /// The group is paused and no more events will be fired until it resumes.</span>
+<span id="L314"><span class="lineNum">     314</span>              :   ///</span>
+<span id="L315"><span class="lineNum">     315</span>              :   /// New streams added to the group will be listened to, but then paused. They</span>
+<span id="L316"><span class="lineNum">     316</span>              :   /// will be resumed once the group itself is resumed.</span>
+<span id="L317"><span class="lineNum">     317</span>              :   ///</span>
+<span id="L318"><span class="lineNum">     318</span>              :   /// This state is only used by single-subscriber groups.</span>
+<span id="L319"><span class="lineNum">     319</span>              :   static const paused = _StreamGroupState('paused');</span>
+<span id="L320"><span class="lineNum">     320</span>              : </span>
+<span id="L321"><span class="lineNum">     321</span>              :   /// The group is canceled and no more events will be fired ever.</span>
+<span id="L322"><span class="lineNum">     322</span>              :   ///</span>
+<span id="L323"><span class="lineNum">     323</span>              :   /// New streams added to the group will be listened to, canceled, and</span>
+<span id="L324"><span class="lineNum">     324</span>              :   /// discarded.</span>
+<span id="L325"><span class="lineNum">     325</span>              :   ///</span>
+<span id="L326"><span class="lineNum">     326</span>              :   /// This state is only used by single-subscriber groups.</span>
+<span id="L327"><span class="lineNum">     327</span>              :   static const canceled = _StreamGroupState('canceled');</span>
+<span id="L328"><span class="lineNum">     328</span>              : </span>
+<span id="L329"><span class="lineNum">     329</span>              :   /// The name of the state.</span>
+<span id="L330"><span class="lineNum">     330</span>              :   ///</span>
+<span id="L331"><span class="lineNum">     331</span>              :   /// Used for debugging.</span>
+<span id="L332"><span class="lineNum">     332</span>              :   final String name;</span>
+<span id="L333"><span class="lineNum">     333</span>              : </span>
+<span id="L334"><span class="lineNum">     334</span> <span class="tlaGNC tlaBgGNC">           6 :   const _StreamGroupState(this.name);</span></span>
+<span id="L335"><span class="lineNum">     335</span>              : </span>
+<span id="L336"><span class="lineNum">     336</span> <span class="tlaUNC tlaBgUNC">           0 :   @override</span></span>
+<span id="L337"><span class="lineNum">     337</span> <span class="tlaUNC">           0 :   String toString() =&gt; name;</span></span>
+<span id="L338"><span class="lineNum">     338</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

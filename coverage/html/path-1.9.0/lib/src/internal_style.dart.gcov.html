@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - path-1.9.0/lib/src/internal_style.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory path-1.9.0/lib/src">path-1.9.0/lib/src</a> - internal_style.dart<span style="font-size: 80%;"> (source / <a href="internal_style.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'context.dart';</span>
+<span id="L6"><span class="lineNum">       6</span>              : import 'style.dart';</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : /// The internal interface for the [Style] type.</span>
+<span id="L9"><span class="lineNum">       9</span>              : ///</span>
+<span id="L10"><span class="lineNum">      10</span>              : /// Users should be able to pass around instances of [Style] like an enum, but</span>
+<span id="L11"><span class="lineNum">      11</span>              : /// the members that [Context] uses should be hidden from them. Those members</span>
+<span id="L12"><span class="lineNum">      12</span>              : /// are defined on this class instead.</span>
+<span id="L13"><span class="lineNum">      13</span>              : abstract class InternalStyle extends Style {</span>
+<span id="L14"><span class="lineNum">      14</span>              :   /// The default path separator for this style.</span>
+<span id="L15"><span class="lineNum">      15</span>              :   ///</span>
+<span id="L16"><span class="lineNum">      16</span>              :   /// On POSIX, this is `/`. On Windows, it's `\`.</span>
+<span id="L17"><span class="lineNum">      17</span>              :   @override</span>
+<span id="L18"><span class="lineNum">      18</span>              :   String get separator;</span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span>              :   /// Returns whether [path] contains a separator.</span>
+<span id="L21"><span class="lineNum">      21</span>              :   bool containsSeparator(String path);</span>
+<span id="L22"><span class="lineNum">      22</span>              : </span>
+<span id="L23"><span class="lineNum">      23</span>              :   /// Returns whether [codeUnit] is the character code of a separator.</span>
+<span id="L24"><span class="lineNum">      24</span>              :   bool isSeparator(int codeUnit);</span>
+<span id="L25"><span class="lineNum">      25</span>              : </span>
+<span id="L26"><span class="lineNum">      26</span>              :   /// Returns whether this path component needs a separator after it.</span>
+<span id="L27"><span class="lineNum">      27</span>              :   ///</span>
+<span id="L28"><span class="lineNum">      28</span>              :   /// Windows and POSIX styles just need separators when the previous component</span>
+<span id="L29"><span class="lineNum">      29</span>              :   /// doesn't already end in a separator, but the URL always needs to place a</span>
+<span id="L30"><span class="lineNum">      30</span>              :   /// separator between the root and the first component, even if the root</span>
+<span id="L31"><span class="lineNum">      31</span>              :   /// already ends in a separator character. For example, to join &quot;file://&quot; and</span>
+<span id="L32"><span class="lineNum">      32</span>              :   /// &quot;usr&quot;, an additional &quot;/&quot; is needed (making &quot;file:///usr&quot;).</span>
+<span id="L33"><span class="lineNum">      33</span>              :   bool needsSeparator(String path);</span>
+<span id="L34"><span class="lineNum">      34</span>              : </span>
+<span id="L35"><span class="lineNum">      35</span>              :   /// Returns the number of characters of the root part.</span>
+<span id="L36"><span class="lineNum">      36</span>              :   ///</span>
+<span id="L37"><span class="lineNum">      37</span>              :   /// Returns 0 if the path is relative and 1 if the path is root-relative.</span>
+<span id="L38"><span class="lineNum">      38</span>              :   ///</span>
+<span id="L39"><span class="lineNum">      39</span>              :   /// If [withDrive] is `true`, this should include the drive letter for `file:`</span>
+<span id="L40"><span class="lineNum">      40</span>              :   /// URLs. Non-URL styles may ignore the parameter.</span>
+<span id="L41"><span class="lineNum">      41</span>              :   int rootLength(String path, {bool withDrive = false});</span>
+<span id="L42"><span class="lineNum">      42</span>              : </span>
+<span id="L43"><span class="lineNum">      43</span>              :   /// Gets the root prefix of [path] if path is absolute. If [path] is relative,</span>
+<span id="L44"><span class="lineNum">      44</span>              :   /// returns `null`.</span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaUNC tlaBgUNC">           0 :   @override</span></span>
+<span id="L46"><span class="lineNum">      46</span>              :   String? getRoot(String path) {</span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaUNC">           0 :     final length = rootLength(path);</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC">           0 :     if (length &gt; 0) return path.substring(0, length);</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaUNC">           0 :     return isRootRelative(path) ? path[0] : null;</span></span>
+<span id="L50"><span class="lineNum">      50</span>              :   }</span>
+<span id="L51"><span class="lineNum">      51</span>              : </span>
+<span id="L52"><span class="lineNum">      52</span>              :   /// Returns whether [path] is root-relative.</span>
+<span id="L53"><span class="lineNum">      53</span>              :   ///</span>
+<span id="L54"><span class="lineNum">      54</span>              :   /// If [path] is relative or absolute and not root-relative, returns `false`.</span>
+<span id="L55"><span class="lineNum">      55</span>              :   bool isRootRelative(String path);</span>
+<span id="L56"><span class="lineNum">      56</span>              : </span>
+<span id="L57"><span class="lineNum">      57</span>              :   /// Returns the path represented by [uri] in this style.</span>
+<span id="L58"><span class="lineNum">      58</span>              :   @override</span>
+<span id="L59"><span class="lineNum">      59</span>              :   String pathFromUri(Uri uri);</span>
+<span id="L60"><span class="lineNum">      60</span>              : </span>
+<span id="L61"><span class="lineNum">      61</span>              :   /// Returns the URI that represents a relative path.</span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L63"><span class="lineNum">      63</span>              :   Uri relativePathToUri(String path) {</span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaUNC">           0 :     if (path.isEmpty) return Uri();</span></span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaUNC">           0 :     final segments = context.split(path);</span></span>
+<span id="L66"><span class="lineNum">      66</span>              : </span>
+<span id="L67"><span class="lineNum">      67</span>              :     // Ensure that a trailing slash in the path produces a trailing slash in the</span>
+<span id="L68"><span class="lineNum">      68</span>              :     // URL.</span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaUNC">           0 :     if (isSeparator(path.codeUnitAt(path.length - 1))) segments.add('');</span></span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaUNC">           0 :     return Uri(pathSegments: segments);</span></span>
+<span id="L71"><span class="lineNum">      71</span>              :   }</span>
+<span id="L72"><span class="lineNum">      72</span>              : </span>
+<span id="L73"><span class="lineNum">      73</span>              :   /// Returns the URI that represents [path], which is assumed to be absolute.</span>
+<span id="L74"><span class="lineNum">      74</span>              :   @override</span>
+<span id="L75"><span class="lineNum">      75</span>              :   Uri absolutePathToUri(String path);</span>
+<span id="L76"><span class="lineNum">      76</span>              : </span>
+<span id="L77"><span class="lineNum">      77</span>              :   /// Returns whether [codeUnit1] and [codeUnit2] are considered equivalent for</span>
+<span id="L78"><span class="lineNum">      78</span>              :   /// this style.</span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaUNC">           0 :   bool codeUnitsEqual(int codeUnit1, int codeUnit2) =&gt; codeUnit1 == codeUnit2;</span></span>
+<span id="L80"><span class="lineNum">      80</span>              : </span>
+<span id="L81"><span class="lineNum">      81</span>              :   /// Returns whether [path1] and [path2] are equivalent.</span>
+<span id="L82"><span class="lineNum">      82</span>              :   ///</span>
+<span id="L83"><span class="lineNum">      83</span>              :   /// This only needs to handle character-by-character comparison; it can assume</span>
+<span id="L84"><span class="lineNum">      84</span>              :   /// the paths are normalized and contain no `..` components.</span>
+<span id="L85"><span class="lineNum">      85</span> <span class="tlaUNC">           0 :   bool pathsEqual(String path1, String path2) =&gt; path1 == path2;</span></span>
+<span id="L86"><span class="lineNum">      86</span>              : </span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaUNC">           0 :   int canonicalizeCodeUnit(int codeUnit) =&gt; codeUnit;</span></span>
+<span id="L88"><span class="lineNum">      88</span>              : </span>
+<span id="L89"><span class="lineNum">      89</span> <span class="tlaUNC">           0 :   String canonicalizePart(String part) =&gt; part;</span></span>
+<span id="L90"><span class="lineNum">      90</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

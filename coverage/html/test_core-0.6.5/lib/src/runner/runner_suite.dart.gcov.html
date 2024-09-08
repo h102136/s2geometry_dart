@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - test_core-0.6.5/lib/src/runner/runner_suite.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory test_core-0.6.5/lib/src/runner">test_core-0.6.5/lib/src/runner</a> - runner_suite.dart<span style="font-size: 80%;"> (source / <a href="runner_suite.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">39</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2015, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'dart:async';</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : import 'package:async/async.dart';</span>
+<span id="L8"><span class="lineNum">       8</span>              : import 'package:stream_channel/stream_channel.dart';</span>
+<span id="L9"><span class="lineNum">       9</span>              : import 'package:test_api/src/backend/group.dart'; // ignore: implementation_imports</span>
+<span id="L10"><span class="lineNum">      10</span>              : import 'package:test_api/src/backend/suite.dart'; // ignore: implementation_imports</span>
+<span id="L11"><span class="lineNum">      11</span>              : import 'package:test_api/src/backend/suite_platform.dart'; // ignore: implementation_imports</span>
+<span id="L12"><span class="lineNum">      12</span>              : import 'package:test_api/src/backend/test.dart'; // ignore: implementation_imports</span>
+<span id="L13"><span class="lineNum">      13</span>              : </span>
+<span id="L14"><span class="lineNum">      14</span>              : import 'environment.dart';</span>
+<span id="L15"><span class="lineNum">      15</span>              : import 'suite.dart';</span>
+<span id="L16"><span class="lineNum">      16</span>              : </span>
+<span id="L17"><span class="lineNum">      17</span>              : /// A suite produced and consumed by the test runner that has runner-specific</span>
+<span id="L18"><span class="lineNum">      18</span>              : /// logic and lifecycle management.</span>
+<span id="L19"><span class="lineNum">      19</span>              : ///</span>
+<span id="L20"><span class="lineNum">      20</span>              : /// This is separated from [Suite] because the backend library (which will</span>
+<span id="L21"><span class="lineNum">      21</span>              : /// eventually become its own package) is primarily for test code itself to use,</span>
+<span id="L22"><span class="lineNum">      22</span>              : /// for which the [RunnerSuite] APIs don't make sense.</span>
+<span id="L23"><span class="lineNum">      23</span>              : ///</span>
+<span id="L24"><span class="lineNum">      24</span>              : /// A [RunnerSuite] can be produced and controlled using a</span>
+<span id="L25"><span class="lineNum">      25</span>              : /// [RunnerSuiteController].</span>
+<span id="L26"><span class="lineNum">      26</span>              : class RunnerSuite extends Suite {</span>
+<span id="L27"><span class="lineNum">      27</span>              :   final RunnerSuiteController _controller;</span>
+<span id="L28"><span class="lineNum">      28</span>              : </span>
+<span id="L29"><span class="lineNum">      29</span>              :   /// The environment in which this suite runs.</span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaUNC tlaBgUNC">           0 :   Environment get environment =&gt; _controller._environment;</span></span>
+<span id="L31"><span class="lineNum">      31</span>              : </span>
+<span id="L32"><span class="lineNum">      32</span>              :   /// The configuration for this suite.</span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaUNC">           0 :   SuiteConfiguration get config =&gt; _controller._config;</span></span>
+<span id="L34"><span class="lineNum">      34</span>              : </span>
+<span id="L35"><span class="lineNum">      35</span>              :   /// Whether the suite is paused for debugging.</span>
+<span id="L36"><span class="lineNum">      36</span>              :   ///</span>
+<span id="L37"><span class="lineNum">      37</span>              :   /// When using a dev inspector, this may also mean that the entire browser is</span>
+<span id="L38"><span class="lineNum">      38</span>              :   /// paused.</span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaUNC">           0 :   bool get isDebugging =&gt; _controller._isDebugging;</span></span>
+<span id="L40"><span class="lineNum">      40</span>              : </span>
+<span id="L41"><span class="lineNum">      41</span>              :   /// A broadcast stream that emits an event whenever the suite is paused for</span>
+<span id="L42"><span class="lineNum">      42</span>              :   /// debugging or resumed afterwards.</span>
+<span id="L43"><span class="lineNum">      43</span>              :   ///</span>
+<span id="L44"><span class="lineNum">      44</span>              :   /// The event is `true` when debugging starts and `false` when it ends.</span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaUNC">           0 :   Stream&lt;bool&gt; get onDebugging =&gt; _controller._onDebuggingController.stream;</span></span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span>              :   /// A shortcut constructor for creating a [RunnerSuite] that never goes into</span>
+<span id="L48"><span class="lineNum">      48</span>              :   /// debugging mode and doesn't support suite channels.</span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaUNC">           0 :   factory RunnerSuite(Environment environment, SuiteConfiguration config,</span></span>
+<span id="L50"><span class="lineNum">      50</span>              :       Group group, SuitePlatform platform,</span>
+<span id="L51"><span class="lineNum">      51</span>              :       {String? path, void Function()? onClose}) {</span>
+<span id="L52"><span class="lineNum">      52</span>              :     var controller =</span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaUNC">           0 :         RunnerSuiteController._local(environment, config, onClose: onClose);</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaUNC">           0 :     var suite = RunnerSuite._(controller, group, platform, path: path);</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaUNC">           0 :     controller._suite = Future.value(suite);</span></span>
+<span id="L56"><span class="lineNum">      56</span>              :     return suite;</span>
+<span id="L57"><span class="lineNum">      57</span>              :   }</span>
+<span id="L58"><span class="lineNum">      58</span>              : </span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaUNC">           0 :   RunnerSuite._(this._controller, Group group, SuitePlatform platform,</span></span>
+<span id="L60"><span class="lineNum">      60</span>              :       {String? path})</span>
+<span id="L61"><span class="lineNum">      61</span> <span class="tlaUNC">           0 :       : super(group, platform,</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaUNC">           0 :             path: path, ignoreTimeouts: _controller._config.ignoreTimeouts);</span></span>
+<span id="L63"><span class="lineNum">      63</span>              : </span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaUNC">           0 :   @override</span></span>
+<span id="L65"><span class="lineNum">      65</span>              :   RunnerSuite filter(bool Function(Test) callback) {</span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaUNC">           0 :     var filtered = group.filter(callback);</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaUNC">           0 :     filtered ??= Group.root([], metadata: metadata);</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaUNC">           0 :     return RunnerSuite._(_controller, filtered, platform, path: path);</span></span>
+<span id="L69"><span class="lineNum">      69</span>              :   }</span>
+<span id="L70"><span class="lineNum">      70</span>              : </span>
+<span id="L71"><span class="lineNum">      71</span>              :   /// Closes the suite and releases any resources associated with it.</span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaUNC">           0 :   Future close() =&gt; _controller._close();</span></span>
+<span id="L73"><span class="lineNum">      73</span>              : </span>
+<span id="L74"><span class="lineNum">      74</span>              :   /// Collects a hit-map containing merged coverage.</span>
+<span id="L75"><span class="lineNum">      75</span>              :   ///</span>
+<span id="L76"><span class="lineNum">      76</span>              :   /// Result is suitable for input to the coverage formatters provided by</span>
+<span id="L77"><span class="lineNum">      77</span>              :   /// `package:coverage`.</span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaUNC">           0 :   Future&lt;Map&lt;String, dynamic&gt;&gt; gatherCoverage() async =&gt;</span></span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaUNC">           0 :       (await _controller._gatherCoverage?.call()) ?? {};</span></span>
+<span id="L80"><span class="lineNum">      80</span>              : }</span>
+<span id="L81"><span class="lineNum">      81</span>              : </span>
+<span id="L82"><span class="lineNum">      82</span>              : /// A class that exposes and controls a [RunnerSuite].</span>
+<span id="L83"><span class="lineNum">      83</span>              : class RunnerSuiteController {</span>
+<span id="L84"><span class="lineNum">      84</span>              :   /// The suite controlled by this controller.</span>
+<span id="L85"><span class="lineNum">      85</span> <span class="tlaUNC">           0 :   Future&lt;RunnerSuite&gt; get suite =&gt; _suite;</span></span>
+<span id="L86"><span class="lineNum">      86</span>              :   late final Future&lt;RunnerSuite&gt; _suite;</span>
+<span id="L87"><span class="lineNum">      87</span>              : </span>
+<span id="L88"><span class="lineNum">      88</span>              :   /// The backing value for [suite.environment].</span>
+<span id="L89"><span class="lineNum">      89</span>              :   final Environment _environment;</span>
+<span id="L90"><span class="lineNum">      90</span>              : </span>
+<span id="L91"><span class="lineNum">      91</span>              :   /// The configuration for this suite.</span>
+<span id="L92"><span class="lineNum">      92</span>              :   final SuiteConfiguration _config;</span>
+<span id="L93"><span class="lineNum">      93</span>              : </span>
+<span id="L94"><span class="lineNum">      94</span>              :   /// A channel that communicates with the remote suite.</span>
+<span id="L95"><span class="lineNum">      95</span>              :   final MultiChannel? _suiteChannel;</span>
+<span id="L96"><span class="lineNum">      96</span>              : </span>
+<span id="L97"><span class="lineNum">      97</span>              :   /// The function to call when the suite is closed.</span>
+<span id="L98"><span class="lineNum">      98</span>              :   final FutureOr&lt;void&gt; Function()? _onClose;</span>
+<span id="L99"><span class="lineNum">      99</span>              : </span>
+<span id="L100"><span class="lineNum">     100</span>              :   /// The backing value for [suite.isDebugging].</span>
+<span id="L101"><span class="lineNum">     101</span>              :   bool _isDebugging = false;</span>
+<span id="L102"><span class="lineNum">     102</span>              : </span>
+<span id="L103"><span class="lineNum">     103</span>              :   /// The controller for [suite.onDebugging].</span>
+<span id="L104"><span class="lineNum">     104</span>              :   final _onDebuggingController = StreamController&lt;bool&gt;.broadcast();</span>
+<span id="L105"><span class="lineNum">     105</span>              : </span>
+<span id="L106"><span class="lineNum">     106</span>              :   /// The channel names that have already been used.</span>
+<span id="L107"><span class="lineNum">     107</span>              :   final _channelNames = &lt;String&gt;{};</span>
+<span id="L108"><span class="lineNum">     108</span>              : </span>
+<span id="L109"><span class="lineNum">     109</span>              :   /// Collects a hit-map containing merged coverage.</span>
+<span id="L110"><span class="lineNum">     110</span>              :   final Future&lt;Map&lt;String, dynamic&gt;&gt; Function()? _gatherCoverage;</span>
+<span id="L111"><span class="lineNum">     111</span>              : </span>
+<span id="L112"><span class="lineNum">     112</span> <span class="tlaUNC">           0 :   RunnerSuiteController(this._environment, this._config, this._suiteChannel,</span></span>
+<span id="L113"><span class="lineNum">     113</span>              :       Future&lt;Group&gt; groupFuture, SuitePlatform platform,</span>
+<span id="L114"><span class="lineNum">     114</span>              :       {String? path,</span>
+<span id="L115"><span class="lineNum">     115</span>              :       void Function()? onClose,</span>
+<span id="L116"><span class="lineNum">     116</span>              :       Future&lt;Map&lt;String, dynamic&gt;&gt; Function()? gatherCoverage})</span>
+<span id="L117"><span class="lineNum">     117</span>              :       : _onClose = onClose,</span>
+<span id="L118"><span class="lineNum">     118</span>              :         _gatherCoverage = gatherCoverage {</span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaUNC">           0 :     _suite = groupFuture</span></span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaUNC">           0 :         .then((group) =&gt; RunnerSuite._(this, group, platform, path: path));</span></span>
+<span id="L121"><span class="lineNum">     121</span>              :   }</span>
+<span id="L122"><span class="lineNum">     122</span>              : </span>
+<span id="L123"><span class="lineNum">     123</span>              :   /// Used by [RunnerSuite.new] to create a runner suite that's not loaded from</span>
+<span id="L124"><span class="lineNum">     124</span>              :   /// an external source.</span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaUNC">           0 :   RunnerSuiteController._local(this._environment, this._config,</span></span>
+<span id="L126"><span class="lineNum">     126</span>              :       {void Function()? onClose,</span>
+<span id="L127"><span class="lineNum">     127</span>              :       Future&lt;Map&lt;String, dynamic&gt;&gt; Function()? gatherCoverage})</span>
+<span id="L128"><span class="lineNum">     128</span>              :       : _suiteChannel = null,</span>
+<span id="L129"><span class="lineNum">     129</span>              :         _onClose = onClose,</span>
+<span id="L130"><span class="lineNum">     130</span>              :         _gatherCoverage = gatherCoverage;</span>
+<span id="L131"><span class="lineNum">     131</span>              : </span>
+<span id="L132"><span class="lineNum">     132</span>              :   /// Sets whether the suite is paused for debugging.</span>
+<span id="L133"><span class="lineNum">     133</span>              :   ///</span>
+<span id="L134"><span class="lineNum">     134</span>              :   /// If this is different than [suite.isDebugging], this will automatically</span>
+<span id="L135"><span class="lineNum">     135</span>              :   /// send out an event along [suite.onDebugging].</span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaUNC">           0 :   void setDebugging(bool debugging) {</span></span>
+<span id="L137"><span class="lineNum">     137</span> <span class="tlaUNC">           0 :     if (debugging == _isDebugging) return;</span></span>
+<span id="L138"><span class="lineNum">     138</span> <span class="tlaUNC">           0 :     _isDebugging = debugging;</span></span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaUNC">           0 :     _onDebuggingController.add(debugging);</span></span>
+<span id="L140"><span class="lineNum">     140</span>              :   }</span>
+<span id="L141"><span class="lineNum">     141</span>              : </span>
+<span id="L142"><span class="lineNum">     142</span>              :   /// Returns a channel that communicates with the remote suite.</span>
+<span id="L143"><span class="lineNum">     143</span>              :   ///</span>
+<span id="L144"><span class="lineNum">     144</span>              :   /// This connects to a channel created by code in the test worker calling the</span>
+<span id="L145"><span class="lineNum">     145</span>              :   /// `suiteChannel` argument from a `beforeLoad` callback to `serializeSuite`</span>
+<span id="L146"><span class="lineNum">     146</span>              :   /// with the same name.</span>
+<span id="L147"><span class="lineNum">     147</span>              :   /// It can be used used to send and receive any JSON-serializable object.</span>
+<span id="L148"><span class="lineNum">     148</span>              :   ///</span>
+<span id="L149"><span class="lineNum">     149</span>              :   /// This is exposed on the [RunnerSuiteController] so that runner plugins can</span>
+<span id="L150"><span class="lineNum">     150</span>              :   /// communicate with the workers they spawn before the associated [suite] is</span>
+<span id="L151"><span class="lineNum">     151</span>              :   /// fully loaded.</span>
+<span id="L152"><span class="lineNum">     152</span> <span class="tlaUNC">           0 :   StreamChannel channel(String name) {</span></span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaUNC">           0 :     if (!_channelNames.add(name)) {</span></span>
+<span id="L154"><span class="lineNum">     154</span> <span class="tlaUNC">           0 :       throw StateError('Duplicate RunnerSuite.channel() connection &quot;$name&quot;.');</span></span>
+<span id="L155"><span class="lineNum">     155</span>              :     }</span>
+<span id="L156"><span class="lineNum">     156</span>              : </span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaUNC">           0 :     var suiteChannel = _suiteChannel;</span></span>
+<span id="L158"><span class="lineNum">     158</span>              :     if (suiteChannel == null) {</span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaUNC">           0 :       throw StateError('No suite channel set up but one was requested.');</span></span>
+<span id="L160"><span class="lineNum">     160</span>              :     }</span>
+<span id="L161"><span class="lineNum">     161</span>              : </span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaUNC">           0 :     var channel = suiteChannel.virtualChannel();</span></span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaUNC">           0 :     suiteChannel.sink</span></span>
+<span id="L164"><span class="lineNum">     164</span> <span class="tlaUNC">           0 :         .add({'type': 'suiteChannel', 'name': name, 'id': channel.id});</span></span>
+<span id="L165"><span class="lineNum">     165</span>              :     return channel;</span>
+<span id="L166"><span class="lineNum">     166</span>              :   }</span>
+<span id="L167"><span class="lineNum">     167</span>              : </span>
+<span id="L168"><span class="lineNum">     168</span>              :   /// The backing function for [suite.close].</span>
+<span id="L169"><span class="lineNum">     169</span> <span class="tlaUNC">           0 :   Future _close() =&gt; _closeMemo.runOnce(() async {</span></span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaUNC">           0 :         await _onDebuggingController.close();</span></span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaUNC">           0 :         var onClose = _onClose;</span></span>
+<span id="L172"><span class="lineNum">     172</span> <span class="tlaUNC">           0 :         if (onClose != null) await onClose();</span></span>
+<span id="L173"><span class="lineNum">     173</span>              :       });</span>
+<span id="L174"><span class="lineNum">     174</span>              :   final _closeMemo = AsyncMemoizer&lt;void&gt;();</span>
+<span id="L175"><span class="lineNum">     175</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - source_span-1.10.0/lib/src/span_with_context.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory source_span-1.10.0/lib/src">source_span-1.10.0/lib/src</a> - span_with_context.dart<span style="font-size: 80%;"> (source / <a href="span_with_context.dart.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">0.0&nbsp;%</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-09-06 11:05:58</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : // Copyright (c) 2014, the Dart project authors.  Please see the AUTHORS file</span>
+<span id="L2"><span class="lineNum">       2</span>              : // for details. All rights reserved. Use of this source code is governed by a</span>
+<span id="L3"><span class="lineNum">       3</span>              : // BSD-style license that can be found in the LICENSE file.</span>
+<span id="L4"><span class="lineNum">       4</span>              : </span>
+<span id="L5"><span class="lineNum">       5</span>              : import 'location.dart';</span>
+<span id="L6"><span class="lineNum">       6</span>              : import 'span.dart';</span>
+<span id="L7"><span class="lineNum">       7</span>              : import 'utils.dart';</span>
+<span id="L8"><span class="lineNum">       8</span>              : </span>
+<span id="L9"><span class="lineNum">       9</span>              : /// A class that describes a segment of source text with additional context.</span>
+<span id="L10"><span class="lineNum">      10</span>              : class SourceSpanWithContext extends SourceSpanBase {</span>
+<span id="L11"><span class="lineNum">      11</span>              :   // This is a getter so that subclasses can override it.</span>
+<span id="L12"><span class="lineNum">      12</span>              :   /// Text around the span, which includes the line containing this span.</span>
+<span id="L13"><span class="lineNum">      13</span> <span class="tlaUNC tlaBgUNC">           0 :   String get context =&gt; _context;</span></span>
+<span id="L14"><span class="lineNum">      14</span>              :   final String _context;</span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              :   /// Creates a new span from [start] to [end] (exclusive) containing [text], in</span>
+<span id="L17"><span class="lineNum">      17</span>              :   /// the given [context].</span>
+<span id="L18"><span class="lineNum">      18</span>              :   ///</span>
+<span id="L19"><span class="lineNum">      19</span>              :   /// [start] and [end] must have the same source URL and [start] must come</span>
+<span id="L20"><span class="lineNum">      20</span>              :   /// before [end]. [text] must have a number of characters equal to the</span>
+<span id="L21"><span class="lineNum">      21</span>              :   /// distance between [start] and [end]. [context] must contain [text], and</span>
+<span id="L22"><span class="lineNum">      22</span>              :   /// [text] should start at `start.column` from the beginning of a line in</span>
+<span id="L23"><span class="lineNum">      23</span>              :   /// [context].</span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC">           0 :   SourceSpanWithContext(</span></span>
+<span id="L25"><span class="lineNum">      25</span>              :       SourceLocation start, SourceLocation end, String text, this._context)</span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaUNC">           0 :       : super(start, end, text) {</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaUNC">           0 :     if (!context.contains(text)) {</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaUNC">           0 :       throw ArgumentError('The context line &quot;$context&quot; must contain &quot;$text&quot;.');</span></span>
+<span id="L29"><span class="lineNum">      29</span>              :     }</span>
+<span id="L30"><span class="lineNum">      30</span>              : </span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaUNC">           0 :     if (findLineStart(context, text, start.column) == null) {</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaUNC">           0 :       throw ArgumentError('The span text &quot;$text&quot; must start at '</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaUNC">           0 :           'column ${start.column + 1} in a line within &quot;$context&quot;.');</span></span>
+<span id="L34"><span class="lineNum">      34</span>              :     }</span>
+<span id="L35"><span class="lineNum">      35</span>              :   }</span>
+<span id="L36"><span class="lineNum">      36</span>              : }</span>
+<span id="L37"><span class="lineNum">      37</span>              : </span>
+<span id="L38"><span class="lineNum">      38</span>              : // TODO(#52): Move these to instance methods in the next breaking release.</span>
+<span id="L39"><span class="lineNum">      39</span>              : /// Extension methods on the base [SourceSpan] API.</span>
+<span id="L40"><span class="lineNum">      40</span>              : extension SourceSpanWithContextExtension on SourceSpanWithContext {</span>
+<span id="L41"><span class="lineNum">      41</span>              :   /// Returns a span from [start] code units (inclusive) to [end] code units</span>
+<span id="L42"><span class="lineNum">      42</span>              :   /// (exclusive) after the beginning of this span.</span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaUNC">           0 :   SourceSpanWithContext subspan(int start, [int? end]) {</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaUNC">           0 :     RangeError.checkValidRange(start, end, length);</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaUNC">           0 :     if (start == 0 &amp;&amp; (end == null || end == length)) return this;</span></span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaUNC">           0 :     final locations = subspanLocations(this, start, end);</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC">           0 :     return SourceSpanWithContext(</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaUNC">           0 :         locations[0], locations[1], text.substring(start, end), context);</span></span>
+<span id="L50"><span class="lineNum">      50</span>              :   }</span>
+<span id="L51"><span class="lineNum">      51</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
