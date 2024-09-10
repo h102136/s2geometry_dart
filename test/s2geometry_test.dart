@@ -4,24 +4,24 @@ import 'package:s2geometry_dart/s2geometry.dart';
 
 void main() {
   group('S2Cell Tests', () {
-    test('cellFromKey', () {
-      final s2cell = S2.cellFromKey('3/210');
+    test('fromHilbertQuadKey', () {
+      final s2cell = S2.fromHilbertQuadKey('3/210');
       expect(s2cell.face, equals(3));
       expect(s2cell.ij, equals([6, 4]));
       expect(s2cell.level, equals(3));
     });
 
-    test('cellFromKey', () {
-      final s2cell = S2.cellFromKey('3/0123');
+    test('fromHilbertQuadKey', () {
+      final s2cell = S2.fromHilbertQuadKey('3/0123');
       expect(s2cell.face, equals(3));
       expect(s2cell.ij, equals([3, 6]));
       expect(s2cell.level, equals(4));
     });
 
 
-    test('cellFromLatLng', () {
+    test('fromLatLng', () {
       final latLng = LatLng(37.7749, -122.4194); 
-      final s2cell = S2.cellFromLatLng(latLng, 10);
+      final s2cell = S2.fromLatLng(latLng, 10);
       expect(s2cell.level, equals(10));
     });
 
