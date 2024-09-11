@@ -7,16 +7,25 @@ void main(){
   var lng = -111.7089464;
   var level = 15;
   
-  // Convert lat and lng to key 
+  // Convert lat, lng, level to key 
   var key = S2.latLngToKey(lat, lng, level);
   print(key);
 
-  // Convert key to s2cell id 
+  // Convert key to id 
   var idFromKey = S2.keyToId(key);
   print(idFromKey);
 
+  // Convert lat, lng, level to id 
+  var idFromLatLng = S2.latLngToId(lat, lng); // level defaults to 15, use 'level = 10' to specify level ex.latLngToId(lat, lng, level = 10)
+  print(idFromLatLng);
+  
+  // Convert id to key
   var keyFromId = S2.idToKey(idFromKey);
   print(keyFromId);
+
+  // Convert id to lat, lng, level
+  var idToLatLng = S2.idToLatLng(idFromKey);
+  print(idToLatLng);
 
   //Get neighbors based on lat, lng, level
   var neighbors = S2.latLngToNeighborKeys(lat, lng, level);
