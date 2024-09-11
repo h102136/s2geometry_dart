@@ -1,0 +1,18 @@
+name: my_dart_project
+description: A sample command-line application.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.4.4
+
+# Add regular dependencies here.
+dependencies:
+  s2geometry_dart:
+    path: package/s2geometry_dart
+
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.24.0
+  
