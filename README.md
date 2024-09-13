@@ -1,7 +1,8 @@
 # s2geometry_dart
 
-- This project is to port JavaScript version of S2 Geometry Library to Dart, the porting task is based on the script from  https://www.npmjs.com/package/s2-geometry as a reference.
-- The goal of this porting task is to retain all functionality in the reference, but split the main script into multiple scripts for enhancing code maintainability and improve testability, and improve user experience so that users can use the package more intuitively and easily.
+- The project is to port JavaScript version of S2 Geometry Library to Dart, the porting task is based on the script from  https://www.npmjs.com/package/s2-geometry as a reference.
+
+- The goal of this porting task is to retain all functionalities in the reference, but split the main script into multiple scripts for enhancing code maintainability and improve testability, and improve user experience so that users can use the package more intuitively and easily.
 
 ## Reference
 
@@ -14,13 +15,13 @@ https://github.com/nbspou/dart-s2geometry (dart)
 
 1. Target: 
     - functional completeness: Dart version should be able to implement all the functions in JavaScript version
-    - testing coverage: Make sure test cases in Dart version have a comparable coverage rate to JavaScript version
+    
     - convenience of use: Improve the convenience of use and ensure that users can use the package easily without a deep understanding of the internal implementation.
 
 2. Preparation and analysis: 
     - due to that all function on Javascript version was combined as one script, so the script was split into several functions to improve maintainability.
+
     - code test cases for each function to ensure the availability of each function through testing.
-    - analyze the structure of all module.
 
 3. Process of porting:
     - port modules step by step
@@ -63,7 +64,7 @@ dependencies:
 ```
 ## Example
 ```dart
-import 'package:s2geometry_dart/s2geometry.dart';
+import 'package:s2geometry_dart/s2geometry_dart.dart';
 
 void main(){
 
