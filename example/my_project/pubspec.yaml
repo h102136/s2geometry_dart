@@ -1,12 +1,12 @@
-name: my_dart_project
-description: A sample command-line application.
+name: my_project
+description: A sample example for package testing.
 version: 1.0.0
 
 environment:
   sdk: ^3.4.4
 
 dependencies:
-  s2geometry_dart: ^1.0.0
+  s2geometry_dart: ^0.0.1
     path: package/s2geometry_dart
 
 
