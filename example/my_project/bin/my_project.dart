@@ -1,4 +1,4 @@
-import 'package:s2geometry_dart/s2geometry.dart';
+import 'package:s2geometry_dart/s2geometry_dart.dart';
 
 void main(){
 

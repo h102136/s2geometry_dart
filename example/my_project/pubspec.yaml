@@ -6,7 +6,7 @@ environment:
   sdk: ^3.4.4
 
 dependencies:
-  s2geometry_dart:
+  s2geometry_dart: ^1.0.0
     path: package/s2geometry_dart
 
 
