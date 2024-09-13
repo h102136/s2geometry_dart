@@ -1,6 +1,6 @@
 # s2geometry_dart
 
-- The project is to port JavaScript version of S2 Geometry Library to Dart, the porting task is based on the script from  https://www.npmjs.com/package/s2-geometry as a reference.
+- The project is to port JavaScript version of S2 Geometry Library to Dart, the porting task is based on the script from  https://www.npmjs.com/package/s2-geometry
 
 - The goal of this porting task is to retain all functionalities in the reference, but split the main script into multiple scripts for enhancing code maintainability and improve testability, and improve user experience so that users can use the package more intuitively and easily.
 
@@ -13,15 +13,16 @@ https://github.com/nbspou/dart-s2geometry (dart)
 
 ## Porting plan
 
-1. Target: 
-    - functional completeness: Dart version should be able to implement all the functions in JavaScript version
+1. Target:
+
+    - Functional completeness: Dart version should be able to implement all the functions in JavaScript version
     
-    - convenience of use: Improve the convenience of use and ensure that users can use the package easily without a deep understanding of the internal implementation.
+    - Convenience of use: Improve the convenience of use and ensure that users can use the package easily without a deep understanding of the internal implementation.
 
 2. Preparation and analysis: 
-    - due to that all function on Javascript version was combined as one script, so the script was split into several functions to improve maintainability.
+    - Due to that all function on Javascript version was combined as one script, so the script was split into several functions to improve maintainability.
 
-    - code test cases for each function to ensure the availability of each function through testing.
+    - Code test cases for each function to ensure the availability of each function through testing.
 
 3. Process of porting:
     - port modules step by step
@@ -31,36 +32,36 @@ https://github.com/nbspou/dart-s2geometry (dart)
     - integration testing
         - perform the integration testing after porting one function, to ensure that new modules will not destroy existing functions.
 4. Testing:  
-Port test cases of Javascript version into Dart version and ensure all tests pass
+Port test cases of Javascript version into Dart version and ensure all tests pass 
 
 
 
 ## Difficulty of the task
 
-- differences of language feature: Javascript is a dynamic typing language and Dart is a static typing, so need to check and reconstruct the type of each variable and function.
+- Differences of language feature: Javascript is a dynamic typing language and Dart is a static typing, so need to check and reconstruct the type of each variable and function.
 
-- data structure: 'Array' and 'Object' are the most commonly used in JavaScript, 'List' and 'Map' have different ways of use in Dart, so the code needs to be rewritten to accommodate the methods and features of Dart
+- Data structure: 'Array' and 'Object' are the most commonly used in JavaScript, 'List' and 'Map' have different ways of use in Dart, so the code needs to be rewritten to accommodate the methods and features of Dart
 
-- use 'BigInt' to declare S2 cell id for solving the problem of a number over 64 bits.
+- Use 'BigInt' to declare S2 cell id for solving the problem of a number over 64 bits.
 
 ## Functions available to users
 
-the features to enable users to perform geographic calculations and conversions :
+The features to enable users to perform geographic calculations and conversions :
 
 ```dart
 latLngToKey(lat, lng, level) //Converts 'lat', 'lng', 'level' to S2 Cell key.
 
 keyToId(key) //Converts S2 Cell key to S2 Cell ID.
 
-latLngToId(lat, lng, [level]) //Converts lat, lng directly to S2 Cell ID. 'level' default to 15, use latLngToId(lat, lng, level = 10) to specific 'level'.
+latLngToId(lat, lng, [level]) //Converts 'lat', 'lng', 'level' directly to S2 Cell ID. 'level' default to 15, use latLngToId(lat, lng, level = 10) to specific 'level'.
 
 idToKey(id) //Converts S2 Cell ID to key.
 
 keyToLatLng(key) //Converts S2 Cell key back to lat, lng.
 
-idToLatLng(id) //Converts S2 Cell ID back to lat, lng.
+idToLatLng(id) //Converts S2 Cell ID back to 'lat', 'lng'.
 
-latLngToNeighborKeys(lat, lng, level) //Retrieves a list of S2 Cell neighbor keys for a given lat and lng at a specified level.
+latLngToNeighborKeys(lat, lng, level) //Retrieves a list of S2 Cell neighbor keys for a given 'lat' and 'lng' at a specified level.
 
 nextKey(key) //Gets the next S2 Cell key after the current key.
 
