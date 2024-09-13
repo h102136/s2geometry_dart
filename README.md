@@ -43,6 +43,32 @@ Port test cases of Javascript version into Dart version and ensure all tests pas
 
 - use 'BigInt' to declare S2 cell id for solving the problem of a number over 64 bits.
 
+## Functions available to users
+
+the features to enable users to perform geographic calculations and conversions :
+
+```dart
+latLngToKey(lat, lng, level) //Converts 'lat', 'lng', 'level' to S2 Cell key.
+
+keyToId(key) //Converts S2 Cell key to S2 Cell ID.
+
+latLngToId(lat, lng, [level]) //Converts lat, lng directly to S2 Cell ID. 'level' default to 15, use latLngToId(lat, lng, level = 10) to specific 'level'.
+
+idToKey(id) //Converts S2 Cell ID to key.
+
+keyToLatLng(key) //Converts S2 Cell key back to lat, lng.
+
+idToLatLng(id) //Converts S2 Cell ID back to lat, lng.
+
+latLngToNeighborKeys(lat, lng, level) //Retrieves a list of S2 Cell neighbor keys for a given lat and lng at a specified level.
+
+nextKey(key) //Gets the next S2 Cell key after the current key.
+
+prevKey(key) //Gets the previous S2 Cell key before the current key.
+
+stepKey(key, step) //Moves the current key forward or backward by the specified number of steps.
+```
+
 ## Usage
 
 - clone the package in your project
@@ -53,7 +79,8 @@ git clone https://github.com/h102136/s2geometry_dart
 ```
 your_project/
 ├── lib/
-└── s2geometry_dart/
+└── package/ 
+        └── s2geometry_dart/
 ```
 - add the dependency in 'pubspec.yaml'
 
