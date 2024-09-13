@@ -380,13 +380,13 @@ class S2 {
     // 3-bit face value
     faceB = Int64.parseInt(faceN.toString()).toRadixString(2);
     while (faceB.length < faceBITS) {
-      faceB = '0' + faceB;
+      faceB = '0$faceB';
     }
 
     // 60-bit position value
     posB = Int64(int.parse(posS, radix: 4)).toRadixString(2);
     while (posB.length < (2 * levelN)) {
-      posB = '0' + posB;
+      posB = '0$posB';
     }
     bin = faceB + posB;
     // 1-bit lsb marker
@@ -452,7 +452,7 @@ class S2 {
     var bin = id.toRadixString(2);
 
     while (bin.length < (faceBITS + posBITS)) {
-      bin = '0' + bin;
+      bin = '0$bin';
     }
 
     var lsbIndex = bin.lastIndexOf('1');
@@ -464,10 +464,10 @@ class S2 {
     var posS = int.parse(posB, radix: 2).toRadixString(4);
 
     while (posS.length < levelN) {
-      posS = '0' + posS;
+      posS = '0$posS';
     }
 
-    return faceS + '/' + posS;
+    return '$faceS/$posS';
   }
 
   /* source code from js
@@ -571,10 +571,10 @@ class S2 {
       print("Warning: face/position wrapping is not yet supported");
     }
     while (otherS.length < level) {
-      otherS = '0' + otherS;
+      otherS = '0$otherS';
     }
 
-    return faceS + '/' + otherS;
+    return '$faceS/$otherS';
   }
 
   /*  source code from js
