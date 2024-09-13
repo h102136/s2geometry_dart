@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:s2geometry_dart/src/latlng_s2point.dart';
-import 'package:s2geometry_dart/s2geometry.dart';
+import 'package:s2geometry_dart/s2geometry_dart.dart';
 
 void main() {
   group('S2Cell Tests', () {
