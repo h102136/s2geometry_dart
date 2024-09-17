@@ -18,9 +18,8 @@ void main() {
       expect(s2cell.level, equals(4));
     });
 
-
     test('fromLatLng', () {
-      final latLng = LatLng(37.7749, -122.4194); 
+      final latLng = LatLng(37.7749, -122.4194);
       final s2cell = S2.fromLatLng(latLng, 10);
       expect(s2cell.level, equals(10));
     });
@@ -74,18 +73,18 @@ void main() {
 
     test('keyToId', () {
       var key = '4/0010023000';
-      var expectedId = BigInt.parse('9260950045757276160'); 
+      var expectedId = BigInt.parse('9260950045757276160');
       expect(S2.keyToId(key), expectedId);
     });
 
     test('idToKey', () {
-      var id = BigInt.parse('9260950045757276160');  
+      var id = BigInt.parse('9260950045757276160');
       var expectedKey = '4/0010023000';
       expect(S2.idToKey(id), expectedKey);
     });
 
     test('idToLatLng', () {
-      var id = BigInt.parse('9260950045757276160');  
+      var id = BigInt.parse('9260950045757276160');
       var expectedLat = 37.7749;
       var expectedLng = -122.4194;
       var actualLatLng = S2.idToLatLng(id);
@@ -97,35 +96,34 @@ void main() {
       var face = 1;
       var pos = '130';
       var level = 3;
-      var expectedId = BigInt.parse('3332663724254167040');  
+      var expectedId = BigInt.parse('3332663724254167040');
       expect(S2.facePosLevelToId(face, pos, level), expectedId);
     });
 
     test('prevKey', () {
       var key = '1/130';
-      var expectedKey = '1/123'; 
+      var expectedKey = '1/123';
       expect(S2.prevKey(key), expectedKey);
     });
 
     test('nextKey', () {
       var key = '1/130';
-      var expectedKey = '1/131'; 
+      var expectedKey = '1/131';
       expect(S2.nextKey(key), expectedKey);
     });
 
     test('stepKey', () {
       var key = '1/130';
       var num = 3;
-      var expectedKey = '1/133'; 
+      var expectedKey = '1/133';
       expect(S2.stepKey(key, num), expectedKey);
     });
 
     test('stepKey', () {
       var key = '1/130';
       var num = -3;
-      var expectedKey = '1/121'; 
+      var expectedKey = '1/121';
       expect(S2.stepKey(key, num), expectedKey);
     });
   });
-
 }

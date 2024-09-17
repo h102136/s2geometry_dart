@@ -1,6 +1,5 @@
 import 'dart:math';
 
-// 'st' is a point that is projected from a sphere to a unit square on a 2D plane.
 /* source code from js
 var singleSTtoUV = function(st) {
   if (st >= 0.5) {
@@ -10,7 +9,8 @@ var singleSTtoUV = function(st) {
   }
 };
 */
-// convert st to uv
+/// 'st' is a point that is projected from a sphere to a unit square on a 2D plane.
+/// convert st to uv
 double singleSTtoUV(double st) {
   if (st >= 0.5) {
     return (1 / 3.0) * (4 * st * st - 1);
@@ -37,7 +37,7 @@ var singleUVtoST = function(uv) {
   }
 };
 */
-// convert single st to single uv
+/// convert single st to single uv
 double singleUVtoST(double uv) {
   if (uv >= 0) {
     return 0.5 * sqrt(1 + 3 * uv);

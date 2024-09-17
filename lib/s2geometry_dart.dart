@@ -7,8 +7,7 @@ import 'dart:math';
 import 'dart:core';
 import 'package:fixnum/fixnum.dart';
 
-
-  /* source code from js
+/* source code from js
   S2.S2Cell = function(){};
   S2.S2Cell.FromHilbertQuadKey = function(hilbertQuadkey) {
     var parts = hilbertQuadkey.split('/');
@@ -66,18 +65,21 @@ class S2 {
   int level;
 
   S2({required this.face, required this.ij, required this.level});
-  // Convert Hilbert Quadkey to S2 Cell
+
+  /// Convert Hilbert Quadkey to S2 Cell
   static S2 fromHilbertQuadKey(String hilbertQuadkey) {
-    final parts = hilbertQuadkey.split('/'); 
-    final face = int.parse(parts[0]); 
-    final position = parts[1]; 
-    final maxLevel = position.length; 
+    final parts = hilbertQuadkey.split('/');
+    final face = int.parse(parts[0]);
+    final position = parts[1];
+    final maxLevel = position.length;
     final point = {'x': 0, 'y': 0};
 
     for (int i = maxLevel - 1; i >= 0; i--) {
       final level = maxLevel - i;
       final bit = position[i];
-      int rx = 0, ry = 0; // Rotation and flip parameters
+      int rx = 0, ry = 0;
+
+      /// Rotation and flip parameters
 
       if (bit == '1') {
         ry = 1;
@@ -89,13 +91,15 @@ class S2 {
       }
 
       final val = pow(2, level - 1).toInt();
-      rotateAndFlipQuadrant(val, point, rx, ry); // Rotate and flip the quadrant
+      rotateAndFlipQuadrant(val, point, rx, ry);
+
+      /// Rotate and flip the quadrant
 
       point['x'] = point['x']! + val * rx;
       point['y'] = point['y']! + val * ry;
     }
 
-    // Adjust the point based on the face (odd faces require swapping x and y)
+    /// Adjust the point based on the face (odd faces require swapping x and y)
     if (face % 2 == 1) {
       final t = point['x'];
       point['x'] = point['y']!;
@@ -115,7 +119,7 @@ class S2 {
     return cell;
   };
    */
-  // Create S2 Cell from face, ij, and level
+  /// Create S2 Cell from face, ij, and level
   static S2 fromFaceIJ(int face, List<int> ij, int level) {
     return S2(face: face, ij: ij, level: level);
   }
@@ -135,7 +139,7 @@ class S2 {
     return S2.S2Cell.FromFaceIJ (faceuv[0], ij, level);
   }; 
   */
-  // Convert LatLng to S2 Cell
+  /// Convert LatLng to S2 Cell
   static S2 fromLatLng(LatLng latLng, int level) {
     final xyz = S2Point.latLngToXYZ(latLng);
     final faceuv = xyzToFaceUV(xyz);
@@ -149,7 +153,7 @@ class S2 {
     return 'F'+this.face+'ij['+this.ij[0]+','+this.ij[1]+']@'+this.level;
   };
   */
-  // String representation of the S2 Cell
+  /// String representation of the S2 Cell
   @override
   String toString() {
     return 'F$face ij[${ij[0]},${ij[1]}]@$level';
@@ -164,7 +168,7 @@ class S2 {
     return S2.XYZToLatLng(xyz);
   };
   */
-  // Convert S2 Cell to LatLng
+  /// Convert S2 Cell to LatLng
   LatLng getLatLng() {
     final st = ijToST(ij, level, [0.5.toInt(), 0.5.toInt()]);
     final uv = stToUV(st);
@@ -192,18 +196,27 @@ class S2 {
     return result;
   };
   */
-  // Get 4 corner LatLngs of the S2 Cell
+  /// Get 4 corner LatLngs of the S2 Cell
   List<LatLng> getCornerLatLngs() {
     final result = <LatLng>[];
     final offsets = [
-      [0.0, 0.0], // Bottom-left
-      [0.0, 1.0], // Top-left
-      [1.0, 1.0], // Top-right
-      [1.0, 0.0]  // Bottom-right
+      [0.0, 0.0],
+
+      /// Bottom-left
+      [0.0, 1.0],
+
+      /// Top-left
+      [1.0, 1.0],
+
+      /// Top-right
+      [1.0, 0.0]
+
+      /// Bottom-right
     ];
 
     for (int i = 0; i < 4; i++) {
-      final st = ijToST(ij, level, [offsets[i][0].toInt(), offsets[i][1].toInt()]);
+      final st =
+          ijToST(ij, level, [offsets[i][0].toInt(), offsets[i][1].toInt()]);
       final uv = stToUV(st);
       final xyz = faceUVToXYZ(face, uv);
       result.add(S2Point.xyzToLatLng(xyz));
@@ -218,7 +231,7 @@ class S2 {
     return [this.face,quads];
   };
   */
-  // Get face and quads of the S2 Cell
+  /// Get face and quads of the S2 Cell
   List<dynamic> getFaceAndQuads() {
     final quads = pointToHilbertQuadList(ij[0], ij[1], level, face);
     return [face, quads];
@@ -231,7 +244,7 @@ class S2 {
     return this.face.toString(10) + '/' + quads.join('');
   };
   */
-  // Convert S2 Cell to Hilbert Quadkey
+  /// Convert S2 Cell to Hilbert Quadkey
   String toHilbertQuadkey() {
     final quads = pointToHilbertQuadList(ij[0], ij[1], level, face);
     return '$face/${quads.join('')}';
@@ -244,11 +257,15 @@ class S2 {
     });
   };
   */
-  // Convert LatLng to neighboring Hilbert Quadkeys
+  /// Convert LatLng to neighboring Hilbert Quadkeys
   static List<String> latLngToNeighborKeys(double lat, double lng, int level) {
     S2 cell = S2.fromLatLng(LatLng(lat, lng), level);
-    return cell.getNeighbors().map((neighbor) => neighbor.toHilbertQuadkey()).toList();
+    return cell
+        .getNeighbors()
+        .map((neighbor) => neighbor.toHilbertQuadkey())
+        .toList();
   }
+
   /* source code from js
   S2.S2Cell.prototype.getNeighbors = function() {
 
@@ -289,7 +306,7 @@ class S2 {
 
   };
   */
-  // Get 4 neighboring S2 Cells
+  /// Get 4 neighboring S2 Cells
   List<S2> getNeighbors() {
     S2 fromFaceIJWrap(int face, List<int> ij, int level) {
       final maxSize = (1 << level);
@@ -362,11 +379,13 @@ class S2 {
     return Long.fromString(bin, true, 2).toString(10);
   };
   */
-  // Constants
+  /// Constants
   static const int faceBITS = 3;
   static const int maxLEVEL = 30;
-  static const int posBITS = (2 * maxLEVEL) + 1; // 61 (60 bits of data, 1 bit lsb marker)
-  // Convert face, position, and level to S2 Cell ID
+  static const int posBITS = (2 * maxLEVEL) + 1;
+
+  /// 61 (60 bits of data, 1 bit lsb marker)
+  /// Convert face, position, and level to S2 Cell ID
   static BigInt facePosLevelToId(int faceN, String posS, int? levelN) {
     String faceB;
     String posB;
@@ -377,26 +396,30 @@ class S2 {
       posS = posS.substring(0, levelN);
     }
 
-    // 3-bit face value
+    /// 3-bit face value
     faceB = Int64.parseInt(faceN.toString()).toRadixString(2);
     while (faceB.length < faceBITS) {
       faceB = '0$faceB';
     }
 
-    // 60-bit position value
+    /// 60-bit position value
     posB = Int64(int.parse(posS, radix: 4)).toRadixString(2);
     while (posB.length < (2 * levelN)) {
       posB = '0$posB';
     }
     bin = faceB + posB;
-    // 1-bit lsb marker
+
+    /// 1-bit lsb marker
     bin += '1';
-    // n-bit padding to 64-bits
+
+    /// n-bit padding to 64-bits
     while (bin.length < (faceBITS + posBITS)) {
       bin += '0';
     }
 
-    return BigInt.parse(bin, radix: 2); // s2cell id
+    return BigInt.parse(bin, radix: 2);
+
+    /// s2cell id
   }
 
   /* source code from js
@@ -408,7 +431,7 @@ class S2 {
     return S2.fromFacePosLevel(parts[0], parts[1], parts[1].length);
   };
   */
-  // Convert quadkey to S2 Cell ID
+  /// Convert quadkey to S2 Cell ID
   static BigInt keyToId(String key) {
     var parts = key.split('/');
     return facePosLevelToId(int.parse(parts[0]), parts[1], parts[1].length);
@@ -447,7 +470,7 @@ class S2 {
     return faceS + '/' + posS;
   };
   */
-  // Convert S2 Cell ID to quadkey
+  /// Convert S2 Cell ID to quadkey
   static String idToKey(BigInt id) {
     var bin = id.toRadixString(2);
 
@@ -476,7 +499,7 @@ class S2 {
     return cell2.getLatLng();
   };
   */
-  // Convert quadkey to LatLng
+  /// Convert quadkey to LatLng
   static LatLng keyToLatLng(String key) {
     final cell = S2.fromHilbertQuadKey(key);
     return cell.getLatLng();
@@ -488,7 +511,7 @@ class S2 {
     return S2.keyToLatLng(key);
   };
   */
-  // Convert S2 Cell ID to LatLng
+  /// Convert S2 Cell ID to LatLng
   static LatLng idToLatLng(BigInt id) {
     final key = idToKey(id);
     return keyToLatLng(key);
@@ -503,15 +526,16 @@ class S2 {
     return S2.S2Cell.FromLatLng({ lat: lat, lng: lng }, level).toHilbertQuadkey();
   };
   */
-  // Convert LatLng to quadkey
+  /// Convert LatLng to quadkey
   static String latLngToKey(double lat, double lng, int level) {
     if (level.isNaN || level < 1 || level > 30) {
-      throw ArgumentError("'level' is not a number between 1 and 30 (but it should be)");
+      throw ArgumentError(
+          "'level' is not a number between 1 and 30 (but it should be)");
     }
     return S2.fromLatLng(LatLng(lat, lng), level).toHilbertQuadkey();
   }
 
-  // Convert LatLng to S2 Cell ID
+  /// Convert LatLng to S2 Cell ID
   static BigInt latLngToId(double lat, double lng, {int level = 15}) {
     String hilbertQuadkey = latLngToKey(lat, lng, level);
     return keyToId(hilbertQuadkey);
@@ -549,14 +573,16 @@ class S2 {
     return faceS + '/' + otherS;
   };
   */
-  // Stepping operation for quadkey
+  /// Stepping operation for quadkey
   static String stepKey(String key, int num) {
     var parts = key.split('/');
     var faceS = parts[0];
     var posS = parts[1];
     var level = parts[1].length;
 
-    var posL = int.parse(posS, radix: 4); // Translate posS to base 10
+    var posL = int.parse(posS, radix: 4);
+
+    /// Translate posS to base 10
     int otherL;
     if (num > 0) {
       otherL = posL + num.abs();
@@ -582,7 +608,7 @@ class S2 {
     return S2.stepKey(key, -1);
   };
   */
-  // Calculate the previous Hilbert QuadKey
+  /// Calculate the previous Hilbert QuadKey
   static String prevKey(String key) {
     return stepKey(key, -1);
   }
@@ -592,7 +618,7 @@ class S2 {
     return S2.stepKey(key, 1);
   };
   */
-  // Calculate the next Hilbert QuadKey
+  /// Calculate the next Hilbert QuadKey
   static String nextKey(String key) {
     return stepKey(key, 1);
   }

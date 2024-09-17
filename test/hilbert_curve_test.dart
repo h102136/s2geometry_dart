@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
-import 'package:s2geometry_dart/src/hilbert_curve.dart'; 
+import 'package:s2geometry_dart/src/hilbert_curve.dart';
+
 void main() {
   group('HilbertCurve', () {
     test('Should return correct positions for x=0, y=0, order=2, face=0', () {
