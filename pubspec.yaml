@@ -1,6 +1,6 @@
 name: s2geometry_dart
 description: A Dart port of the S2 Geometry Library from JavaScript, providing utilities for geographic calculations and conversions.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/h102136/s2geometry_dart
 
 environment:
