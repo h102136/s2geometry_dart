@@ -9,3 +9,7 @@
 - formating 
 - readme 
 - comments
+
+## 0.0.3
+
+- readme 
