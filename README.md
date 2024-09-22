@@ -72,23 +72,11 @@ stepKey(key, step) //Moves the current key forward or backward by the specified 
 
 ## Usage
 
-- clone the package in your project
-
-```sh
-git clone https://github.com/h102136/s2geometry_dart
-```
-```
-your_project/
-├── lib/
-└── package/ 
-        └── s2geometry_dart/
-```
 - add the dependency in 'pubspec.yaml'
 
 ```yaml
 dependencies:
-    s2geometry_dart:
-    path: s2geometry_dart
+    s2geometry_dart: ^0.0.2
 ```
 ## Example
 ```dart
