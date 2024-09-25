@@ -15,8 +15,7 @@ void main() {
   print('idFromKey: $idFromKey');
 
   /// Convert lat, lng, level to id
-  var idFromLatLng = S2.latLngToId(lat,
-      lng); // level defaults to 15, use 'level = 10' to specify level ex.latLngToId(lat, lng, level = 10)
+  var idFromLatLng = S2.latLngToId(lat,lng); // level defaults to 15, use 'level = 10' to specify level ex.latLngToId(lat, lng, level = 10)
   print('idFromLatLng: $idFromLatLng');
 
   /// Convert id to key
