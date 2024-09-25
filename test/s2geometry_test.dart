@@ -1,9 +1,41 @@
 import 'package:test/test.dart';
-import 'package:s2geometry_dart/src/latlng_s2point.dart';
+import 'package:s2geometry_dart/src/latlng.dart';
 import 'package:s2geometry_dart/s2geometry_dart.dart';
 
 void main() {
-  group('S2Cell Tests', () {
+  group('S2geometry Tests', () {
+    // test cases for S2Point 
+    test('should convert lat,lng (45.0, 90.0) to xyz correctly', () {
+      final latLng = LatLng(45.0, 90.0);
+      final result = S2.latLngToXYZ(latLng);
+
+      expect(result[0], closeTo(0.0, 1e-10)); // x
+      expect(result[1], closeTo(0.70710678118, 1e-10)); // y
+      expect(result[2], closeTo(0.70710678118, 1e-10)); // z
+    });
+    test('should convert lat,lng (-45.0, -90.0)to xyz correctly', () {
+      final latLng = LatLng(-45.0, -90.0);
+      final result = S2.latLngToXYZ(latLng);
+
+      expect(result[0], closeTo(0.0, 1e-10));
+      expect(result[1], closeTo(-0.70710678118, 1e-10));
+      expect(result[2], closeTo(-0.70710678118, 1e-10));
+    });
+    test('should convert xyz to lat,lng (45.0, 90.0)correctly', () {
+      final xyz = [0.0, 0.70710678118, 0.70710678118];
+      final result = S2.xyzToLatLng(xyz);
+
+      expect(result.lat, closeTo(45.0, 1e-10));
+      expect(result.lng, closeTo(90.0, 1e-10));
+    });
+    test('should convert xyz to lat,lng (-45.0, -90.0)correctly', () {
+      final xyz = [0.0, -0.70710678118, -0.70710678118];
+      final result = S2.xyzToLatLng(xyz);
+
+      expect(result.lat, closeTo(-45.0, 1e-10));
+      expect(result.lng, closeTo(-90.0, 1e-10));
+    });
+
     test('fromHilbertQuadKey', () {
       final s2cell = S2.fromHilbertQuadKey('3/210');
       expect(s2cell.face, equals(3));
