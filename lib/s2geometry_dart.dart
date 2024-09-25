@@ -166,7 +166,7 @@ class S2 {
   */
   /// Convert S2 Cell to LatLng
   LatLng getLatLng() {
-    final st = ijToST(ij, level, [0.5.toInt(), 0.5.toInt()]);
+    final st = ijToST(ij, level, [0.5, 0.5]);
     final uv = stToUV(st);
     final xyz = faceUVToXYZ(face, uv);
     return xyzToLatLng(xyz);
@@ -212,7 +212,7 @@ class S2 {
 
     for (int i = 0; i < 4; i++) {
       final st =
-          ijToST(ij, level, [offsets[i][0].toInt(), offsets[i][1].toInt()]);
+          ijToST(ij, level, [offsets[i][0], offsets[i][1]]);
       final uv = stToUV(st);
       final xyz = faceUVToXYZ(face, uv);
       result.add(xyzToLatLng(xyz));
@@ -309,7 +309,7 @@ class S2 {
       if (ij[0] >= 0 && ij[1] >= 0 && ij[0] < maxSize && ij[1] < maxSize) {
         return S2.fromFaceIJ(face, ij, level);
       } else {
-        final st = ijToST(ij, level, [0.5.toInt(), 0.5.toInt()]);
+        final st = ijToST(ij, level, [0.5, 0.5]);
         final uv = stToUV(st);
         final xyz = faceUVToXYZ(face, uv);
         final faceuv = xyzToFaceUV(xyz);

@@ -42,7 +42,7 @@ S2.IJToST = function(ij,order,offsets) {
 */
 /// convert ij to st
 List<double> ijToST(
-    List<int> ij, int order, List<int> offsets /*a list of two integers*/) {
+    List<int> ij, int order, List<double> offsets /*a list of two integers*/) {
   int maxSize = 1 << order;
 
   return [
