@@ -2,7 +2,29 @@ import 'package:test/test.dart';
 import 'package:s2geometry_dart/s2geometry_dart.dart';
 
 void main() {
+  //test cases for LatLng class
   group('S2geometry Tests', () {
+    test('should throw an error for invalid lat,lng values', () {
+      expect(() => LatLng('invalid', 90.0), throwsArgumentError);
+      expect(() => LatLng(45.0, 'invalid'), throwsArgumentError);
+    });
+    test('should clamp lat to -90..90', () {
+      final latLng = LatLng(100.0, 90.0);
+      expect(latLng.lat, 90.0);
+      expect(latLng.lng, 90.0);
+    });
+    test(
+        'should wrap lng to -180..180 and lat to -90..90 (-100,-200 =>-90,160)',
+        () {
+      final latLng = LatLng(-100.0, -200.0);
+      expect(latLng.lat, -90.0);
+      expect(latLng.lng, 160.0);
+    });
+    test('should not wrap lat and lng if noWrap is true', () {
+      final latLng = LatLng(-100.0, -200.0, noWrap: true);
+      expect(latLng.lat, -100.0);
+      expect(latLng.lng, -200.0);
+    });
     // test cases for S2Point 
     test('should convert lat,lng (45.0, 90.0) to xyz correctly', () {
       final latLng = LatLng(45.0, 90.0);
