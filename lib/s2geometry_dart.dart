@@ -1,70 +1,66 @@
-import 'package:s2geometry_dart/src/latlng_s2point.dart';
+import 'package:s2geometry_dart/src/latlng.dart';
 import 'package:s2geometry_dart/src/face_uv.dart';
 import 'package:s2geometry_dart/src/st_uv.dart';
 import 'package:s2geometry_dart/src/ij.dart';
 import 'package:s2geometry_dart/src/hilbert_curve.dart';
-import 'dart:math';
+import 'dart:math' as math;
 import 'dart:core';
 import 'package:fixnum/fixnum.dart';
 
-/* source code from js
-  S2.S2Cell = function(){};
-  S2.S2Cell.FromHilbertQuadKey = function(hilbertQuadkey) {
-    var parts = hilbertQuadkey.split('/');
-    var face = parseInt(parts[0]);
-    var position = parts[1];
-    var maxLevel = position.length;
-    var point = {
-      x : 0,
-      y: 0
-    };
-    var i;
-    var level;
-    var bit;
-    var rx, ry;
-    var val;
-
-    for(i = maxLevel - 1; i >= 0; i--) {
-
-      level = maxLevel - i;
-      bit = position[i];
-      rx = 0;
-      ry = 0;
-      if (bit === '1') {
-        ry = 1;
-      }
-      else if (bit === '2') {
-        rx = 1;
-        ry = 1;
-      }
-      else if (bit === '3') {
-        rx = 1;
-      }
-
-      val = Math.pow(2, level - 1);
-      rotateAndFlipQuadrant(val, point, rx, ry);
-
-      point.x += val * rx;
-      point.y += val * ry;
-
-    }
-
-    if (face % 2 === 1) {
-      var t = point.x;
-      point.x = point.y;
-      point.y = t;
-    }
-
-
-    return S2.S2Cell.FromFaceIJ(parseInt(face), [point.x, point.y], level);
-  };
-  */
 class S2 {
   int face;
   List<int> ij;
   int level;
 
   S2({required this.face, required this.ij, required this.level});
+  
+  /* source code from js
+  S2.LatLngToXYZ = function(latLng) {
+    var d2r = S2.L.LatLng.DEG_TO_RAD;
+
+    var phi = latLng.lat*d2r;
+    var theta = latLng.lng*d2r;
+
+    var cosphi = Math.cos(phi);
+
+    return [Math.cos(theta)*cosphi, Math.sin(theta)*cosphi, Math.sin(phi)];
+  };
+
+  S2.XYZToLatLng = function(xyz) {
+    var r2d = S2.L.LatLng.RAD_TO_DEG;
+
+    var lat = Math.atan2(xyz[2], Math.sqrt(xyz[0]*xyz[0]+xyz[1]*xyz[1]));
+    var lng = Math.atan2(xyz[1], xyz[0]);
+
+    return S2.L.LatLng(lat*r2d, lng*r2d);
+  };
+  */
+  /// Convert lat,lng to 3D point (x, y, z)
+  static List<double> latLngToXYZ(LatLng latLng) {
+    double d2r = math.pi / 180.0; // Degrees to radians conversion factor
+
+    double phi = latLng.lat * d2r;
+    double theta = latLng.lng * d2r;
+
+    double cosphi = math.cos(phi);
+
+    return [
+      math.cos(theta) * cosphi,
+      math.sin(theta) * cosphi,
+      math.sin(phi)
+    ];
+  }
+
+  /// Convert 3D point (x, y, z) to lat,lng
+  static LatLng xyzToLatLng(List<double> xyz) {
+    double r2d = 180.0 / math.pi; // Radians to degrees conversion factor
+
+    double lat = math.atan2(
+        xyz[2], math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1]));
+    double lng = math.atan2(xyz[1], xyz[0]);
+
+    return LatLng(lat * r2d, lng * r2d);
+  }
 
   /// Convert Hilbert Quadkey to S2 Cell
   static S2 fromHilbertQuadKey(String hilbertQuadkey) {
@@ -90,7 +86,7 @@ class S2 {
         rx = 1;
       }
 
-      final val = pow(2, level - 1).toInt();
+      final val = math.pow(2, level - 1).toInt();
       rotateAndFlipQuadrant(val, point, rx, ry);
 
       /// Rotate and flip the quadrant
@@ -141,7 +137,7 @@ class S2 {
   */
   /// Convert LatLng to S2 Cell
   static S2 fromLatLng(LatLng latLng, int level) {
-    final xyz = S2Point.latLngToXYZ(latLng);
+    final xyz = latLngToXYZ(latLng);
     final faceuv = xyzToFaceUV(xyz);
     final st = uvToST(faceuv[1]);
     final ij = stToIJ(st, level);
@@ -173,7 +169,7 @@ class S2 {
     final st = ijToST(ij, level, [0.5.toInt(), 0.5.toInt()]);
     final uv = stToUV(st);
     final xyz = faceUVToXYZ(face, uv);
-    return S2Point.xyzToLatLng(xyz);
+    return xyzToLatLng(xyz);
   }
 
   /* source code from js
@@ -219,7 +215,7 @@ class S2 {
           ijToST(ij, level, [offsets[i][0].toInt(), offsets[i][1].toInt()]);
       final uv = stToUV(st);
       final xyz = faceUVToXYZ(face, uv);
-      result.add(S2Point.xyzToLatLng(xyz));
+      result.add(xyzToLatLng(xyz));
     }
     return result;
   }

@@ -24,7 +24,6 @@ S2.L.LatLng = function (/*Number*/ rawLat, /*Number*/ rawLng, /*Boolean*/ noWrap
 S2.L.LatLng.DEG_TO_RAD = Math.PI / 180;
 S2.L.LatLng.RAD_TO_DEG = 180 / Math.PI;
 */
-
 /// LatLng class ensures that lat and lng values are valid
 class LatLng {
   double lat;
@@ -65,49 +64,3 @@ class LatLng {
   }
 }
 
-/* source code from js
-S2.LatLngToXYZ = function(latLng) {
-  var d2r = S2.L.LatLng.DEG_TO_RAD;
-
-  var phi = latLng.lat*d2r;
-  var theta = latLng.lng*d2r;
-
-  var cosphi = Math.cos(phi);
-
-  return [Math.cos(theta)*cosphi, Math.sin(theta)*cosphi, Math.sin(phi)];
-};
-
-S2.XYZToLatLng = function(xyz) {
-  var r2d = S2.L.LatLng.RAD_TO_DEG;
-
-  var lat = Math.atan2(xyz[2], Math.sqrt(xyz[0]*xyz[0]+xyz[1]*xyz[1]));
-  var lng = Math.atan2(xyz[1], xyz[0]);
-
-  return S2.L.LatLng(lat*r2d, lng*r2d);
-};
-*/
-/// S2Point class contains static methods to convert between LatLng and 3D coordinates(xyz)
-class S2Point {
-  /// Convert lat,lng to 3D point (x, y, z)
-  static List<double> latLngToXYZ(LatLng latLng) {
-    double d2r = LatLng.degToRad;
-
-    double phi = latLng.lat * d2r;
-    double theta = latLng.lng * d2r;
-
-    double cosphi = math.cos(phi);
-
-    return [math.cos(theta) * cosphi, math.sin(theta) * cosphi, math.sin(phi)];
-  }
-
-  /// convert S2 point (x, y, z) to lat,lng
-  static LatLng xyzToLatLng(List<double> xyz) {
-    double r2d = LatLng.radToDeg;
-
-    double lat =
-        math.atan2(xyz[2], math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1]));
-    double lng = math.atan2(xyz[1], xyz[0]);
-
-    return LatLng(lat * r2d, lng * r2d);
-  }
-}
