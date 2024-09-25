@@ -4,7 +4,12 @@ void main() {
   /// Define latitude, longitude and level
   var lat = 40.2574448;
   var lng = -111.7089464;
+  var latlng = LatLng(lat, lng);
   var level = 15;
+
+  /// Convert lat, lng to s2 point
+  var point = S2.latLngToXYZ(latlng);
+  print('point: $point');
 
   /// Convert lat, lng, level to key
   var key = S2.latLngToKey(lat, lng, level);
