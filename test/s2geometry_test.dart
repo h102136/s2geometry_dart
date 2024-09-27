@@ -79,7 +79,7 @@ void main() {
 
     test('toString', () {
       final s2cell = S2(face: 1, ij: [2, 3], level: 5);
-      expect(s2cell.toString(), equals('F1 ij[2,3]@5'));
+      expect(s2cell.toString(), equals('F1 ij[2, 3] @5'));
     });
 
     test('getLatLng', () {
