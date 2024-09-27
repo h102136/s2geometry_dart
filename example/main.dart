@@ -85,7 +85,7 @@ void main() {
   var idFromFacePosLevel = S2.facePosLevelToId(face, posS, levelN);
   print('idFromFacePosLevel: $idFromFacePosLevel');
 
-  /// Get face and quads of the S2 Cell
+  /// Get face and quads list of the S2 Cell
   S2 cell = S2.fromLatLng(latlng, level); // cell = [4, [1107, 8497], 15] face, ij , level
   var faceAndQuads = cell.getFaceAndQuads(); 
   print('faceAndQuads: $faceAndQuads');
