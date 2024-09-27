@@ -185,7 +185,7 @@ class S2 {
   /// String representation of the S2 Cell
   @override
   String toString() {
-    return 'F$face ij[${ij[0]},${ij[1]}]@$level';
+    return 'F$face ij$ij @$level';
   }
 
   /* source code from js
