@@ -7,9 +7,14 @@
 ## 0.0.2
 
 - formating 
-- readme 
+- readme update
 - comments
 
 ## 0.0.3
 
-- readme 
+- readme update
+
+## 0.0.4
+
+- example (list more functions)
+- readme update
